@@ -2,9 +2,11 @@
 
 ## GraphQL
 
-### [Resolver best practices](dev/graphql/resolver-best-practices.md)
+- [Resolver best practices](dev/graphql/resolver-best-practices.md)
 
 ## JavaScript
+
+- [Reduce and flatmap](dev/javascript/reduce-flatmap.md)
 
 ### TODO: Async await
 
@@ -19,6 +21,8 @@
 ### TODO: Generics
 
 ### TODO: Interface vs Types
+
+### TODO: VIM
 
 # 🔒 Security
 
