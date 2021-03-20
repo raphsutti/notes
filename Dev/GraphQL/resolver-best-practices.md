@@ -2,6 +2,16 @@
 
 https://medium.com/paypal-tech/graphql-resolvers-best-practices-cd36fdbcef55
 
+## Key take aways
+
+- Field has resolvers
+- 4 steps to queries execution
+- Abstract syntax tree. Runtime walks from parent down
+- `Context` for storing models/fetchers for API and databases
+- Passing data from parent to child should be avoided
+- Beware of overfetching
+- Use field level fetching and libraries to dedupe fetches
+
 ## Resolvers
 
 Every field on every type is backed by a function called `resolvers`
