@@ -2,7 +2,7 @@
 
 ## GraphQL
 
-### [Resolver best practices](Dev/GraphQL/resolver-best-practices.md)
+### [Resolver best practices](dev/graphql/resolver-best-practices.md)
 
 ## JavaScript
 
@@ -21,10 +21,10 @@
 
 ## AWS - Cloud
 
-- [S3](Security/aws/s3.md)
+- [S3](security/aws/s3.md)
 
-## [CTFs](Security/CTF)
+## [CTFs](security/CTF)
 
-## [Linux](Security/linux)
+## [Linux](security/linux)
 
-- [lesser known tricks](Security/linux/lesserKnown.sh)
+- [lesser known tricks](security/linux/lesserKnown.sh)
