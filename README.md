@@ -2,7 +2,7 @@
 
 ## GraphQL
 
-### [Resolver best practices](Dev/GraphQL/resolver-best-practices)
+### [Resolver best practices](Dev/GraphQL/resolver-best-practices.md)
 
 ## JavaScript
 
