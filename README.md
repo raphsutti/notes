@@ -27,4 +27,4 @@
 
 ## [Linux](Security/linux)
 
-- [lesser known tricks](Security/linux/lesserKNown.sh)
+- [lesser known tricks](Security/linux/lesserKnown.sh)
