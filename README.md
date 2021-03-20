@@ -6,16 +6,19 @@
 
 ## JavaScript
 
-### examples
+### TODO: Async await
 
-## TypeScript
+### TODO: Flatmap
 
-### examples
+### TODO: Reduce
 
-### typescriptlang.org
+### TODO: Destructuring
 
-- 5 mins
-- Handbook
+### TODO: Destructuring - rename keys
+
+### TODO: Generics
+
+### TODO: Interface vs Types
 
 # 🔒 Security
 
@@ -23,8 +26,11 @@
 
 - [S3](security/aws/s3.md)
 
-## [CTFs](security/CTF)
+## CTFs
 
-## [Linux](security/linux)
+- TODO: Overthewire Bandit
+- TODO: Tryhackme Advent of Cyber
+
+## Linux
 
 - [lesser known tricks](security/linux/lesserKnown.sh)
