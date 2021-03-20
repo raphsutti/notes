@@ -1,0 +1,36 @@
+# Nmap 7.80 scan initiated Mon Aug 17 06:42:36 2020 as: nmap -sV -vv -sC -oN nmap/initial 10.10.239.219
+Increasing send delay for 10.10.239.219 from 0 to 5 due to 48 out of 159 dropped probes since last increase.
+Nmap scan report for 10.10.239.219
+Host is up, received syn-ack (0.34s latency).
+Scanned at 2020-08-17 06:42:36 EDT for 82s
+Not shown: 998 closed ports
+Reason: 998 conn-refused
+PORT   STATE SERVICE REASON  VERSION
+22/tcp open  ssh     syn-ack OpenSSH 6.6.1p1 Ubuntu 2ubuntu2.10 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   1024 9c:c6:30:fd:ea:82:33:ca:59:fb:c0:51:65:1e:87:41 (DSA)
+| ssh-dss AAAAB3NzaC1kc3MAAACBAL0cQO0bUTw92j+0rcuNIAfn9Qu++GnWTFFdAvM9MU2ZSpBw1TvGavN93g1BC3dPaRH9iTNSnuIbddPooJ3Xs7f92VSDl43sUjSDU1ohH+W1rg5LUYhvtLJJ73nHk5UVcW8DrkJsFHuGi5ZFOQnuyKAqdwpOwGEVZIXrbvNI4AiRAAAAFQDGpe2LBsJxHg1Kzd25S+QdqJr/GQAAAIEAtLK/SH8u+Q8ndB2rVmjwRx2KqoEVw94HRg4C4JCiOK8CBMNIo6Cf4h+7g6MRbIXYH2kyo12+go3+whBYuyNolajuSzGTwBV6OjY1USbsvXimo068CPlObXz4haBjdt/kzYeskqNa8dRGBaHxSQLd4imFZ6Z/aJjKit0bAZF+SAsAAACAaPTN9/Aw2tx0oXbSsS4PP3NFXxWQla6yHIpqxhbL7b74RAvEp9oMrpVUIw4m96AtHuFFSDc7i7IhN4v56qBPBR7FQdMaeZSHrWCLLKxCTBLzR4vvtwf/2mGVQgaR+qGD3Hnfqc1fCJAcAeLIXvzkpRlKZIFYFv6nZIApAg6jECw=
+|   2048 03:a8:a0:96:c5:42:99:dd:d8:4e:d3:4e:0a:68:13:9f (RSA)
+| ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDKCwHUEgOwwWDoPrmxeFUhI6ArmNYWYceXItC3OEVOVgvDI6eXO/1K5JzT8nXIm6NDJZF4z+XCsXCzuXJLLfQMW6hysVoqBYASOKL6M61Z0AioW9LGS9pyapqMRWbawNj81UTBBleLQI4eQ+grw5LzgiIA76otklE++CMPM7OlTmlrggZh+xDpRunuDzQfCOKIpPLsDwK8TG0OOxRFtaWp0wjJRYfoAiJ0RqHhRD1HCYS9D1UM5GS1HkAo0d9PtQsBSP3RZ6p1B7pE/nE3VU9yFoUHpheS5rWt9YQtM+IWeP07x6H5BHIAFL917dSoEnGaRbNxe9ApuIVjEinxK9NR
+|   256 dc:43:d3:a6:33:40:a3:ff:d2:e4:76:c8:a7:04:9e:ae (ECDSA)
+| ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBD1qVYz+4bIxlVmbbdqOJ8F4Z8wMaQCan294shQ5rEy5Oc88cCLOrbosorHiR6XQwbVan9k1BBzONKPTvbhIrMI=
+|   256 19:ac:66:5e:56:ea:94:30:2f:ae:79:d5:88:02:75:d3 (ED25519)
+|_ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOTTi/hStTotEIegfHaFG8ayVCHT4ZZHqvSoN6KCYdvH
+80/tcp open  http    syn-ack Apache httpd 2.4.7 ((Ubuntu))
+| http-cookie-flags: 
+|   /: 
+|     PHPSESSID: 
+|_      httponly flag not set
+|_http-favicon: Unknown favicon MD5: 69C728902A3F1DF75CF9EAC73BD55556
+| http-methods: 
+|_  Supported Methods: GET OPTIONS
+| http-robots.txt: 1 disallowed entry 
+|_/
+|_http-server-header: Apache/2.4.7 (Ubuntu)
+| http-title: Login :: Damn Vulnerable Web Application (DVWA) v1.10 *Develop...
+|_Requested resource was login.php
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Read data files from: /usr/bin/../share/nmap
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Mon Aug 17 06:43:58 2020 -- 1 IP address (1 host up) scanned in 82.46 seconds

@@ -1,0 +1,12 @@
+/usr/sbin/john hashall --wordlist=/usr/share/wordlists/rockyou.txt
+Warning: only loading hashes of type sha512crypt, but also saw type md5crypt
+Use the --format=md5crypt option to force loading hashes of that type instead
+Using default input encoding: UTF-8
+Loaded 1 password hash (sha512crypt, crypt(3) $ [SHA512 128/128 AVX 2x])
+Cost 1 (iteration count) is 5000 for all loaded hashes
+Will run 4 OpenMP threads
+Press 'q' or Ctrl-C to abort, almost any other key for status
+love2fish        (root)
+1g 0:00:01:14 DONE (2020-09-05 18:06) 0.01350g/s 3240p/s 3240c/s 3240C/s luciole..lossims
+Use the --show option to display all of the cracked passwords reliably
+Session completed

@@ -1,0 +1,31 @@
+---------------------------------------------------- ---------------------------------
+ Exploit Title                                      |  Path
+---------------------------------------------------- ---------------------------------
+[01;31m[KCMS[m[K [01;31m[KMade[m[K [01;31m[KSimple[m[K ([01;31m[KCMS[m[KMS) Showtime2 - File Upload Rem | php/remote/46627.rb
+[01;31m[KCMS[m[K [01;31m[KMade[m[K [01;31m[KSimple[m[K 0.10 - 'index.php' Cross-Site Scrip | php/webapps/26298.txt
+[01;31m[KCMS[m[K [01;31m[KMade[m[K [01;31m[KSimple[m[K 0.10 - 'Lang.php' Remote File Inclu | php/webapps/26217.html
+[01;31m[KCMS[m[K [01;31m[KMade[m[K [01;31m[KSimple[m[K 1.0.2 - 'SearchInput' Cross-Site Sc | php/webapps/29272.txt
+[01;31m[KCMS[m[K [01;31m[KMade[m[K [01;31m[KSimple[m[K 1.0.5 - 'Stylesheet.php' SQL Inject | php/webapps/29941.txt
+[01;31m[KCMS[m[K [01;31m[KMade[m[K [01;31m[KSimple[m[K 1.11.10 - Multiple Cross-Site Scrip | php/webapps/32668.txt
+[01;31m[KCMS[m[K [01;31m[KMade[m[K [01;31m[KSimple[m[K 1.11.9 - Multiple Vulnerabilities   | php/webapps/43889.txt
+[01;31m[KCMS[m[K [01;31m[KMade[m[K [01;31m[KSimple[m[K 1.2 - Remote Code Execution         | php/webapps/4442.txt
+[01;31m[KCMS[m[K [01;31m[KMade[m[K [01;31m[KSimple[m[K 1.2.2 Module TinyMCE - SQL Injectio | php/webapps/4810.txt
+[01;31m[KCMS[m[K [01;31m[KMade[m[K [01;31m[KSimple[m[K 1.2.4 Module FileManager - Arbitrar | php/webapps/5600.php
+[01;31m[KCMS[m[K [01;31m[KMade[m[K [01;31m[KSimple[m[K 1.4.1 - Local File Inclusion        | php/webapps/7285.txt
+[01;31m[KCMS[m[K [01;31m[KMade[m[K [01;31m[KSimple[m[K 1.6.2 - Local File Disclosure       | php/webapps/9407.txt
+[01;31m[KCMS[m[K [01;31m[KMade[m[K [01;31m[KSimple[m[K 1.6.6 - Local File Inclusion / Cros | php/webapps/33643.txt
+[01;31m[KCMS[m[K [01;31m[KMade[m[K [01;31m[KSimple[m[K 1.6.6 - Multiple Vulnerabilities    | php/webapps/11424.txt
+[01;31m[KCMS[m[K [01;31m[KMade[m[K [01;31m[KSimple[m[K 1.7 - Cross-Site Request Forgery    | php/webapps/12009.html
+[01;31m[KCMS[m[K [01;31m[KMade[m[K [01;31m[KSimple[m[K 1.8 - 'default_[01;31m[Kcms[m[K_lang' Local File | php/webapps/34299.py
+[01;31m[KCMS[m[K [01;31m[KMade[m[K [01;31m[KSimple[m[K 1.x - Cross-Site Scripting / Cross- | php/webapps/34068.html
+[01;31m[KCMS[m[K [01;31m[KMade[m[K [01;31m[KSimple[m[K 2.1.6 - Multiple Vulnerabilities    | php/webapps/41997.txt
+[01;31m[KCMS[m[K [01;31m[KMade[m[K [01;31m[KSimple[m[K 2.1.6 - Remote Code Execution       | php/webapps/44192.txt
+[01;31m[KCMS[m[K [01;31m[KMade[m[K [01;31m[KSimple[m[K 2.2.5 - (Authenticated) Remote Code | php/webapps/44976.py
+[01;31m[KCMS[m[K [01;31m[KMade[m[K [01;31m[KSimple[m[K 2.2.7 - (Authenticated) Remote Code | php/webapps/45793.py
+[01;31m[KCMS[m[K [01;31m[KMade[m[K [01;31m[KSimple[m[K < 1.12.1 / < 2.1.3 - Web Server Cac | php/webapps/39760.txt
+[01;31m[KCMS[m[K [01;31m[KMade[m[K [01;31m[KSimple[m[K < 2.2.10 - SQL Injection            | php/webapps/46635.py
+[01;31m[KCMS[m[K [01;31m[KMade[m[K [01;31m[KSimple[m[K Module Antz Toolkit 1.02 - Arbitrar | php/webapps/34300.py
+[01;31m[KCMS[m[K [01;31m[KMade[m[K [01;31m[KSimple[m[K Module Download Manager 1.4.1 - Arb | php/webapps/34298.py
+[01;31m[KCMS[m[K [01;31m[KMade[m[K [01;31m[KSimple[m[K Showtime2 Module 3.6.2 - (Authentic | php/webapps/46546.py
+---------------------------------------------------- ---------------------------------
+Shellcodes: No Results

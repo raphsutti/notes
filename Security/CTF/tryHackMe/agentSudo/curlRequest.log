@@ -1,0 +1,157 @@
+Trying user agent A
+HTTP/1.1 200 OK
+Date: Fri, 21 Aug 2020 12:36:53 GMT
+Server: Apache/2.4.29 (Ubuntu)
+Content-Type: text/html; charset=UTF-8
+
+Trying user agent B
+HTTP/1.1 200 OK
+Date: Fri, 21 Aug 2020 12:36:54 GMT
+Server: Apache/2.4.29 (Ubuntu)
+Content-Type: text/html; charset=UTF-8
+
+Trying user agent C
+HTTP/1.1 302 Found
+Date: Fri, 21 Aug 2020 12:36:55 GMT
+Server: Apache/2.4.29 (Ubuntu)
+Location: agent_C_attention.php
+Content-Type: text/html; charset=UTF-8
+
+Trying user agent D
+HTTP/1.1 200 OK
+Date: Fri, 21 Aug 2020 12:36:56 GMT
+Server: Apache/2.4.29 (Ubuntu)
+Content-Type: text/html; charset=UTF-8
+
+Trying user agent E
+HTTP/1.1 200 OK
+Date: Fri, 21 Aug 2020 12:36:58 GMT
+Server: Apache/2.4.29 (Ubuntu)
+Content-Type: text/html; charset=UTF-8
+
+Trying user agent F
+HTTP/1.1 200 OK
+Date: Fri, 21 Aug 2020 12:36:58 GMT
+Server: Apache/2.4.29 (Ubuntu)
+Content-Type: text/html; charset=UTF-8
+
+Trying user agent G
+HTTP/1.1 200 OK
+Date: Fri, 21 Aug 2020 12:36:59 GMT
+Server: Apache/2.4.29 (Ubuntu)
+Content-Type: text/html; charset=UTF-8
+
+Trying user agent H
+HTTP/1.1 200 OK
+Date: Fri, 21 Aug 2020 12:37:01 GMT
+Server: Apache/2.4.29 (Ubuntu)
+Content-Type: text/html; charset=UTF-8
+
+Trying user agent I
+HTTP/1.1 200 OK
+Date: Fri, 21 Aug 2020 12:37:02 GMT
+Server: Apache/2.4.29 (Ubuntu)
+Content-Type: text/html; charset=UTF-8
+
+Trying user agent J
+HTTP/1.1 200 OK
+Date: Fri, 21 Aug 2020 12:37:03 GMT
+Server: Apache/2.4.29 (Ubuntu)
+Content-Type: text/html; charset=UTF-8
+
+Trying user agent K
+HTTP/1.1 200 OK
+Date: Fri, 21 Aug 2020 12:37:03 GMT
+Server: Apache/2.4.29 (Ubuntu)
+Content-Type: text/html; charset=UTF-8
+
+Trying user agent L
+HTTP/1.1 200 OK
+Date: Fri, 21 Aug 2020 12:37:04 GMT
+Server: Apache/2.4.29 (Ubuntu)
+Content-Type: text/html; charset=UTF-8
+
+Trying user agent M
+HTTP/1.1 200 OK
+Date: Fri, 21 Aug 2020 12:37:05 GMT
+Server: Apache/2.4.29 (Ubuntu)
+Content-Type: text/html; charset=UTF-8
+
+Trying user agent N
+HTTP/1.1 200 OK
+Date: Fri, 21 Aug 2020 12:37:07 GMT
+Server: Apache/2.4.29 (Ubuntu)
+Content-Type: text/html; charset=UTF-8
+
+Trying user agent O
+HTTP/1.1 200 OK
+Date: Fri, 21 Aug 2020 12:37:08 GMT
+Server: Apache/2.4.29 (Ubuntu)
+Content-Type: text/html; charset=UTF-8
+
+Trying user agent P
+HTTP/1.1 200 OK
+Date: Fri, 21 Aug 2020 12:37:09 GMT
+Server: Apache/2.4.29 (Ubuntu)
+Content-Type: text/html; charset=UTF-8
+
+Trying user agent Q
+HTTP/1.1 200 OK
+Date: Fri, 21 Aug 2020 12:37:10 GMT
+Server: Apache/2.4.29 (Ubuntu)
+Content-Type: text/html; charset=UTF-8
+
+Trying user agent R
+HTTP/1.1 200 OK
+Date: Fri, 21 Aug 2020 12:37:11 GMT
+Server: Apache/2.4.29 (Ubuntu)
+Content-Type: text/html; charset=UTF-8
+
+Trying user agent S
+HTTP/1.1 200 OK
+Date: Fri, 21 Aug 2020 12:37:12 GMT
+Server: Apache/2.4.29 (Ubuntu)
+Content-Type: text/html; charset=UTF-8
+
+Trying user agent T
+HTTP/1.1 200 OK
+Date: Fri, 21 Aug 2020 12:37:13 GMT
+Server: Apache/2.4.29 (Ubuntu)
+Content-Type: text/html; charset=UTF-8
+
+Trying user agent U
+HTTP/1.1 200 OK
+Date: Fri, 21 Aug 2020 12:37:14 GMT
+Server: Apache/2.4.29 (Ubuntu)
+Content-Type: text/html; charset=UTF-8
+
+Trying user agent V
+HTTP/1.1 200 OK
+Date: Fri, 21 Aug 2020 12:37:15 GMT
+Server: Apache/2.4.29 (Ubuntu)
+Content-Type: text/html; charset=UTF-8
+
+Trying user agent W
+HTTP/1.1 200 OK
+Date: Fri, 21 Aug 2020 12:37:16 GMT
+Server: Apache/2.4.29 (Ubuntu)
+Content-Type: text/html; charset=UTF-8
+
+Trying user agent X
+HTTP/1.1 200 OK
+Date: Fri, 21 Aug 2020 12:37:16 GMT
+Server: Apache/2.4.29 (Ubuntu)
+Content-Type: text/html; charset=UTF-8
+
+Trying user agent Y
+HTTP/1.1 200 OK
+Date: Fri, 21 Aug 2020 12:37:18 GMT
+Server: Apache/2.4.29 (Ubuntu)
+Content-Type: text/html; charset=UTF-8
+
+Trying user agent Z
+HTTP/1.1 200 OK
+Date: Fri, 21 Aug 2020 12:37:19 GMT
+Server: Apache/2.4.29 (Ubuntu)
+Content-Type: text/html; charset=UTF-8
+

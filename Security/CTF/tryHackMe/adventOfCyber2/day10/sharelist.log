@@ -1,0 +1,54 @@
+Starting enum4linux v0.8.9 ( http://labs.portcullis.co.uk/application/enum4linux/ ) on Fri Dec 11 05:21:11 2020
+
+ ========================== 
+|    Target Information    |
+ ========================== 
+Target ........... 10.10.200.89
+RID Range ........ 500-550,1000-1050
+Username ......... ''
+Password ......... ''
+Known Usernames .. administrator, guest, krbtgt, domain admins, root, bin, none
+
+
+ ==================================================== 
+|    Enumerating Workgroup/Domain on 10.10.200.89    |
+ ==================================================== 
+[+] Got domain/workgroup name: TBFC-SMB-01
+
+ ===================================== 
+|    Session Check on 10.10.200.89    |
+ ===================================== 
+[+] Server 10.10.200.89 allows sessions using username '', password ''
+
+ =========================================== 
+|    Getting domain SID for 10.10.200.89    |
+ =========================================== 
+Unable to initialize messaging context
+Domain Name: TBFC-SMB-01
+Domain Sid: (NULL SID)
+[+] Can't determine if host is part of domain or part of a workgroup
+
+ ========================================= 
+|    Share Enumeration on 10.10.200.89    |
+ ========================================= 
+directory_create_or_exist: mkdir failed on directory /run/samba/msg.lock: Permission denied
+Unable to initialize messaging context
+
+	Sharename       Type      Comment
+	---------       ----      -------
+	tbfc-hr         Disk      tbfc-hr
+	tbfc-it         Disk      tbfc-it
+	tbfc-santa      Disk      tbfc-santa
+	IPC$            IPC       IPC Service (tbfc-smb server (Samba, Ubuntu))
+SMB1 disabled -- no workgroup available
+
+[+] Attempting to map shares on 10.10.200.89
+//10.10.200.89/tbfc-hr	Mapping: DENIED, Listing: N/A
+//10.10.200.89/tbfc-it	Mapping: DENIED, Listing: N/A
+//10.10.200.89/tbfc-santa	Mapping: OK, Listing: OK
+//10.10.200.89/IPC$	[E] Can't understand response:
+directory_create_or_exist: mkdir failed on directory /run/samba/msg.lock: Permission denied
+Unable to initialize messaging context
+NT_STATUS_OBJECT_NAME_NOT_FOUND listing \*
+enum4linux complete on Fri Dec 11 05:21:34 2020
+

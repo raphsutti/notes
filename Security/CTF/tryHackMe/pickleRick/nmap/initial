@@ -1,0 +1,17 @@
+# Nmap 7.80 scan initiated Sat Sep 12 00:13:47 2020 as: nmap -sC -sV -oN nmap/initial 10.10.89.157
+Nmap scan report for 10.10.89.157
+Host is up (0.32s latency).
+Not shown: 998 closed ports
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 7.2p2 Ubuntu 4ubuntu2.6 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   2048 45:db:4a:70:91:ea:f3:95:dc:26:39:35:27:48:89:a9 (RSA)
+|   256 6d:58:88:89:6b:5b:91:b2:cc:a3:5a:61:30:47:cf:32 (ECDSA)
+|_  256 ed:95:60:87:ab:a8:20:06:de:3b:48:86:9f:44:29:83 (ED25519)
+80/tcp open  http    Apache httpd 2.4.18 ((Ubuntu))
+|_http-server-header: Apache/2.4.18 (Ubuntu)
+|_http-title: Rick is sup4r cool
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Sat Sep 12 00:14:55 2020 -- 1 IP address (1 host up) scanned in 67.47 seconds

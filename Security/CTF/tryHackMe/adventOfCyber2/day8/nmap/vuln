@@ -1,0 +1,35 @@
+# Nmap 7.80 scan initiated Tue Dec  8 18:47:29 2020 as: nmap --script vuln -oN nmap/vuln 10.10.19.245
+Pre-scan script results:
+| broadcast-avahi-dos: 
+|   Discovered hosts:
+|     224.0.0.251
+|   After NULL UDP avahi packet DoS (CVE-2011-1002).
+|_  Hosts are all up (not vulnerable).
+Nmap scan report for tbfc.blog (10.10.19.245)
+Host is up (0.27s latency).
+Not shown: 995 closed ports
+PORT     STATE    SERVICE
+80/tcp   open     http
+|_clamav-exec: ERROR: Script execution failed (use -d to debug)
+|_http-csrf: Couldn't find any CSRF vulnerabilities.
+|_http-dombased-xss: Couldn't find any DOM based XSS.
+| http-enum: 
+|   /css/: Potentially interesting directory w/ listing on 'apache/2.4.29 (ubuntu)'
+|   /images/: Potentially interesting directory w/ listing on 'apache/2.4.29 (ubuntu)'
+|   /js/: Potentially interesting directory w/ listing on 'apache/2.4.29 (ubuntu)'
+|   /page/: Potentially interesting directory w/ listing on 'apache/2.4.29 (ubuntu)'
+|_  /src/: Potentially interesting directory w/ listing on 'apache/2.4.29 (ubuntu)'
+| http-internal-ip-disclosure: 
+|_  Internal IP Leaked: 10
+|_http-stored-xss: Couldn't find any stored XSS vulnerabilities.
+2047/tcp filtered dls
+2222/tcp open     EtherNetIP-1
+|_clamav-exec: ERROR: Script execution failed (use -d to debug)
+3389/tcp open     ms-wbt-server
+|_clamav-exec: ERROR: Script execution failed (use -d to debug)
+|_rdp-vuln-ms12-020: ERROR: Script execution failed (use -d to debug)
+|_ssl-ccs-injection: No reply from server (TIMEOUT)
+|_sslv2-drown: 
+9100/tcp filtered jetdirect
+
+# Nmap done at Tue Dec  8 18:49:32 2020 -- 1 IP address (1 host up) scanned in 123.02 seconds

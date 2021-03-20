@@ -1,0 +1,10 @@
+# Nmap 7.80 scan initiated Sun Dec 13 01:00:12 2020 as: nmap -Pn -oN nmap/icmp 10.10.156.2
+Nmap scan report for 10.10.156.2
+Host is up (0.32s latency).
+Not shown: 997 filtered ports
+PORT     STATE SERVICE
+3389/tcp open  ms-wbt-server
+8009/tcp open  ajp13
+8080/tcp open  http-proxy
+
+# Nmap done at Sun Dec 13 01:00:33 2020 -- 1 IP address (1 host up) scanned in 20.50 seconds

@@ -1,0 +1,42 @@
+Starting enum4linux v0.8.9 ( http://labs.portcullis.co.uk/application/enum4linux/ ) on Fri Dec 11 05:20:43 2020
+
+ ========================== 
+|    Target Information    |
+ ========================== 
+Target ........... 10.10.200.89
+RID Range ........ 500-550,1000-1050
+Username ......... ''
+Password ......... ''
+Known Usernames .. administrator, guest, krbtgt, domain admins, root, bin, none
+
+
+ ==================================================== 
+|    Enumerating Workgroup/Domain on 10.10.200.89    |
+ ==================================================== 
+[+] Got domain/workgroup name: TBFC-SMB-01
+
+ ===================================== 
+|    Session Check on 10.10.200.89    |
+ ===================================== 
+[+] Server 10.10.200.89 allows sessions using username '', password ''
+
+ =========================================== 
+|    Getting domain SID for 10.10.200.89    |
+ =========================================== 
+Unable to initialize messaging context
+Domain Name: TBFC-SMB-01
+Domain Sid: (NULL SID)
+[+] Can't determine if host is part of domain or part of a workgroup
+
+ ============================= 
+|    Users on 10.10.200.89    |
+ ============================= 
+index: 0x1 RID: 0x3e8 acb: 0x00000010 Account: elfmcskidy	Name: 	Desc: 
+index: 0x2 RID: 0x3ea acb: 0x00000010 Account: elfmceager	Name: elfmceager	Desc: 
+index: 0x3 RID: 0x3e9 acb: 0x00000010 Account: elfmcelferson	Name: 	Desc: 
+
+user:[elfmcskidy] rid:[0x3e8]
+user:[elfmceager] rid:[0x3ea]
+user:[elfmcelferson] rid:[0x3e9]
+enum4linux complete on Fri Dec 11 05:21:03 2020
+

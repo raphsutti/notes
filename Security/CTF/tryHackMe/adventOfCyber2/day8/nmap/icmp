@@ -1,0 +1,10 @@
+# Nmap 7.80 scan initiated Tue Dec  8 17:43:19 2020 as: nmap -Pn -oN nmap/icmp 10.10.19.245
+Nmap scan report for tbfc.blog (10.10.19.245)
+Host is up (0.27s latency).
+Not shown: 997 closed ports
+PORT     STATE SERVICE
+80/tcp   open  http
+2222/tcp open  EtherNetIP-1
+3389/tcp open  ms-wbt-server
+
+# Nmap done at Tue Dec  8 17:44:07 2020 -- 1 IP address (1 host up) scanned in 47.77 seconds

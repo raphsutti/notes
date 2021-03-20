@@ -1,0 +1,17 @@
+# Nmap 7.80 scan initiated Fri Dec 25 17:25:52 2020 as: nmap -sV -sC -oN nmap/initial 10.10.16.106
+Nmap scan report for 10.10.16.106
+Host is up (0.30s latency).
+Not shown: 998 closed ports
+PORT      STATE SERVICE VERSION
+80/tcp    open  http    Apache httpd 2.4.29 ((Ubuntu))
+|_http-server-header: Apache/2.4.29 (Ubuntu)
+65000/tcp open  http    Apache httpd 2.4.29 ((Ubuntu))
+| http-cookie-flags: 
+|   /: 
+|     PHPSESSID: 
+|_      httponly flag not set
+|_http-server-header: Apache/2.4.29 (Ubuntu)
+|_http-title: Light Cycle
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Fri Dec 25 17:27:26 2020 -- 1 IP address (1 host up) scanned in 94.75 seconds

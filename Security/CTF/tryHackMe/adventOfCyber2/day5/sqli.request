@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<!DOCTYPE items [
+<!ELEMENT items (item*)>
+<!ATTLIST items burpVersion CDATA "">
+<!ATTLIST items exportTime CDATA "">
+<!ELEMENT item (time, url, host, port, protocol, method, path, extension, request, status, responselength, mimetype, response, comment)>
+<!ELEMENT time (#PCDATA)>
+<!ELEMENT url (#PCDATA)>
+<!ELEMENT host (#PCDATA)>
+<!ATTLIST host ip CDATA "">
+<!ELEMENT port (#PCDATA)>
+<!ELEMENT protocol (#PCDATA)>
+<!ELEMENT method (#PCDATA)>
+<!ELEMENT path (#PCDATA)>
+<!ELEMENT extension (#PCDATA)>
+<!ELEMENT request (#PCDATA)>
+<!ATTLIST request base64 (true|false) "false">
+<!ELEMENT status (#PCDATA)>
+<!ELEMENT responselength (#PCDATA)>
+<!ELEMENT mimetype (#PCDATA)>
+<!ELEMENT response (#PCDATA)>
+<!ATTLIST response base64 (true|false) "false">
+<!ELEMENT comment (#PCDATA)>
+]>
+<items burpVersion="2.1.07" exportTime="Sun Dec 06 04:13:49 EST 2020">
+  <item>
+    <time>Wed Dec 31 19:00:00 EST 1969</time>
+    <url><![CDATA[http://10.10.71.142:8000/santapanel?search=test]]></url>
+    <host ip="10.10.71.142">10.10.71.142</host>
+    <port>8000</port>
+    <protocol>http</protocol>
+    <method><![CDATA[GET]]></method>
+    <path><![CDATA[/santapanel?search=test]]></path>
+    <extension>null</extension>
+    <request base64="true"><![CDATA[R0VUIC9zYW50YXBhbmVsP3NlYXJjaD10ZXN0IEhUVFAvMS4xDQpIb3N0OiAxMC4xMC43MS4xNDI6ODAwMA0KVXNlci1BZ2VudDogTW96aWxsYS81LjAgKFgxMTsgTGludXggeDg2XzY0OyBydjo2OC4wKSBHZWNrby8yMDEwMDEwMSBGaXJlZm94LzY4LjANCkFjY2VwdDogdGV4dC9odG1sLGFwcGxpY2F0aW9uL3hodG1sK3htbCxhcHBsaWNhdGlvbi94bWw7cT0wLjksKi8qO3E9MC44DQpBY2NlcHQtTGFuZ3VhZ2U6IGVuLVVTLGVuO3E9MC41DQpBY2NlcHQtRW5jb2Rpbmc6IGd6aXAsIGRlZmxhdGUNClJlZmVyZXI6IGh0dHA6Ly8xMC4xMC43MS4xNDI6ODAwMC9zYW50YXBhbmVsP3NlYXJjaD0NCkNvbm5lY3Rpb246IGNsb3NlDQpDb29raWU6IHNlc3Npb249ZXlKaGRYUm9JanAwY25WbGZRLlg4eWZ5Zy5JNHl1Z0lCZ1BPb0NwZmhaNzBSSklybTJaancNClVwZ3JhZGUtSW5zZWN1cmUtUmVxdWVzdHM6IDENCg0K]]></request>
+    <status></status>
+    <responselength></responselength>
+    <mimetype></mimetype>
+    <response base64="true"></response>
+    <comment></comment>
+  </item>
+</items>

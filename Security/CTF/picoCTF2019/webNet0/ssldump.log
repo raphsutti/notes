@@ -1,0 +1,252 @@
+New TCP connection #1: 128.237.140.23(57567) <-> 172.31.22.220(443)
+1 1  0.0288 (0.0288)  C>S  Handshake
+      ClientHello
+        Version 3.3 
+        cipher suites
+        Unknown value 0xc030
+        Unknown value 0xc02c
+        Unknown value 0xc028
+        Unknown value 0xc024
+        Unknown value 0xc014
+        Unknown value 0xc00a
+        Unknown value 0xa5
+        Unknown value 0xa1
+        Unknown value 0x9f
+        Unknown value 0x6b
+        Unknown value 0x69
+        Unknown value 0x68
+        Unknown value 0x39
+        Unknown value 0x37
+        Unknown value 0x36
+        Unknown value 0xc032
+        Unknown value 0xc02e
+        Unknown value 0xc02a
+        Unknown value 0xc026
+        Unknown value 0xc00f
+        Unknown value 0xc005
+        Unknown value 0x9d
+        Unknown value 0x3d
+        Unknown value 0x35
+        Unknown value 0xc02f
+        Unknown value 0xc02b
+        Unknown value 0xc027
+        Unknown value 0xc023
+        Unknown value 0xc013
+        Unknown value 0xc009
+        Unknown value 0xa4
+        Unknown value 0xa0
+        Unknown value 0x9e
+        TLS_DHE_DSS_WITH_NULL_SHA
+        Unknown value 0x3f
+        Unknown value 0x3e
+        Unknown value 0x33
+        Unknown value 0x31
+        Unknown value 0x30
+        Unknown value 0xc031
+        Unknown value 0xc02d
+        Unknown value 0xc029
+        Unknown value 0xc025
+        Unknown value 0xc00e
+        Unknown value 0xc004
+        Unknown value 0x9c
+        Unknown value 0x3c
+        Unknown value 0x2f
+        Unknown value 0xc012
+        Unknown value 0xc008
+        TLS_DHE_RSA_WITH_3DES_EDE_CBC_SHA
+        TLS_DH_RSA_WITH_3DES_EDE_CBC_SHA
+        TLS_DH_DSS_WITH_3DES_EDE_CBC_SHA
+        Unknown value 0xc00d
+        Unknown value 0xc003
+        TLS_RSA_WITH_3DES_EDE_CBC_SHA
+        Unknown value 0xff
+        compression methods
+                  NULL
+1 2  0.0295 (0.0006)  S>C  Handshake
+      ServerHello
+        Version 3.3 
+        session_id[0]=
+
+        cipherSuite         Unknown value 0x9d
+        compressionMethod                   NULL
+1 3  0.0295 (0.0000)  S>C  Handshake
+      Certificate
+1 4  0.0295 (0.0000)  S>C  Handshake
+      ServerHelloDone
+New TCP connection #2: 128.237.140.23(57578) <-> 172.31.22.220(443)
+2 1  0.0332 (0.0332)  C>S  Handshake
+      ClientHello
+        Version 3.3 
+        cipher suites
+        Unknown value 0xc030
+        Unknown value 0xc02c
+        Unknown value 0xc028
+        Unknown value 0xc024
+        Unknown value 0xc014
+        Unknown value 0xc00a
+        Unknown value 0xa5
+        Unknown value 0xa1
+        Unknown value 0x9f
+        Unknown value 0x6b
+        Unknown value 0x69
+        Unknown value 0x68
+        Unknown value 0x39
+        Unknown value 0x37
+        Unknown value 0x36
+        Unknown value 0xc032
+        Unknown value 0xc02e
+        Unknown value 0xc02a
+        Unknown value 0xc026
+        Unknown value 0xc00f
+        Unknown value 0xc005
+        Unknown value 0x9d
+        Unknown value 0x3d
+        Unknown value 0x35
+        Unknown value 0xc02f
+        Unknown value 0xc02b
+        Unknown value 0xc027
+        Unknown value 0xc023
+        Unknown value 0xc013
+        Unknown value 0xc009
+        Unknown value 0xa4
+        Unknown value 0xa0
+        Unknown value 0x9e
+        TLS_DHE_DSS_WITH_NULL_SHA
+        Unknown value 0x3f
+        Unknown value 0x3e
+        Unknown value 0x33
+        Unknown value 0x31
+        Unknown value 0x30
+        Unknown value 0xc031
+        Unknown value 0xc02d
+        Unknown value 0xc029
+        Unknown value 0xc025
+        Unknown value 0xc00e
+        Unknown value 0xc004
+        Unknown value 0x9c
+        Unknown value 0x3c
+        Unknown value 0x2f
+        Unknown value 0xc012
+        Unknown value 0xc008
+        TLS_DHE_RSA_WITH_3DES_EDE_CBC_SHA
+        TLS_DH_RSA_WITH_3DES_EDE_CBC_SHA
+        TLS_DH_DSS_WITH_3DES_EDE_CBC_SHA
+        Unknown value 0xc00d
+        Unknown value 0xc003
+        TLS_RSA_WITH_3DES_EDE_CBC_SHA
+        Unknown value 0xff
+        compression methods
+                  NULL
+2 2  0.0335 (0.0003)  S>C  Handshake
+      ServerHello
+        Version 3.3 
+        session_id[0]=
+
+        cipherSuite         Unknown value 0x9d
+        compressionMethod                   NULL
+2 3  0.0335 (0.0000)  S>C  Handshake
+      Certificate
+2 4  0.0335 (0.0000)  S>C  Handshake
+      ServerHelloDone
+1 5  0.0596 (0.0301)  C>S  Handshake
+      ClientKeyExchange
+1 6  0.0596 (0.0000)  C>S  ChangeCipherSpec
+1 7  0.0596 (0.0000)  C>S  Handshake
+1 8  0.0613 (0.0017)  S>C  Handshake
+1 9  0.0613 (0.0000)  S>C  ChangeCipherSpec
+1 10 0.0613 (0.0000)  S>C  Handshake
+2 5  0.0672 (0.0336)  C>S  Handshake
+      ClientKeyExchange
+2 6  0.0672 (0.0000)  C>S  ChangeCipherSpec
+2 7  0.0672 (0.0000)  C>S  Handshake
+2 8  0.0689 (0.0016)  S>C  Handshake
+2 9  0.0689 (0.0000)  S>C  ChangeCipherSpec
+2 10 0.0689 (0.0000)  S>C  Handshake
+New TCP connection #3: 128.237.140.23(57581) <-> 172.31.22.220(443)
+3 1  0.0297 (0.0297)  C>S  Handshake
+      ClientHello
+        Version 3.3 
+        cipher suites
+        Unknown value 0xc030
+        Unknown value 0xc02c
+        Unknown value 0xc028
+        Unknown value 0xc024
+        Unknown value 0xc014
+        Unknown value 0xc00a
+        Unknown value 0xa5
+        Unknown value 0xa1
+        Unknown value 0x9f
+        Unknown value 0x6b
+        Unknown value 0x69
+        Unknown value 0x68
+        Unknown value 0x39
+        Unknown value 0x37
+        Unknown value 0x36
+        Unknown value 0xc032
+        Unknown value 0xc02e
+        Unknown value 0xc02a
+        Unknown value 0xc026
+        Unknown value 0xc00f
+        Unknown value 0xc005
+        Unknown value 0x9d
+        Unknown value 0x3d
+        Unknown value 0x35
+        Unknown value 0xc02f
+        Unknown value 0xc02b
+        Unknown value 0xc027
+        Unknown value 0xc023
+        Unknown value 0xc013
+        Unknown value 0xc009
+        Unknown value 0xa4
+        Unknown value 0xa0
+        Unknown value 0x9e
+        TLS_DHE_DSS_WITH_NULL_SHA
+        Unknown value 0x3f
+        Unknown value 0x3e
+        Unknown value 0x33
+        Unknown value 0x31
+        Unknown value 0x30
+        Unknown value 0xc031
+        Unknown value 0xc02d
+        Unknown value 0xc029
+        Unknown value 0xc025
+        Unknown value 0xc00e
+        Unknown value 0xc004
+        Unknown value 0x9c
+        Unknown value 0x3c
+        Unknown value 0x2f
+        Unknown value 0xc012
+        Unknown value 0xc008
+        TLS_DHE_RSA_WITH_3DES_EDE_CBC_SHA
+        TLS_DH_RSA_WITH_3DES_EDE_CBC_SHA
+        TLS_DH_DSS_WITH_3DES_EDE_CBC_SHA
+        Unknown value 0xc00d
+        Unknown value 0xc003
+        TLS_RSA_WITH_3DES_EDE_CBC_SHA
+        Unknown value 0xff
+        compression methods
+                  NULL
+3 2  0.0301 (0.0003)  S>C  Handshake
+      ServerHello
+        Version 3.3 
+        session_id[0]=
+
+        cipherSuite         Unknown value 0x9d
+        compressionMethod                   NULL
+3 3  0.0301 (0.0000)  S>C  Handshake
+      Certificate
+3 4  0.0301 (0.0000)  S>C  Handshake
+      ServerHelloDone
+3 5  0.0598 (0.0296)  C>S  Handshake
+      ClientKeyExchange
+3 6  0.0598 (0.0000)  C>S  ChangeCipherSpec
+3 7  0.0598 (0.0000)  C>S  Handshake
+3 8  0.0607 (0.0009)  S>C  Handshake
+3 9  0.0607 (0.0000)  S>C  ChangeCipherSpec
+3 10 0.0607 (0.0000)  S>C  Handshake
+3 11 0.0953 (0.0345)  C>S  application_data
+3 12 0.0958 (0.0004)  S>C  application_data
+1 11 0.3571 (0.2957)  C>S  application_data
+1 12 0.3575 (0.0004)  S>C  application_data
+1 13 0.8170 (0.4595)  C>S  application_data
+1 14 0.8173 (0.0003)  S>C  application_data

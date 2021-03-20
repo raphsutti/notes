@@ -1,0 +1,20 @@
+- Nikto v2.1.6
+---------------------------------------------------------------------------
++ Target IP:          10.10.252.66
++ Target Hostname:    10.10.252.66
++ Target Port:        80
++ Start Time:         2020-09-11 07:51:15 (GMT-4)
+---------------------------------------------------------------------------
++ Server: Apache/2.4.18 (Ubuntu)
++ The anti-clickjacking X-Frame-Options header is not present.
++ The X-XSS-Protection header is not defined. This header can hint to the user agent to protect against some forms of XSS
++ The X-Content-Type-Options header is not set. This could allow the user agent to render the content of the site in a different fashion to the MIME type
++ No CGI Directories found (use '-C all' to force check all possible dirs)
++ "robots.txt" contains 2 entries which should be manually viewed.
++ Server may leak inodes via ETags, header found with file /, inode: 2c39, size: 590523e6dfcd7, mtime: gzip
++ Apache/2.4.18 appears to be outdated (current is at least Apache/2.4.37). Apache 2.2.34 is the EOL for the 2.x branch.
++ Allowed HTTP Methods: POST, OPTIONS, GET, HEAD 
++ Scan terminated:  19 error(s) and 7 item(s) reported on remote host
++ End Time:           2020-09-11 18:09:09 (GMT-4) (37074 seconds)
+---------------------------------------------------------------------------
++ 1 host(s) tested
