@@ -47,10 +47,14 @@ I'm currently a Software Developer but I also like infosec. This repo will be a 
 - [lesser known tricks](security/linux/lesserKnown.sh)
 - TODO: CVE-2019–14287 - sudo bug 
 
+## Metasploit
+
+- TODO: 
+
 ## Web
 
 - TODO: CSRF, cookies auth bypass
 - TODO: dirb
+- TODO: hydra
 - TODO: nikto
 - TODO: nmap
-- TODO: 
