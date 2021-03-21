@@ -38,7 +38,7 @@ I'm currently a Software Developer but I also like infosec. This repo will be a 
 
 ## CTFs
 
-- TODO: Overthewire Bandit
+- [Over the Wire: Bandit](security/CTF/bandit/)
 - TODO: Tryhackme Advent of Cyber
 - TODO: Kringlecon 2020
 
