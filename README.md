@@ -28,6 +28,10 @@ I'm currently a Software Developer but I also like infosec. This repo will be a 
 - TODO: Destructuring - rename keys
 - TODO: Generics
 - TODO: Interface vs Types
+- TODO: Check if undefined
+
+## Productivity
+
 - TODO: VIM
 
 # 🔒 Security
