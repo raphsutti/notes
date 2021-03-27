@@ -20,6 +20,7 @@ I'm currently a Software Developer but I also like infosec. This repo will be a 
 ## JavaScript
 
 - [Reduce and flatmap](dev/javascript/reduce-flatmap.md)
+- [Avoid export default](dev/javascript/avoid-export-default.md)
 
 - TODO: Async await
 - TODO: Flatmap
