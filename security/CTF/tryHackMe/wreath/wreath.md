@@ -4,7 +4,7 @@ Learn how to pivot through a network by compromising a public facing web machine
 
 https://tryhackme.com/room/wreath
 
-## Background
+## 1. Background
 
 > *There are two machines on my home network that host projects and stuff I'm working on in my own time -- one of them has a webserver that's port forwarded, so that's your way in if you can find a vulnerability! It's serving a website that's pushed to my git server from my own PC for version control, then cloned to the public facing server. See if you can get into these! My own PC is also on that network, but I doubt you'll be able to get into that as it has protections turned on, doesn't run anything vulnerable, and can't be accessed by the public-facing section of the network. Well, I say PC -- it's technically a repurposed server because I had a spare license lying around, but same difference.*
 
@@ -15,7 +15,7 @@ https://tryhackme.com/room/wreath
 - PC on the network with AV installed - likely Windows
 - Windows PC cannot be directly access from the webserver 
 
-## Webserver enumeration
+## 2. Webserver enumeration
 
 ![Network map](./wreath-network.png)
 
@@ -136,7 +136,7 @@ Nmap done: 1 IP address (1 host up) scanned in 24.00 seconds
 
 Quick Google search reveals this server version is vulnerable to `CVE-2019–15107`
 
-## Webserver Exploitation
+## 3. Webserver Exploitation
 
 Exploit can be downloaded and run from `https://github.com/MuirlandOracle/CVE-2019-15107`
 
@@ -338,7 +338,49 @@ drwxr-xr-x 4 kali kali 4096 Apr  4 05:30 ..
 -rw------- 1 kali kali 2602 Apr  4 05:30 id_rsa
 ```
 
-## Pivoting
+## 4. Pivoting
+
+### Definition
+
+Pivoting is using access obtained over one machine to exploit another machine deeper in the network.
+
+The technique involves gaining initial access to a remote network, and use it to access other machines
 
 ![pivoting](pivoting.png)
 
+Above there are four machines on the target network
+- 1 public facing server
+- 3 machines not exposed to the internet
+
+By accessing the public server, it is then possible to pivot to attack the other 3 targets.
+
+### Methods
+
+Methods varies depending on OS
+
+Two main methods:
+
+1. Tunnelling/Proxying
+
+Creating proxy connection through compromised machine. 
+This could be tunnelled inside another protocol (eg. SSH tunnelling) which is useful in evading basic intrusion detection system or firewall
+
+Proxying is preferred when there is need to redirect lots of different kinds of traffic to target network eg. nmap scan or access multiple ports on multiple different machines
+
+2. Port forwarding
+
+Creating a connection between local port and single port on a target via compromised host
+
+Port forwarding tends to be faster and more reliable but only allow access to a single port (or small range) on a target device
+
+Example pivoting tools
+
+- Enumerating a network using native and statically compiled tools
+- Proxychains / FoxyProxy
+- SSH port forwarding and tunnelling (primarily Unix)
+- plink.exe (Windows)
+- socat (Windows and Unix)
+- chisel (Windows and Unix)
+- sshuttle (currently Unix only)
+
+## 5. Pivoting Enumeration
