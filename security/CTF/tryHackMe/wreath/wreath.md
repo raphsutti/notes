@@ -618,3 +618,13 @@ plink is preinstalled on Kali at `/usr/share/windows-resources/binaries/plink.ex
 
 ## 8 Pivoting - Socat
 
+<details>
+  <summary>---</summary>
+
+Socat:
+- Great for fully stable Linux shells
+- Port forwarding.
+- However, rarely installed on target
+- Unlikely to bypass AV in Windows
+
+</details>
