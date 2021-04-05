@@ -764,7 +764,7 @@ Above options combined allow us to use the same port forward for more than one c
 
 We can now connect to port 33060 on the relay 172.16.0.5 and connection directly relayed to our target 172.16.0.10:3306
 
-TODO: [port forwarding easy diagram]
+![port forwarding easy diagram](port-forward-easy.jpg)
 
 ### Port forwarding -- quiet
 
@@ -791,21 +791,21 @@ This makes connection between our listening 8001 on attacking machine and open p
 For example, 
 
 ```
-./socat tcp:10.50.73.2:8001 tcp:172.16.0/10:80,fork &
+./socat tcp:10.50.73.2:8001 tcp:172.16.0.10:80,fork &
 ```
 
 This creates a link between port 8000 on attacking machine and port 80 on intended target 172.16.0.10. If we go to localhost:8000 on our attacking machine's web browser, it would load the webpage served by target 172.16.0.10:80.
 
 Summary visiting webpage on attacking server:
 - Request goes to 127.0.0.1:8000
-- Socat listenner, anything goes into port 8000, comeso ut of port 8001
+- Socat listener, anything goes into port 8000, comes out of port 8001
 - Port 8001 is connected directly to socat porcess on the compromised server. Anything coming out of port 8001 gets sent to compromised server and relayed to port 80 on target server
 
 Summary target sends response:
 - Response sent to socat process on compromised server. What goes in process comes out to port 8001 on our attacking machine
 - Anything goes in port 8001 on attacking machine comes out of port 8000 which is where web browser expects to receive its response
 
-TODO: [port forwarding quiet diagram]
+![port forwarding quiet diagram](port-forward-quiet.jpg)
 
 ### Killing backgrounded socat port forwards
 
