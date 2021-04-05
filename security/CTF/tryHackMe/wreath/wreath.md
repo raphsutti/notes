@@ -351,6 +351,19 @@ drwxr-xr-x 4 kali kali 4096 Apr  4 05:30 ..
 -rw------- 1 kali kali 2602 Apr  4 05:30 id_rsa
 ```
 
+> Note: if you dont change the permission of the key, you wont be able to use it
+
+```
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@         WARNING: UNPROTECTED PRIVATE KEY FILE!          @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+Permissions 0644 for 'id_rsa' are too open.
+It is required that your private key files are NOT accessible by others.
+This private key will be ignored.
+Load key "id_rsa": bad permissions
+root@10.200.81.200: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).
+```
+
 Now we can just use this key to ssh straight into the webserver
 
 ```
