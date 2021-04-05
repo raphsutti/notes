@@ -31,24 +31,22 @@ https://tryhackme.com/room/wreath
 
 Start with nmap
 
-We find there are 7 ports open
+We find there are 4 ports open
 
 ```
 nmap -p-15000 10.200.81.200 -oN initial.nmap
-Starting Nmap 7.80 ( https://nmap.org ) at 2021-04-04 01:57 EDT
-Nmap scan report for 10.200.81.200
+Starting Nmap 7.80 ( https://nmap.org ) at 2021-04-05 02:14 EDT
+Nmap scan report for thomaswreath.thm (10.200.81.200)
 Host is up (0.26s latency).
-Not shown: 14993 filtered ports
+Not shown: 14995 filtered ports
 PORT      STATE  SERVICE
 22/tcp    open   ssh
 80/tcp    open   http
 443/tcp   open   https
-2513/tcp  closed citrixadmin
 9090/tcp  closed zeus-admin
-9889/tcp  open   gt-proxy
 10000/tcp open   snet-sensor-mgmt
 
-Nmap done: 1 IP address (1 host up) scanned in 90.73 seconds
+Nmap done: 1 IP address (1 host up) scanned in 118.64 seconds
 ```
 
 ### Server OS
