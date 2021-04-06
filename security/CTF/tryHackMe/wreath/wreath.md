@@ -516,7 +516,12 @@ Other things to note
 
 Better with web browser. Popular with Burp and ZAP
 
-## Pivoting SSH Tunnelling / Port Forwarding
+</details>
+
+## 7. Pivoting SSH Tunnelling / Port Forwarding
+
+<details>
+  <summary>---</summary>
 
 ### Forward connections
 
@@ -613,7 +618,7 @@ To kill any connections use `ps aux | grep ssh` then `sudo kill PID`
 
 </details>
 
-## 7. Pivoting - plink.exe
+## 8. Pivoting - plink.exe
 
 <details>
   <summary>---</summary>
@@ -642,7 +647,7 @@ plink is preinstalled on Kali at `/usr/share/windows-resources/binaries/plink.ex
 
 </details>
 
-## 8. Pivoting - Socat
+## 9. Pivoting - Socat
 
 <details>
   <summary>---</summary>
@@ -824,7 +829,7 @@ kali@kali:~$ jobs
 
 </details>
 
-## 9. Pivoting - Chisel
+## 10. Pivoting - Chisel
 
 <details>
   <summary>---</summary>
