@@ -14,26 +14,12 @@ I'm currently a Software Developer but I also like infosec. This repo will be a 
 
 - [Resolver best practices](dev/graphql/resolver-best-practices.md)
 
-- TODO: basic benefits of graphql vs REST
-- TODO: basic typedefs, resolvers
 
 ## JavaScript
 
 - [Reduce and flatmap](dev/javascript/reduce-flatmap.md)
 - [Avoid export default](dev/javascript/avoid-export-default.md)
 
-- TODO: Async await
-- TODO: Flatmap
-- TODO: Reduce
-- TODO: Destructuring
-- TODO: Destructuring - rename keys
-- TODO: Generics
-- TODO: Interface vs Types
-- TODO: Check if undefined
-
-## Productivity
-
-- TODO: VIM
 
 # 🔒 Security
 
@@ -44,22 +30,20 @@ I'm currently a Software Developer but I also like infosec. This repo will be a 
 ## CTFs
 
 - [Over the Wire: Bandit](security/CTF/bandit/)
+- [Wreath](security/CTF/tryhackMe/../tryHackMe/wreath/)
 - TODO: Tryhackme Advent of Cyber
-- TODO: Kringlecon 2020
 
 ## Linux
 
-- [lesser known tricks](security/linux/lesserKnown.sh)
+- [Recon](security/linux/recon/)
+- [Exploitation](security/linux/explotiation/)
+- [Misc tricks](security/linux/lesserKnown.sh)
 - TODO: CVE-2019–14287 - sudo bug 
 
-## Metasploit
+## Crypto
 
-- TODO: 
+- [Crypto101](security/linux/crypto/crypto101.md)
 
 ## Web
 
-- TODO: CSRF, cookies auth bypass
-- TODO: dirb
-- TODO: hydra
-- TODO: nikto
-- TODO: nmap
+- TODO
