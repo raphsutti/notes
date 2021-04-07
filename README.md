@@ -42,7 +42,7 @@ I'm currently a Software Developer but I also like infosec. This repo will be a 
 
 ## Crypto
 
-- [Crypto101](security/linux/crypto/crypto101.md)
+- [Crypto101](security/crypto/crypto101.md)
 
 ## Web
 
