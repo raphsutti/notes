@@ -96,4 +96,39 @@ Session completed
 
 ## PGP, GPG, AES
 
+Unzip the file we get 
+```
+unzip gpg.zip 
+Archive:  gpg.zip
+ extracting: message.gpg             
+  inflating: tryhackme.key
+```
+
+Adding the key 
+```
+sudo gpg --import tryhackmegpg.key 
+[sudo] password for kali: 
+gpg: directory '/root/.gnupg' created
+gpg: keybox '/root/.gnupg/pubring.kbx' created
+gpg: /root/.gnupg/trustdb.gpg: trustdb created
+gpg: key FFA4B5252BAEB2E6: public key "TryHackMe (Example Key)" imported
+gpg: key FFA4B5252BAEB2E6: secret key imported
+gpg: Total number processed: 1
+gpg:               imported: 1
+gpg:       secret keys read: 1
+gpg:   secret keys imported: 1
+```
+
+Now we decrypt the message
+```
+sudo gpg message.gpg 
+gpg: WARNING: no command supplied.  Trying to guess what you mean ...
+gpg: encrypted with 1024-bit RSA key, ID 2A0A5FDC5081B1C5, created 2020-06-30
+      "TryHackMe (Example Key)"
+
+cat message
+You decrypted the file!
+The secret word is Pineapple.
+```
+
 ## Future and rise of quantum computing
