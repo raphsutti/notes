@@ -19,7 +19,7 @@ I'm currently a Software Developer but I also like infosec. This repo will be a 
 
 - [Reduce and flatmap](dev/javascript/reduce-flatmap.md)
 - [Avoid export default](dev/javascript/avoid-export-default.md)
-
+- [Const assertion](dev/javascript/constAssertion.md)
 
 # 🔒 Security
 
@@ -30,7 +30,8 @@ I'm currently a Software Developer but I also like infosec. This repo will be a 
 ## CTFs
 
 - [Over the Wire: Bandit](security/CTF/bandit/)
-- [Wreath](security/CTF/tryhackMe/../tryHackMe/wreath/)
+- [Tryhackme: Wreath](security/CTF/tryhackMe/../tryHackMe/wreath/)
+- [BSides Canberra 2021](security/CTF/bsidescbr2021/README.md)
 - TODO: Tryhackme Advent of Cyber
 
 ## Linux
