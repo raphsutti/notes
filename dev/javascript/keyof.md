@@ -16,3 +16,22 @@ type M = keyof Mapish;
 //   ^ = type M = string | number'
 // Note that in this example, M is string | number — this is because JavaScript object keys are always coerced to a string, so obj[0] is always the same as obj["0"].
 ```
+
+
+Examples
+
+```typescript
+interface Props {
+  id: number
+  name: string
+  lastName: string
+}
+
+type foo = {
+  [K in Exclude<keyof Props, 'lastName'>]: boolean;
+}
+// type foo = { id: boolean; name: boolean; }
+
+type bar = Record<Exclude<keyof Props, 'lastName'>, boolean>
+// type bar = { id: boolean; name: boolean; }
+```
