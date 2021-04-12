@@ -1066,4 +1066,19 @@ eg. `sshuttle -r user@172.16.0.5 172.16.0.0/24 -x 172.16.0.5`
 <details>
   <summary>---</summary>
 
+- There are many ways to pivot through a network
+- Proxychains and FoxyProxy are used to access a proxy
+- SSH can be used to create both port forwards, and proxies
+- plink.exe is an SSH client for Windows. Can create reverse SSH connections
+- Socat can redirect connection and create port forwards
+- Chisel can do the same thing as SSH port forwarding / tunnelling. Does not require SSH on the box
+- sshuttle is nicer to create proxy when we have SSH access on target
+
+</details>
+
+## 13. Git - Enumeration
+
+<details>
+  <summary>---</summary>
+
 </details>
