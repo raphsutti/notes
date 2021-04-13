@@ -1,0 +1,12 @@
+# Nmap 7.80 scan initiated Mon Apr  5 02:23:49 2021 as: nmap -p-15000 -oN 15000ports.nmap 10.200.81.200
+Nmap scan report for thomaswreath.thm (10.200.81.200)
+Host is up (0.26s latency).
+Not shown: 14995 filtered ports
+PORT      STATE  SERVICE
+22/tcp    open   ssh
+80/tcp    open   http
+443/tcp   open   https
+9090/tcp  closed zeus-admin
+10000/tcp open   snet-sensor-mgmt
+
+# Nmap done at Mon Apr  5 02:29:09 2021 -- 1 IP address (1 host up) scanned in 319.90 seconds
