@@ -1,0 +1,24 @@
+# Nmap 7.80 scan initiated Sun Apr  4 04:51:47 2021 as: nmap -p 10000 --script vuln -oN port10000vuln.nmap 10.200.81.200
+Nmap scan report for thomaswreath.thm (10.200.81.200)
+Host is up (0.26s latency).
+
+PORT      STATE SERVICE
+10000/tcp open  snet-sensor-mgmt
+|_clamav-exec: ERROR: Script execution failed (use -d to debug)
+| http-vuln-cve2006-3392: 
+|   VULNERABLE:
+|   Webmin File Disclosure
+|     State: VULNERABLE (Exploitable)
+|     IDs:  CVE:CVE-2006-3392
+|       Webmin before 1.290 and Usermin before 1.220 calls the simplify_path function before decoding HTML.
+|       This allows arbitrary files to be read, without requiring authentication, using "..%01" sequences
+|       to bypass the removal of "../" directory traversal sequences.
+|       
+|     Disclosure date: 2006-06-29
+|     References:
+|       http://www.rapid7.com/db/modules/auxiliary/admin/webmin/file_disclosure
+|       https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-3392
+|_      http://www.exploit-db.com/exploits/1997/
+|_sslv2-drown: 
+
+# Nmap done at Sun Apr  4 04:52:11 2021 -- 1 IP address (1 host up) scanned in 24.00 seconds

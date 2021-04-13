@@ -1,0 +1,14 @@
+# Nmap 7.80 scan initiated Sun Apr  4 02:02:53 2021 as: nmap -p-15000 -oN initial.nmap 10.200.81.200
+Nmap scan report for 10.200.81.200
+Host is up (0.26s latency).
+Not shown: 14993 filtered ports
+PORT      STATE  SERVICE
+22/tcp    open   ssh
+80/tcp    open   http
+443/tcp   open   https
+2513/tcp  closed citrixadmin
+9090/tcp  closed zeus-admin
+9889/tcp  open   gt-proxy
+10000/tcp open   snet-sensor-mgmt
+
+# Nmap done at Sun Apr  4 02:07:14 2021 -- 1 IP address (1 host up) scanned in 261.79 seconds
