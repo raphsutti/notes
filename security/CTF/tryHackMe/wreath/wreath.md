@@ -1155,4 +1155,41 @@ Nmap done: 1 IP address (1 host up) scanned in 574.74 seconds
 <details>
   <summary>---</summary>
 
+Port 80 is interesting in 10.200.81.150.
+We use sshuttle to ssh tunnel to 150 through 200 from the attacking machine
+
+Attacking box - this runs in the background with `-fN`
+```
+kali@kali:~/thm/wreath$ ssh -i ssh/webserver_id_rsa -L 8000:10.200.81.150:80 root@10.200.81.200 -fN
+```
+
+We navigate to `localhost:8000` and see an error page that tells us various accessible routes eg. `/gitstack`
+
+![error page](gitPivot.png)
+
+We navigate to `localhost:8000/gitstack` and see a log in page - default creds do not work
+
+![gitstack](gitstack.png)
+
+Use searchsploit on gitstack
+```
+kali@kali:~/thm/wreath$ searchsploit gitstack
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------- ----------------------------------------
+ Exploit Title                                                                                                                                                      |  Path
+                                                                                                                                                                    | (/usr/share/exploitdb/)
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------- ----------------------------------------
+GitStack - Remote Code Execution                                                                                                                                    | exploits/php/webapps/44044.md
+GitStack - Unsanitized Argument Remote Code Execution (Metasploit)                                                                                                  | exploits/windows/remote/44356.rb
+GitStack 2.3.10 - Remote Code Execution                                                                                                                             | exploits/php/webapps/43777.py
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------- ----------------------------------------
+Shellcodes: No Result
+```
+
+</details>
+
+## 15. Git Server - Code Review
+
+<details>
+  <summary>---</summary>
+
 </details>
