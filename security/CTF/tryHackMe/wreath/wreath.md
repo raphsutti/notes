@@ -1076,7 +1076,81 @@ eg. `sshuttle -r user@172.16.0.5 172.16.0.0/24 -x 172.16.0.5`
 
 </details>
 
-## 13. Git - Enumeration
+## 13. Git Server- Enumeration
+
+<details>
+  <summary>---</summary>
+
+
+Ping scan - `100` and `150` up
+
+```
+[root@prod-serv tmp]# ./nmap-Neozer0 -sn 10.200.81.1-255 -oN scan-Neozer0
+
+Starting Nmap 6.49BETA1 ( http://nmap.org ) at 2021-04-13 11:29 BST
+Cannot find nmap-payloads. UDP payloads are disabled.
+Nmap scan report for ip-10-200-81-1.eu-west-1.compute.internal (10.200.81.1)
+Cannot find nmap-mac-prefixes: Ethernet vendor correlation will not be performed
+Host is up (0.00035s latency).
+MAC Address: 02:8C:E0:55:7B:89 (Unknown)
+Nmap scan report for ip-10-200-81-100.eu-west-1.compute.internal (10.200.81.100)
+Host is up (0.00014s latency).
+MAC Address: 02:6E:4F:DD:1B:65 (Unknown)
+Nmap scan report for ip-10-200-81-150.eu-west-1.compute.internal (10.200.81.150)
+Host is up (-0.10s latency).
+MAC Address: 02:AD:06:35:A5:CB (Unknown)
+Nmap scan report for ip-10-200-81-250.eu-west-1.compute.internal (10.200.81.250)
+Host is up (0.00022s latency).
+MAC Address: 02:E7:4E:C8:80:A7 (Unknown)
+Nmap scan report for ip-10-200-81-200.eu-west-1.compute.internal (10.200.81.200)
+Host is up.
+Nmap done: 255 IP addresses (5 hosts up) scanned in 3.73 seconds
+```
+
+Scanning 100 returns filtered
+```
+[root@prod-serv tmp]# ./nmap-Neozer0 10.200.81.100
+
+Starting Nmap 6.49BETA1 ( http://nmap.org ) at 2021-04-14 10:17 BST
+Unable to find nmap-services!  Resorting to /etc/services
+Cannot find nmap-payloads. UDP payloads are disabled.
+Nmap scan report for ip-10-200-81-100.eu-west-1.compute.internal (10.200.81.100)
+Cannot find nmap-mac-prefixes: Ethernet vendor correlation will not be performed
+Host is up (-0.20s latency).
+All 6150 scanned ports on ip-10-200-81-100.eu-west-1.compute.internal (10.200.81.100) are filtered
+MAC Address: 02:6E:4F:DD:1B:65 (Unknown)
+
+Nmap done: 1 IP address (1 host up) scanned in 124.54 seconds
+```
+
+Scanning 150 returns a result
+```
+[root@prod-serv tmp]# ./nmap-Neozer0 10.200.81.150
+
+Starting Nmap 6.49BETA1 ( http://nmap.org ) at 2021-04-13 11:57 BST
+Unable to find nmap-services!  Resorting to /etc/services
+Cannot find nmap-payloads. UDP payloads are disabled.
+Nmap scan report for ip-10-200-81-150.eu-west-1.compute.internal (10.200.81.150)
+Cannot find nmap-mac-prefixes: Ethernet vendor correlation will not be performed
+Host is up (0.00049s latency).
+Not shown: 6142 closed ports
+PORT      STATE SERVICE
+80/tcp    open  http
+135/tcp   open  epmap
+139/tcp   open  netbios-ssn
+445/tcp   open  microsoft-ds
+3389/tcp  open  ms-wbt-server
+5357/tcp  open  wsdapi
+5985/tcp  open  wsman
+47001/tcp open  winrm
+MAC Address: 02:AD:06:35:A5:CB (Unknown)
+
+Nmap done: 1 IP address (1 host up) scanned in 574.74 seconds
+```
+
+</details>
+
+## 14. Git Server - Pivoting
 
 <details>
   <summary>---</summary>
