@@ -8,7 +8,72 @@ Greatest threats
 
 Espionage, terrorism
 
-## Christopher Vella - Easy LPEs
+## Christopher Vella - Easy LPEs and common software vulnerabilities
+
+Bad assumption. Logic vulns - assumed file paths are fixed but could be symlinked eg. system32
+
+```
+hFile -
+  CreateFile(
+      "c:\\ProgramData\\MyFolder\\file1.txt"
+  ); 
+WriteFile(hFile, "test");
+```
+
+`C:\Folder1\Folder2\File1.txt`
+
+`C:` - symlink
+`Folder1` - Possible junctions
+`File1.txt` - Possible hardlink
+
+Common attack surfaces
+- COM
+- RPC
+- Shared memory
+- Named pipes
+- File IO
+
+Many `junction` vuln can be found in zdi.
+Common vulns in AVs
+
+`Process hacker` - look at running processes
+`Process monitor` - capture process activity
+
+`Zoom` case study
+- Digital signature
+- msi run privilege as `NT AUTHORITY/System`
+- Running at specific folder which it cant find
+- Create a folder to match
+- msi access it and delete
+- Can file redirection and arbitrary delete file for privesc
+- chocolatey package manager exists
+- We can delete the chocolatey folder `programdata/chocolatey` and create our own one to run our own binaries
+- Find system process that will try load something from this directory and replace it with our own binary
+- Got privesc code exec
+
+`Foxit` PDF reader case study
+- Heavily fuzzed - memory corruption found daily on zdi
+- Open process monitor
+- Constantly trying to find `FoxitData.txt`
+- Once parse file, the file is deleted
+- Check what it is expecting from the file
+- Found user shell execute.. 
+- Got code execution
+
+`PuppetLabs` case study
+- Coding error caused a file to be opened in C drive. Not intended
+- Open process monitor
+- found `name not found` error on `syslog.so`
+- Copy dll to that location
+- Proc mon shows it loads the file as dll
+- DLL ran as system
+
+`VMWare workstation`
+- As a user can modify and repair VMWare workstation - this process runs as system
+- Proc mon to capture
+- Found VMWare creates a tmp folder with 7 letters but folder has ACL and cannot create
+- Can potentially create all the folders in that combination before hand
+- Find `vmware-hostd-ticket` removes file, use this as elevated delete execution
 
 ## Iggy - Catching criminals in 16 bytes
 
