@@ -170,6 +170,8 @@ https://caniphish.com/Public/SupplyChain
 
 Emperor got swindled in invisible robe
 
-We trust in all these security solutions
+We trust in all these security solutions (WAF, DFIR, etc)
+
+Difficult to measure effectiveness, trusting blindly
 
 ## Sam - Oh my pod, aus biggest CTF
