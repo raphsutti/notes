@@ -1747,12 +1747,33 @@ NT AUTHORITY\NTLM Authentication                              Well-known group S
 Mandatory Label\High Mandatory Level                          Label            S-1-16-12288
 ```
 
-
 </details>
 
 ## 18. Command and Control - Introduction
 
 <details>
   <summary>---</summary>
+
+### Command and Control Framework (C2)
+- Used to consolidate attacker's position within a network
+- Simplify post-exploitation steps (privesc, AV evasion, pivoting, looting, covert network tactics etc.)
+- Eg. Cobalt Strike, Covenant (.NET), Merlin, Shadow, PoshC2, Powershell Empire (Windows)
+- C2 matrix to decide between the frameworks
+  
+### Powershell Empire
+- Windows target
+- Modules to take initial access to a network of Windows devices and turn into something substantial
+- GUI interface `Starkiller`
+- Current version Empire 3.x
+- Multiple people can connect and collaborate
+
+### Empire - Installation
+
+Install in the `/opt` directory
+```
+sudo git clone https://github.com/BC-SECURITY/Empire/
+cd Empire && sudo ./setup/install.sh
+```
+
 
 </details>
