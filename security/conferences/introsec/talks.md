@@ -69,3 +69,46 @@ IOC dev methodology
 3. Acquire true positives
 4. First pass IOC dev
 5. Test assumptions
+
+
+## Opening the Toolbox – A Guide to Pentesting Tools for CTFs   (Sam Ferguson)
+
+### Network scanning
+- rustscan
+- `nmap -sV -sC -O -Pn -p- 192.168.9.1`
+  - -sV = Service version
+  - -sC = Script scan
+  - -O = Operating system
+  - -Pn = No ping
+  - -p = ports
+
+### Web application tools
+- Feroxbuster
+  - Forced browsing tool written in rust
+  - Find hidden directories and files
+  - `feroxbust -t 16 -w mywordlist.txt -u http://10.10.10.10:8080 -x php,html,txt`
+    - -t = threads
+    - -w = wordlist
+    - -u = URL
+    - -x = extensions
+- Developer tools
+  - Web browser dev tools
+  - Inspector, console, debugger, network, storage
+- ffuf
+- Burpsuite
+  
+### Linux local
+- Tools to enum and exploit linux
+- LinPEAS, linux-expoit-suggester-2, gtfobins, pspy
+
+### Windows local
+- WinPeas, Windows Exploit Suggester - Next generation, LOLBAS, WADComs, mimikatz, Bloodhound/Sharphound3
+- LOLBAS - repository of useful Windows binaries, VB scripts, BAT scripts
+
+### General resources
+- Hacktricks
+- PayloadALlTheThings
+- Revshells.com
+- SecLists
+
+
