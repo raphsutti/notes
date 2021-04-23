@@ -2793,3 +2793,54 @@ Now we upload this benign payload and access it on the browser to see that the t
 ![upload poc](./uploadpoc.png)
 
 </details>
+
+## 25. AV Evasion - Intro and Methods
+
+<details>
+  <summary>---</summary>
+
+### Introduction
+
+There is a constant change in this topic. New features by deveopers, new exploit developed by hackers etc.
+
+Two primary types of AV evasion
+1. On-disk evasion
+     - Try to get a file saved on the target, then executed (`.exe` files)
+2. In-memory evasion
+     - Try import a script directly into memory and executed
+     - Eg. Downloading PowerShell module and directly importing it without saving to disk
+
+Microsoft's Anti Malware Scan Interface (AMSI) can pick up in memory scripts now. AV can obtain copy of script being executed, scan it, decides ifi t is safe to execute
+
+Methodology of AV evasion is to fingerprint the AV first. Could be Social Engineering or other techniques.
+
+If we have shell on target, `SharpEDRChecker` and `Seatbelt` can identify AV solution. Once this is known, we can replicate this environment in a virtual machine and test the payload against it. Also consider disconnect VM from the internet so that AV doesn't upload our payload to a server somewhere for analysis.
+
+AV evasion also involves obfuscation of the payload
+- Moving things around in the exploit
+- Changing variable names
+- Encoding parts of the scripts
+- Encrypting the script and writing a wrapper to decrypt and execute code section by section
+
+### AV detection methods
+
+1. Static Detection
+    - Signature detection 
+      - Hashsum (easily evaded)
+      - Byte (or string) matching (slower)
+2. Dynamic / Heuristic / Behavioural Detection
+    - More effective but more time and resource consumption
+    - Looks at how the file acts - two ways
+    1. Look at executable line by line. Determine if malicious based on type of action
+    2. Execute software in a sandbox environment under close supervision
+
+Evading Sandbox environment detection method:
+- no fan, no GUI, VMtools service running
+- exiting if detect these characteristics - cause AV to believe that this program is harmless
+
+Evading by password protecting
+- AV unable to open the file
+
+AV vendors are also in close contact with each other. Once detected, file is sent and analysed by another vendor and shielded against. The knowledge is rapidly shared
+
+</details>
