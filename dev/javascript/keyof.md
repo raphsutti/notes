@@ -2,6 +2,8 @@
 
 https://www.typescriptlang.org/docs/handbook/2/keyof-types.html#the-keyof-type-operator
 
+- Takes an object type and produces a string or numeric literal union of its keys
+
 ```typescript
 type Point = { x: number; y: number };
 type P = keyof Point;
@@ -31,7 +33,10 @@ type foo = {
   [K in Exclude<keyof Props, 'lastName'>]: boolean;
 }
 // type foo = { id: boolean; name: boolean; }
+```
 
+Instead of using `[K in ...]: boolean`, we can also just generate `Record` key-value type
+```typescript
 type bar = Record<Exclude<keyof Props, 'lastName'>, boolean>
 // type bar = { id: boolean; name: boolean; }
 ```
