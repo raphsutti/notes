@@ -23,6 +23,11 @@ I'm currently a Software Developer but I also like infosec. This repo will be a 
 - [Nullish coalescing](dev/javascript/nullish-coalescing.md)
 - [Reduce and flatmap](dev/javascript/reduce-flatmap.md)
 
+## Misc
+
+- [Reverse proxy](/dev/misc/reverse-proxy/reverse-proxy.md)
+- [VIM](/dev/misc/vim.md)
+
 # 🔒 Security
 
 ## AWS - Cloud
