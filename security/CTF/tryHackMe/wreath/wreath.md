@@ -2518,3 +2518,132 @@ Commit without a parent would be the first one. The commits are in these order:
 We could sort by timestamp but these can also be spoofed
 
 </details>
+
+## 23. Personal PC - Website code analysis
+
+<details>
+  <summary>---</summary>
+
+Now we head into the folder `345ac8b236064b431fa43f53d91c98c4834ef8f3`
+
+```
+kali@kali:~/thm/wreath/gitserver/Website/1-345ac8b236064b431fa43f53d91c98c4834ef8f3$ ls -la
+total 68
+drwxr-xr-x 7 kali kali  4096 Apr 23 06:45 .
+drwxr-xr-x 5 kali kali  4096 Apr 23 06:45 ..
+-rw-r--r-- 1 kali kali   225 Apr 23 06:45 commit-meta.txt
+drwxr-xr-x 2 kali kali  4096 Apr 23 06:45 css
+-rw-r--r-- 1 kali kali 17340 Apr 23 06:45 favicon.png
+drwxr-xr-x 2 kali kali  4096 Apr 23 06:45 fonts
+drwxr-xr-x 2 kali kali  4096 Apr 23 06:45 img
+-rw-r--r-- 1 kali kali 15383 Apr 23 06:45 index.html
+drwxr-xr-x 2 kali kali  4096 Apr 23 06:45 js
+drwxr-xr-x 3 kali kali  4096 Apr 23 06:45 resources
+```
+
+We use the `find` command to look for php files
+
+```
+kali@kali:~/thm/wreath/gitserver/Website/1-345ac8b236064b431fa43f53d91c98c4834ef8f3$ find . -name "*.php"
+./resources/index.php
+```
+
+```php
+kali@kali:~/thm/wreath/gitserver/Website/1-345ac8b236064b431fa43f53d91c98c4834ef8f3$ cat resources/index.php 
+<?php
+
+        if(isset($_POST["upload"]) && is_uploaded_file($_FILES["file"]["tmp_name"])){
+                $target = "uploads/".basename($_FILES["file"]["name"]);
+                $goodExts = ["jpg", "jpeg", "png", "gif"];
+                if(file_exists($target)){
+                        header("location: ./?msg=Exists");
+                        die();
+                }
+                $size = getimagesize($_FILES["file"]["tmp_name"]);
+                if(!in_array(explode(".", $_FILES["file"]["name"])[1], $goodExts) || !$size){
+                        header("location: ./?msg=Fail");
+                        die();
+                }
+                move_uploaded_file($_FILES["file"]["tmp_name"], $target);
+                header("location: ./?msg=Success");
+                die();
+        } else if ($_SERVER["REQUEST_METHOD"] == "post"){
+                header("location: ./?msg=Method");
+        }
+
+
+        if(isset($_GET["msg"])){
+                $msg = $_GET["msg"];
+                switch ($msg) {
+                        case "Success":
+                                $res = "File uploaded successfully!";
+                                break;
+                        case "Fail":
+                                $res = "Invalid File Type";
+                                break;
+                        case "Exists":
+                                $res = "File already exists";
+                                break;
+                        case "Method":
+                                $res = "No file send";
+                                break;
+
+                }
+        }
+?>
+<!DOCTYPE html>
+<html lang=en>
+        <!-- ToDo:
+                  - Finish the styling: it looks awful
+                  - Get Ruby more food. Greedy animal is going through it too fast
+                  - Upgrade the filter on this page. Can't rely on basic auth for everything
+                  - Phone Mrs Walker about the neighbourhood watch meetings
+        -->
+        <head>
+                <title>Ruby Pictures</title>
+                <meta charset="utf-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <link rel="stylesheet" type="text/css" href="assets/css/Andika.css">
+                <link rel="stylesheet" type="text/css" href="assets/css/styles.css">
+        </head>
+        <body>
+                <main>
+                        <h1>Welcome Thomas!</h1>
+                        <h2>Ruby Image Upload Page</h2>
+                        <form method="post" enctype="multipart/form-data">
+                                <input type="file" name="file" id="fileEntry" required, accept="image/jpeg,image/png,image/gif">
+                                <input type="submit" name="upload" id="fileSubmit" value="Upload">
+                        </form>
+                        <p id=res><?php if (isset($res)){ echo $res; };?></p>
+                </main>
+        </body>
+</html>
+```
+
+Interesting part is the filters here
+```php
+$size = getimagesize($_FILES["file"]["tmp_name"]);
+if(!in_array(explode(".", $_FILES["file"]["name"])[1], $goodExts) || !$size){
+    header("location: ./?msg=Fail");
+    die();
+}
+```
+
+This line has `getimagesize` method that checks if image has dimensions - returns `False` if file is not an image
+```php
+$size = getimagesize($_FILES["file"]["tmp_name"]);
+```
+
+This line checks for two conditions, if either fails, we get error message.
+- Second condition checks if the file is not an image
+- First condition split string by `.` into an array and checks second item
+  - `image.jpeg` returns `["image", "jpeg"]`
+  - But `image.jpeg.php` returns `["image","jpeg","php"]` and `jpeg` gets passed into the filter
+  - This filter then checks if it is not in the array of `$goodExts`
+
+After two conditions pass, the file gets moved into `uploads/` directory with original name
+```php
+$target = "uploads/".basename($_FILES["file"]["name"]);
+```
+
+</details>
