@@ -2370,3 +2370,151 @@ chisel-Neozer0.exe : 2021/04/22 11:37:19 server: Fingerprint 4YNhTCGX+gcPiJEUdmR
 ![local web server](wapplocalwebserver.png)
 
 </details>
+
+## 22. Personal PC - Git
+
+<details>
+  <summary>---</summary>
+
+We find `Webserver.git` on the git server in `C:\GitStack\repositories`
+
+```
+*Evil-WinRM* PS C:\> ls GitStack/repositories
+
+
+    Directory: C:\GitStack\repositories
+
+
+Mode                LastWriteTime         Length Name
+----                -------------         ------ ----
+d-----         1/2/2021   7:05 PM                Website.git
+```
+
+Download the entire directory
+
+```
+*Evil-WinRM* PS C:\GitStack\repositories> download Website.git
+Info: Downloading C:\GitStack\repositories\Website.git to Website.git
+
+Info: Download successful!
+```
+
+Rename the downloaded folder 
+```
+kali@kali:~/thm/wreath$ mv Website.git/C\:\\GitStack\\repositories\\Website.git/ Website.git/.git
+kali@kali:~/thm/wreath$ ls -la Website.git/
+total 12
+drwxr-xr-x 3 kali kali 4096 Apr 22 07:20 .
+drwxr-xr-x 7 kali kali 4096 Apr 22 07:07 ..
+drwxr-xr-x 5 kali kali 4096 Apr 22 07:09 .git
+```
+
+Clone `GitTools` to analyse a git directory
+```
+kali@kali:~/thm/wreath$ git clone https://github.com/internetwache/GitTools
+Cloning into 'GitTools'...
+remote: Enumerating objects: 221, done.
+remote: Counting objects: 100% (12/12), done.
+remote: Compressing objects: 100% (10/10), done.
+remote: Total 221 (delta 2), reused 0 (delta 0), pack-reused 209
+Receiving objects: 100% (221/221), 50.18 KiB | 236.00 KiB/s, done.
+Resolving deltas: 100% (81/81), done.
+```
+
+GitTools contains 3 tools
+- `Dumper` - download an exposed `.git` directory from a website if the owner of site have forgotten to delete it
+- `Extractor` - take local `.git` directory and recreate the repository in a readable format. Works with Dumper. It will not sort the commits by date however
+- `Finder` - used to search the internet for sites with exposted `.git` directories. Good for bug bounty programs
+
+We use `Extrator` to obtain readable format - `./extractor.sh REPO_DIR DESTINATION_DIR`
+- `REPO_DIR` - directory containing the `.git` directory not the `.git` directory itself
+- `DESTINATION_DIR` subdirectory which the repo will be created
+
+We then use GitTools to extract some data
+```
+kali@kali:~/thm/wreath$ ls -la gitserver/downloaded-website/
+total 12
+drwxr-xr-x 3 kali kali 4096 Apr 23 06:44 .
+drwxr-xr-x 3 kali kali 4096 Apr 23 06:44 ..
+drwxr-xr-x 6 kali kali 4096 Apr 23 06:40 .git
+kali@kali:~/thm/wreath$ ls GitTools/
+Dumper  Extractor  Finder  LICENSE.md  README.md
+kali@kali:~/thm/wreath$ ./GitTools/Extractor/extractor.sh gitserver/downloaded-website/ gitserver/Website                                                                                             
+###########
+# Extractor is part of https://github.com/internetwache/GitTools
+#
+# Developed and maintained by @gehaxelt from @internetwache
+#
+# Use at your own risk. Usage might be illegal in certain circumstances. 
+# Only for educational purposes!
+###########
+[*] Destination folder does not exist
+[*] Creating...
+[+] Found commit: 70dde80cc19ec76704567996738894828f4ee895
+[+] Found folder: /home/kali/thm/wreath/gitserver/Website/0-70dde80cc19ec76704567996738894828f4ee895/css                                                                                              
+[+] Found file: /home/kali/thm/wreath/gitserver/Website/0-70dde80cc19ec76704567996738894828f4ee895/css/.DS_Store                                                                                      
+[+] Found file: /home/kali/thm/wreath/gitserver/Website/0-70dde80cc19ec76704567996738894828f4ee895/css/bootstrap.min.css
+```
+
+We see the extracted directories are commits but are not sorted by date
+```
+kali@kali:~/thm/wreath/gitserver/Website$ ls
+0-70dde80cc19ec76704567996738894828f4ee895  2-82dfc97bec0d7582d485d9031c09abcb5c6b18f2
+1-345ac8b236064b431fa43f53d91c98c4834ef8f3
+```
+
+Inside each commit folder, there is a `commit-meta.txt` which tells us more info
+```
+kali@kali:~/thm/wreath/gitserver/Website$ cat 0-70dde80cc19ec76704567996738894828f4ee895/commit-meta.txt 
+tree d6f9cc307e317dec7be4fe80fb0ca569a97dd984
+author twreath <me@thomaswreath.thm> 1604849458 +0000
+committer twreath <me@thomaswreath.thm> 1604849458 +0000
+
+Static Website Commit
+```
+
+We use a bash one liner to loop through all the folders `commit-meta.txt` and cat them out `separator="====="; for i in $(ls); do printf "\n\n$separator\n$i\n$(cat $i/commit-meta.txt)";done`
+
+```
+kali@kali:~/thm/wreath/gitserver/Website$ separator="====="; for i in $(ls); do printf "\n\n$separator\n$i\n$(cat $i/commit-meta.txt)";done
+
+
+=====
+0-70dde80cc19ec76704567996738894828f4ee895
+tree d6f9cc307e317dec7be4fe80fb0ca569a97dd984
+author twreath <me@thomaswreath.thm> 1604849458 +0000
+committer twreath <me@thomaswreath.thm> 1604849458 +0000
+
+Static Website Commit
+
+=====
+1-345ac8b236064b431fa43f53d91c98c4834ef8f3
+tree c4726fef596741220267e2b1e014024b93fced78
+parent 82dfc97bec0d7582d485d9031c09abcb5c6b18f2
+author twreath <me@thomaswreath.thm> 1609614315 +0000
+committer twreath <me@thomaswreath.thm> 1609614315 +0000
+
+Updated the filter
+
+=====
+2-82dfc97bec0d7582d485d9031c09abcb5c6b18f2
+tree 03f072e22c2f4b74480fcfb0eb31c8e624001b6e
+parent 70dde80cc19ec76704567996738894828f4ee895
+author twreath <me@thomaswreath.thm> 1608592351 +0000
+committer twreath <me@thomaswreath.thm> 1608592351 +0000
+
+Initial Commit for the back-end
+```
+
+or fancier example `separator="======================================="; for i in $(ls); do printf "\n\n$separator\n\033[4;1m$i\033[0m\n$(cat $i/commit-meta.txt)\n"; done; printf "\n\n$separator\n\n\n"`
+
+There are three commit messages here `Static Website Commit`, `Updated the filter`, `Initial Commit for the back-end`. 
+
+Commit without a parent would be the first one. The commits are in these order:
+1. `Static Website Commit` - `70dde80cc19ec76704567996738894828f4ee895`
+2. `Initial Commit for the back-end` - `82dfc97bec0d7582d485d9031c09abcb5c6b18f2`
+3. `Updated the filter` - `345ac8b236064b431fa43f53d91c98c4834ef8f3`
+
+We could sort by timestamp but these can also be spoofed
+
+</details>
