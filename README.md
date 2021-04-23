@@ -14,12 +14,14 @@ I'm currently a Software Developer but I also like infosec. This repo will be a 
 
 - [Resolver best practices](dev/graphql/resolver-best-practices.md)
 
-
 ## JavaScript
 
-- [Reduce and flatmap](dev/javascript/reduce-flatmap.md)
 - [Avoid export default](dev/javascript/avoid-export-default.md)
 - [Const assertion](dev/javascript/constAssertion.md)
+- [Generate types from keys](dev/javascript/generateTypesFromKeys.md)
+- [Keyof operator](dev/javascript/keyof.md)
+- [Nullish coalescing](dev/javascript/nullish-coalescing.md)
+- [Reduce and flatmap](dev/javascript/reduce-flatmap.md)
 
 # 🔒 Security
 
