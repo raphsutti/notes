@@ -188,7 +188,7 @@ _____________________________________
 
 _____________________________________
 
-## Perform a network scan 
+### Perform a network scan 
 
 > We first upload a binary of nmap to the webserver and log in using ssh keys obtained previously
 
@@ -914,7 +914,7 @@ commit-meta.txt  css  favicon.png  fonts  img  index.html  js  resources
 
 _____________________________________
 
-## Visit `/resources` endpoint
+### Visit `/resources` endpoint
 
 we can visit `http://10.200.85.100/resources` where we are greeted with a login prompt
 
@@ -1009,7 +1009,7 @@ Now we upload this benign payload and access it on the browser to see that the t
 
 _____________________________________
 
-## Exploit with AV Evasion 
+### Exploit with AV Evasion 
 
 </details>
 
