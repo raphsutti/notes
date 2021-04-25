@@ -26,18 +26,24 @@ _____________________________________
 ## Timeline
 
 The sequence is as follows:
-1. Webserver (`.200`) enumeration
-2. Webserver (`.200`) exploitation
-3. Webserver (`.200`) maintain access
-4. Pivoting with Webserver (`.200`)
-5. Found gitserver (`.150`) and enumeration
-6. gitserver (`.150`) exploitation
-7. gitserver (`.150`) maintain access
-8. 
+1. Webserver (`.200`) 
+   1. enumeration
+   2. exploitation
+   3. maintain access
+2. Pivoting with Webserver (`.200`)
+3. gitserver (`.150`) 
+   1. enumeration
+   2. exploitation
+   3. maintain access
+4. Personal PC (`.100`)
+   1. enumeration
+   2. code review
+   3. exploitation
+   4. maintain access
 
 _____________________________________
 
-## Webserver (`.200`)
+## 1. Webserver (`.200`)
 
 ### Findings
 
@@ -51,7 +57,7 @@ _____________________________________
 
 _____________________________________
 
-## Perform a network scan
+### Perform a network scan
 
 ```
 nmap -p-15000 10.200.81.200 -oN initial.nmap
@@ -73,7 +79,7 @@ Researching the Webmin version reveals this server is vulnerable to [`CVE-2019â€
 
 _____________________________________
 
-## Webserver exploitation
+### Webserver exploitation
 
 Exploit used: `https://github.com/MuirlandOracle/CVE-2019-15107`
 
@@ -133,7 +139,7 @@ uid=0(root) gid=0(root) groups=0(root) context=system_u:system_r:initrc_t:s0
 
 _____________________________________
 
-## Webserver maintain access - ssh private keys
+### Webserver maintain access - ssh private keys
 
 SSH keys are commonly stored in the home directory under `~/.ssh`
 
@@ -167,7 +173,7 @@ uid=0(root) gid=0(root) groups=0(root) context=unconfined_u:unconfined_r:unconfi
 
 _____________________________________
 
-## Pivoting with webserver (`.200`)
+## 2. Pivoting with webserver (`.200`)
 
 ### Findings
 
@@ -261,7 +267,7 @@ It is still unknown what this server is and more enumeration is required
 
 _____________________________________
 
-## Unknown server enumeration (`.150`)
+## 3. gitserver (`.150`)
 
 ### Findings
 
@@ -276,7 +282,7 @@ _____________________________________
 
 _____________________________________
 
-## Perform a port scan 
+### Perform a port scan 
 
 Scanning ports for `.150` returns results
 ```
@@ -300,7 +306,7 @@ Nmap done: 1 IP address (1 host up) scanned in 280.32 seconds
 
 _____________________________________
 
-## Examine the webpage on port 80
+### Examine the webpage on port 80
 
 Webpage through port `80` is only visible if we were to access with Webserver `.200`. This can be done with sshuttle
 
@@ -321,7 +327,7 @@ Visiting the page shows a login page (default admin/admin creds do not work here
 
 _____________________________________
 
-## GitStack exploitation
+### GitStack exploitation
 
 We obtain a gitstack exploit and modify to suit
 Use searchsploit on gitstack
@@ -417,7 +423,7 @@ OS Version:                10.0.17763 N/A Build 17763
 ...
 ```
 
-## Obtaining a reverse shell
+### Obtaining a reverse shell
 
 This is a bit more difficult as we want to listen from our Attacking Machine for a nc connection through the Webserver `.200` to the gitserver `.150`. Here we use a socat relay
 
@@ -466,7 +472,7 @@ nt authority\system
 PS C:\GitStack\gitphp> 
 ```
 
-## Maintain access
+### Maintain access
 
 From inital port scans we see that rdp is enabled on port 3389 (RDP) and 5985 (WinRM)
 
@@ -565,7 +571,7 @@ Clean up
 
 _____________________________________
 
-## Personal PC (`.100`) enumeration
+## 4. Personal PC (`.100`)
 
 ### Findings
 
@@ -583,7 +589,7 @@ _____________________________________
 
 _____________________________________
 
-## Perform a port scan on Personal PC (`.100`)
+### Perform a port scan on Personal PC (`.100`)
 
 First we run evil-winrm with `-s` to specify path to scan script `Invoke-Portscan`
 
@@ -604,7 +610,7 @@ Next we check out the webserver
 
 _____________________________________
 
-## Check out the webserver on Personal PC (`.100`)
+### Check out the webserver on Personal PC (`.100`)
 
 Because the Personal PC port 80 is only opened to the gitserver `.150`, we need to perform additional steps.
 
@@ -660,7 +666,7 @@ Further enumeration is required
 
 _____________________________________
 
-## gitserver (`.150`) code review
+### gitserver (`.150`) code review
 
 We find `Webserver.git` on the git server in `C:\GitStack\repositories`
 
@@ -906,21 +912,6 @@ kali@kali:~/thm/wreath/gitserver/Website/1-345ac8b236064b431fa43f53d91c98c4834ef
 commit-meta.txt  css  favicon.png  fonts  img  index.html  js  resources
 ```
 
-</details>
-<br>
-
-_____________________________________
-
-## Personal PC (`.100`) webpage enumeration
-
-### Findings
-
-- x
-
-<details open>
-<summary>Attack Narrative</summary>
-<br>
-
 _____________________________________
 
 ## Visit `/resources` endpoint
@@ -1016,6 +1007,9 @@ Now we upload this benign payload and access it on the browser to see that the t
 
 ![upload poc](./uploadpoc.png)
 
+_____________________________________
+
+## Exploit with AV Evasion 
 
 </details>
 
