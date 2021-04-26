@@ -24,16 +24,16 @@ _____________________________________
 ## Timeline
 
 The sequence is as follows:
-1. Webserver (`.200`) 
+1. [Webserver (`.200`)](#1-webserver-200)
    1. enumeration
    2. exploitation
    3. maintain access
-2. Pivoting with Webserver (`.200`)
-3. gitserver (`.150`) 
+2. [Pivoting with Webserver (`.200`)](#2-pivoting-with-webserver-200)
+3. [gitserver (`.150`)](#3-gitserver-150)
    1. enumeration
    2. exploitation
    3. maintain access
-4. Personal PC (`.100`)
+4. [Personal PC (`.100`)](#4-personal-pc-100)
    1. enumeration
    2. code review
    3. exploitation
@@ -272,6 +272,10 @@ It is still unknown what this server is and more enumeration is required
 </details>
 <br>
 
+### Remediation
+
+- TODO
+
 _____________________________________
 
 ## 3. gitserver (`.150`)
@@ -280,7 +284,7 @@ _____________________________________
 
 - Ports `80`, `3389`, `5986` are open
 - git server running `gitstack`
-- `gitstack` is vulnerable to unauthenticated RCE
+- Vulnerable to unauthenticated RCE on `gitstack < v2.3.10`
 - Using rdp we were able to run mimikatz and obtain hashes for persistence
 
 <details>
@@ -582,6 +586,10 @@ _____________________________________
 </details>
 <br>
 
+### Remediation
+
+- TODO
+
 _____________________________________
 
 ## 4. Personal PC (`.100`)
@@ -590,11 +598,13 @@ _____________________________________
 
 - Ports 80 and 3389 are open
 - PHP 7.4.11 is used
-- Webpage can be found in the gitserver `.150`
+- Webpage source code can be found in the gitserver `.150`
 - Analysing git commits we see a new path on the website `/resources` with an upload feature
 - There are two filters on the upload feature to bypass
   - File extension
   - Image size
+- php injected into `Comment` of the image metadata allows us to get a webshell
+- Misconfigured privilege found on `SystemExplorerHelpService` execution path allowing us to inject our own executable and obtain shell running as root
 
 <details>
 <summary>Attack Narrative</summary>
@@ -1454,6 +1464,10 @@ _____________________________________
 - `sc start SystemExplorerHelpService`
 
 </details>
+
+### Remediation
+
+- TODO
 
 ## References
 
