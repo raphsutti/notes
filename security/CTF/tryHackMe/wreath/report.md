@@ -34,7 +34,7 @@ _____________________________________
 - ssh on port 22 was enabled which allowed us to maintain access
 
 <details>
-<summary>Attack Narrative</summary>
+<summary>Attack Narrative (click to expand)</summary>
 <br>
 
 _____________________________________
