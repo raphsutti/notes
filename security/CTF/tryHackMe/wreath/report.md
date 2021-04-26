@@ -33,8 +33,8 @@ _____________________________________
 - ssh private keys was obtained after getting root access
 - ssh on port 22 was enabled which allowed us to maintain access
 
-<details open>
-<summary>Attack Narrative</summary>
+<details>
+<summary>Attack Narrative (click to expand)</summary>
 <br>
 
 _____________________________________
@@ -167,7 +167,7 @@ _____________________________________
 - Host `.100` have filtered ports 
 - Host `.150` have open ports that we can further enumerate on
 
-<details open>
+<details>
 <summary>Attack Narrative</summary>
 <br>
 
@@ -269,7 +269,7 @@ _____________________________________
 - gitserver vulnerable to unauthenticated RCE on `gitstack v2.3.10`
 - Using rdp we were able to run mimikatz and obtain hashes for persistence
 
-<details open>
+<details>
 <summary>Attack Narrative</summary>
 <br>
 
@@ -589,7 +589,7 @@ _____________________________________
 - php injected into `Comment` of the image exifdata allows us to get a webshell
 - Misconfigured privilege found on `SystemExplorerHelpService` execution path allowing us to inject our own executable and obtain shell running as root
 
-<details open>
+<details>
 <summary>Attack Narrative</summary>
 <br>
 
