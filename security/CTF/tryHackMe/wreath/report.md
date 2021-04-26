@@ -1256,6 +1256,9 @@ _____________________________________
 
 - Fix file extension filter bypass that allows `.jpeg.php` files to be uploaded
 - Keep using allowlist which are better than blocklist
+- Remove excess permission on the `C:\Program Files (x86)\System Explorer\` folder
+- Consider reviewing current access and permissions
+- Apply logging and monitoring on any access permissions changes or elevated access events
 
 _____________________________________
 
