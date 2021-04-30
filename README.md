@@ -21,6 +21,7 @@ I'm currently a Software Developer but I also like infosec. This repo will be a 
 - [Generate types from keys](dev/javascript/generateTypesFromKeys.md)
 - [Keyof operator](dev/javascript/keyof.md)
 - [Nullish coalescing](dev/javascript/nullish-coalescing.md)
+- [Optional chaining](dev/javascript/optional-chaining.md)
 - [Reduce and flatmap](dev/javascript/reduce-flatmap.md)
 
 ## Misc
