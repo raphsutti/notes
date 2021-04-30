@@ -31,6 +31,10 @@ I'm currently a Software Developer but I also like infosec. This repo will be a 
 
 # 🔒 Security
 
+## Pentesting report
+
+- [Wreath pentesting report](security/CTF/tryHackMe/wreath/report.md)
+
 ## AWS - Cloud
 
 - [S3](security/aws/s3.md)
@@ -38,7 +42,7 @@ I'm currently a Software Developer but I also like infosec. This repo will be a 
 ## CTFs
 
 - [Over the Wire: Bandit](security/CTF/bandit/)
-- [Tryhackme: Wreath](security/CTF/tryhackMe/../tryHackMe/wreath/)
+- [Tryhackme: Wreath](security/CTF/tryhackMe/wreath/)
 - [BSides Canberra 2021](security/CTF/bsidescbr2021/README.md)
 - TODO: Tryhackme Advent of Cyber
 
