@@ -42,7 +42,7 @@ I'm currently a Software Developer but I also like infosec. This repo will be a 
 ## CTFs
 
 - [Over the Wire: Bandit](security/CTF/bandit/)
-- [Tryhackme: Wreath](security/CTF/tryhackMe/wreath/)
+- [Tryhackme: Wreath](security/CTF/tryHackMe/wreath/)
 - [BSides Canberra 2021](security/CTF/bsidescbr2021/README.md)
 - TODO: Tryhackme Advent of Cyber
 
