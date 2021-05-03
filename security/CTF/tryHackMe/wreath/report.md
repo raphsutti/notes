@@ -2,7 +2,7 @@
 
 > Note: This is based on a fictitious engagement accessed through [Tryhackme](https://tryhackme.com/room/wreath)
 
-![wreath network](./wreathnetworkempty.png)
+![wreath network](wreath.png)
 
 ## Table of Contents
 
@@ -18,6 +18,8 @@
 _____________________________________
 
 ## Executive Summary
+
+![wreath network](./wreathnetworkempty.png)
 
 Our client, Thomas Wreath contacted us to perform a security penetration test on his computer network. Thomas briefed us on the high level architecture prior to the engagement. The scope includes the public facing webserver (local IP address `*.*.*.200`), git server of unknown IP address and his personal PC of also unknown IP address. We were tasked to find any vulnerabilities within the public facing webserver and to pivot to possibly to the git server or even his personal PC
 
