@@ -2,6 +2,8 @@
 
 > Note: This is based on a fictitious engagement accessed through [Tryhackme](https://tryhackme.com/room/wreath)
 
+![wreath network](./wreathnetworkempty.png)
+
 ## Table of Contents
 
 - [Executive Summary](#executive-summary)
@@ -26,6 +28,8 @@ By the end of the engagement, several vulnerabilities were found with suggested 
 _____________________________________
 
 ## 1. Webserver (`.200`)
+
+![wreath webserver](./wreathnetworkwebserver.png)
 
 ### Findings
 
@@ -261,6 +265,8 @@ It is still unknown what this server is and more enumeration is required
 _____________________________________
 
 ## 3. gitserver (`.150`)
+
+![wreath gitserver](./wreathnetworkgitserver.png)
 
 ### Findings
 
@@ -576,6 +582,8 @@ _____________________________________
 _____________________________________
 
 ## 4. Personal PC (`.100`)
+
+![wreath all network](./wreathnetworkall.png)
 
 ### Findings
 
