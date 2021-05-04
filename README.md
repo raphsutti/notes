@@ -59,4 +59,5 @@ I'm currently a Software Developer but I also like infosec. This repo will be a 
 
 ## Web
 
-- TODO
+- [Cross-origin resource sharing](security/web/cors.md)
+- CSRF
