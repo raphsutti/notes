@@ -6,14 +6,44 @@
 
 ## Table of Contents
 
-- [Executive Summary](#executive-summary)
-- Findings and Remediations
-  1. [Webserver (`.200`)](#1-webserver-200)
-  2. [Pivoting with Webserver (`.200`)](#2-pivoting-with-webserver-200)
-  3. [gitserver (`.150`)](#3-gitserver-150)
-  4. [Personal PC (`.100`)](#4-personal-pc-100)
-- [Conclusion](#conclusion)
-- [References](#references)
+- [Wreath - Penetration Test Report](#wreath---penetration-test-report)
+  - [Table of Contents](#table-of-contents)
+  - [Executive Summary](#executive-summary)
+  - [1. Webserver (`.200`)](#1-webserver-200)
+    - [Findings](#findings)
+    - [Perform a network scan](#perform-a-network-scan)
+    - [Webserver exploitation](#webserver-exploitation)
+    - [Webserver maintain access - ssh private keys](#webserver-maintain-access---ssh-private-keys)
+    - [Remediation](#remediation)
+  - [2. Pivoting with webserver (`.200`)](#2-pivoting-with-webserver-200)
+    - [Findings](#findings-1)
+    - [Perform a network scan](#perform-a-network-scan-1)
+    - [Clean up](#clean-up)
+    - [Remediation](#remediation-1)
+  - [3. gitserver (`.150`)](#3-gitserver-150)
+    - [Findings](#findings-2)
+    - [Perform a port scan](#perform-a-port-scan)
+    - [Examine the webpage on port 80](#examine-the-webpage-on-port-80)
+    - [GitStack exploitation](#gitstack-exploitation)
+    - [Obtaining a reverse shell](#obtaining-a-reverse-shell)
+    - [Maintain access](#maintain-access)
+    - [Clean up](#clean-up-1)
+    - [Remediation](#remediation-2)
+  - [4. Personal PC (`.100`)](#4-personal-pc-100)
+    - [Findings](#findings-3)
+    - [Perform a port scan on Personal PC (`.100`)](#perform-a-port-scan-on-personal-pc-100)
+    - [Check out the webserver on Personal PC (`.100`)](#check-out-the-webserver-on-personal-pc-100)
+    - [gitserver (`.150`) code review](#gitserver-150-code-review)
+    - [Visit `/resources` endpoint](#visit-resources-endpoint)
+    - [Exploit with AV Evasion](#exploit-with-av-evasion)
+    - [Reverse shell](#reverse-shell)
+    - [Privilege enumeration](#privilege-enumeration)
+    - [Privilege escalation](#privilege-escalation)
+    - [Exfiltration & Post Exploitation](#exfiltration--post-exploitation)
+    - [Clean up](#clean-up-2)
+    - [Remediation](#remediation-3)
+  - [Conclusion](#conclusion)
+  - [References](#references)
 
 _____________________________________
 
@@ -174,7 +204,7 @@ _____________________________________
 - Host `.150` have open ports that we can further enumerate on
 
 <details>
-<summary>Attack Narrative</summary>
+<summary>Attack Narrative (click to expand)</summary>
 <br>
 
 _____________________________________
@@ -278,7 +308,7 @@ _____________________________________
 - Using rdp we were able to run mimikatz and obtain hashes for persistence
 
 <details>
-<summary>Attack Narrative</summary>
+<summary>Attack Narrative (click to expand)</summary>
 <br>
 
 _____________________________________
@@ -600,7 +630,7 @@ _____________________________________
 - Misconfigured privilege found on `SystemExplorerHelpService` execution path allowing us to inject our own executable and obtain shell running as root
 
 <details>
-<summary>Attack Narrative</summary>
+<summary>Attack Narrative (click to expand)</summary>
 <br>
 
 _____________________________________
