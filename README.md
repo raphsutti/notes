@@ -10,6 +10,11 @@ I'm currently a Software Developer but I also like infosec. This repo will be a 
 
 # 💻 Dev
 
+## AWS study notes
+
+- [Developer Associate](dev/AWS/AWS%20Certified%20Developer%20-%20Associate%202020/)
+- [Security Specialty](dev/AWS/AWS%20Certified%20Security%20-%20Specialty%202020/)
+
 ## GraphQL
 
 - [Resolver best practices](dev/graphql/resolver-best-practices.md)
