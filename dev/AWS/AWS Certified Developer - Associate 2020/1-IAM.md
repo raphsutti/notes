@@ -1,5 +1,13 @@
 # Identity and Access Management
 
+- [Identity and Access Management](#identity-and-access-management)
+  - [Overview](#overview)
+  - [Definitions](#definitions)
+  - [IAM Policy Simulator](#iam-policy-simulator)
+  - [Summary](#summary)
+
+## Overview
+
 - Manage users and their level of access to the AWS console
 - Global - apply to all regions
 
