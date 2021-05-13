@@ -2,6 +2,19 @@
 
 https://graphql.org/learn/queries/
 
+- [Query and mutations](#query-and-mutations)
+  - [Query](#query)
+    - [Simple query](#simple-query)
+    - [Argument](#argument)
+    - [Aliases](#aliases)
+    - [Fragments](#fragments)
+    - [Variables](#variables)
+    - [Directives](#directives)
+  - [Mutations](#mutations)
+    - [Simple mutations](#simple-mutations)
+    - [Inline fragments](#inline-fragments)
+    - [Meta fields](#meta-fields)
+
 ## Query
 
 ### Simple query
