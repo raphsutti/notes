@@ -52,3 +52,35 @@ CQRS
 ![](./dataanalytics.png)
 
 ![](./serverlesssummary.png)
+
+# Reduce time spent on high sev incidents
+
+Determine the scope
+
+![](./contributorinsights.png)
+
+Determin severity
+
+![](./cloudwatchsynthetics.png)
+
+![](./canary.png)
+
+![](./canaryscreenshots.png)
+
+Prioritisation
+
+![](./prioritisation.png)
+
+Root cause analysis - contributor insights - find what API operation is failing
+
+![](./contributorinsightserrors.png)
+
+Root cause analysis - logs insights & embedded metrtic format - correlate logs and metrics
+
+![](./logsinsight.png)
+
+![](./emfcode.png)
+
+![](./emfresult.png)
+
+![](./incidentresponsesummary.png)
