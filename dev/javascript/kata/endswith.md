@@ -8,6 +8,8 @@ solution('abc', 'd') // returns false
 // Test.assertEquals(solution('abcde', 'cde'), true)
 // Test.assertEquals(solution('abcde', 'abc'), false)
 
+## Solution
+
 ```javascript
 const solution = (input, endsWith) => input.endsWith(endsWith);
 ```
