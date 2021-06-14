@@ -9,6 +9,16 @@ alphabetPosition("The sunset sets at twelve o' clock.")
 
 Should return "20 8 5 19 21 14 19 5 20 19 5 20 19 1 20 20 23 5 12 22 5 15 3 12 15 3 11" (as a string)
 
+## Solution
+
+Use `charCodeAt` to return ASCII number and work out number of the alphabet by offsetting to a value
+
+Use `map` to tranform all item in the array to the number
+
+Use `filter` to only return alphabetical letters in the array
+
+Use `join` to join the array into a string separated by white space
+
 ```typescript
 const alphabetPosition = (text: string) => {
   if (text === "") {
