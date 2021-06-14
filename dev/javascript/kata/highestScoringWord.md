@@ -10,6 +10,15 @@ All letters will be lowercase and all inputs will be valid.
 
 ## Solution
 
+Create a wordScorer function
+- Create array of letters with destructuring and make them lowercase
+- Adds each letter values up with `reduce`
+
+Find highest scoring word
+- Creating array of words with `split`
+- Use `reduce` to only return the highest scoring word
+
+
 ```typescript
 const wordScorer = (word: string) => {
   const letters = [...word.toLowerCase()];
