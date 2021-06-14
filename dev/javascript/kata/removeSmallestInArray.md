@@ -11,12 +11,12 @@ removeSmallest([2,2,1,2,1]) = [2,2,2,1]
 
 ## Solution
 
+Use slice(start,end) to create new array
+
 ```typescript
 const removeSmallest = (input:number[]) => {
     const index = input.indexOf(Math.min(...input))
-    const result = [...input]
-    result.splice(index,1)
-
-    return result
+    return [...input.slice(0,index), ...input.slice(index+1)]
 }
 ```
+
