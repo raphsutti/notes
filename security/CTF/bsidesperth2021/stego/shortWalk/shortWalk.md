@@ -1,4 +1,4 @@
-# Cert
+# Short Walk
 
 - **Category:** Stego
 
