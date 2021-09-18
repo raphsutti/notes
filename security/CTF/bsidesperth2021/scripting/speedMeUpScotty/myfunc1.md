@@ -1,4 +1,4 @@
-# Cert
+# Speed Me Up Scotty 1
 
 - **Category:** Scripting
 
