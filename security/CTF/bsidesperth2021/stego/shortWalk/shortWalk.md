@@ -74,9 +74,13 @@ DECIMAL       HEXADECIMAL     DESCRIPTION
 Morse code
 `..-. .-.. .- --. -.--. -- --- --- .-. ... . .. ... ... - .. .-.. .-.. -.-. --- --- .-.. -.--.-`
 
-`f l a g -.--. m o o r s e i s s t i l l c o o l -.--.-`
+`FLAG(MOORSEISSTILLCOOL)`
+
+The `notes.txt` inside `5400A` is password protected
+
+Use password `flag(moorseiscool)`
 
 Flag
 ```
-
+flag{less_walking_more_lerking}
 ```
