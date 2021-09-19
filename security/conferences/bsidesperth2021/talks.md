@@ -16,6 +16,28 @@
 - Hash signature matching
 - Vendor signing
 
+## Iain Dickson - So you want to build a Security Operations Capability?
+
+SOC:
+
+- Monitoring and incident response
+- Threat intelligence
+- GRC
+- Vuln mgmt & pentesting
+
+Why do you need a SOC
+
+Components of Security Operations Capability: Data, People, Processes, Technical capability & tools
+
+Gotchas:
+
+- Timeframe - will take time no matter how much resources
+- Hiring - location, salary, clearances
+- Shift rosters
+- Training
+- SOPs
+- Metrics
+
 ## Alice White - Shifting security left, right, up, down... everywhere! 
 
 - Hierarchy of controls - Most effective to least
