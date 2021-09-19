@@ -40,23 +40,22 @@ I'm currently a Software Developer but I also like infosec. This repo will be a 
 
 - [Wreath pentesting report](security/CTF/tryHackMe/wreath/report.md)
 
-## AWS - Cloud
+## [AWS - Cloud](security/aws/)
 
 - [S3](security/aws/s3.md)
 
-## CTFs
+## [CTFs](security/CTF/)
 
 - [Over the Wire: Bandit](security/CTF/bandit/)
 - [Tryhackme: Wreath](security/CTF/tryHackMe/wreath/)
 - [BSides Canberra 2021](security/CTF/bsidescbr2021/README.md)
-- TODO: Tryhackme Advent of Cyber
+- [BSides Perth 2021](security/CTF/bsidesperth2021/)
 
 ## Linux
 
 - [Recon](security/linux/recon/)
 - [Exploitation](security/linux/explotiation/)
 - [Misc tricks](security/linux/lesserKnown.sh)
-- TODO: CVE-2019–14287 - sudo bug 
 
 ## Crypto
 
@@ -65,4 +64,3 @@ I'm currently a Software Developer but I also like infosec. This repo will be a 
 ## Web
 
 - [Cross-origin resource sharing](security/web/cors.md)
-- CSRF
