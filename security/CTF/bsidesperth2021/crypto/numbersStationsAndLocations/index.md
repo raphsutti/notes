@@ -10,13 +10,12 @@ Flag format -- FLAG{messagehere}
 
 [code.zip](./code.jpg)
 
-
 ## Solution
 
-`.--. ... ...- ...- .--- .---` = PSVVJJ
-
+`.--. .... ....- ....- .--- .---` = PH44JJ
 
 Flag
-```
 
+```
+FLAG{PH44JJ}
 ```
