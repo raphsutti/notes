@@ -15,3 +15,12 @@
 - Path allow list - beware of wild cards
 - Hash signature matching
 - Vendor signing
+
+## Alice White - Shifting security left, right, up, down... everywhere! 
+
+- Hierarchy of controls - Most effective to least
+    - Elimination: allowlist, access control
+    - Substitution: upgrade OS
+    - Engineering: Patching, hot fixes, firewall / detection rules - done by human, could be flawed
+    - Admin: Training, documented processes
+- Near misses - Just in time training, Red team camp
