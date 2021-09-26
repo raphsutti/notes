@@ -1,0 +1,92 @@
+Welcome to the DUCTF Classroom! Cyber School is now in session!
+Press enter when you are ready to start your 30 seconds timer for the quiz...
+Woops the time is always ticking...
+Answer this maths question: 1+1=?
+
+2
+Well I see you are not a bludger then.
+
+Decode this hex string and provide me the original number (base 10): 0x95
+
+149
+You're better than a dog's breakfast at least.
+
+Decode this hex string and provide me the original ASCII letter: 69
+
+i
+Come on this isn't hard yakka
+
+Decode this URL encoded string and provide me the original ASCII symbols: /%22%3E
+
+/">
+You haven't gone walkabout yet. Keep going!
+
+Decode this base64 string and provide me the plaintext: Ym9va19zYXZhZ2VfbmhsX3Nlc3Npb25z
+
+book_savage_nhl_sessions
+That's a fair crack of the whip.
+
+Encode this plaintext string and provide me the Base64: ob_funny_greek_store
+
+b2JfZnVubnlfZ3JlZWtfc3RvcmU=
+Fair dinkum! That's not bad.
+
+Decode this rot13 string and provide me the plaintext: cngvb_pbairefvba_unf_pbeny
+
+patio_conversion_has_coral
+Don't spit the dummy yet!
+
+Encode this plaintext string and provide me the ROT13 equilavent: individual_likelihood_riverside_stack
+
+vaqvivqhny_yvxryvubbq_evirefvqr_fgnpx
+You're sussing this out pretty quickly.
+
+Decode this binary string and provide me the original number (base 10): 0b100110010010
+
+2450
+Crikey, can you speak computer?
+
+Encode this number and provide me the binary equivalent: 2739
+
+0b101010110011
+You're better than a bunnings sausage sizzle.
+
+Final Question, what is the best CTF competition in the universe?
+
+DUCTF
+Bloody Ripper! Here is the grand prize!
+
+
+
+   .^.
+  (( ))
+   |#|_______________________________
+   |#||##############################|
+   |#||##############################|
+   |#||##############################|
+   |#||##############################|
+   |#||########DOWNUNDERCTF##########|
+   |#||########(DUCTF 2021)##########|
+   |#||##############################|
+   |#||##############################|
+   |#||##############################|
+   |#||##############################|
+   |#|'------------------------------'
+   |#|
+   |#|
+   |#|
+   |#|
+   |#|
+   |#|
+   |#|
+   |#|
+   |#|
+   |#|
+   |#|
+   |#|  DUCTF{you_aced_the_quiz!_have_a_gold_star_champion}
+   |#|
+   |#|
+   |#|   
+  //|\\
+
+
