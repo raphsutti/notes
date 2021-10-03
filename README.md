@@ -47,9 +47,9 @@ I'm currently a Software Developer but I also like infosec. This repo will be a 
 ## [CTFs](security/CTF/)
 
 - [Over the Wire: Bandit](security/CTF/bandit/)
-- [Tryhackme: Wreath](security/CTF/tryHackMe/wreath/)
 - [BSides Canberra 2021](security/CTF/bsidescbr2021/README.md)
 - [BSides Perth 2021](security/CTF/bsidesperth2021/)
+- [Down Under CTF 2021](security/CTF/ductf2021/)
 
 ## Linux
 
