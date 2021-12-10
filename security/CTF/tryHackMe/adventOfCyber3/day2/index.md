@@ -1,0 +1,6 @@
+# Cookies
+
+- Cookies found to be hexadecimal encoded
+- Decode and re-encode with user=admin `7b636f6d70616e793a2022546865204265737420466573746976616c20436f6d70616e79222c206973726567697374657265643a2254727565222c20757365726e616d653a2261646d696e227d`
+- Replace cookie within the developer console
+
