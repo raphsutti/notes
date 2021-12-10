@@ -1,0 +1,17 @@
+-----------------                                                                                                                                        
+DIRB v2.22                                                                                                                                               
+By The Dark Raver                                                                                                                                        
+-----------------                                                                                                                                        
+
+START_TIME: Fri Dec 10 06:34:55 2021
+URL_BASE: http://10.10.121.137/
+WORDLIST_FILES: /usr/share/wordlists/dirb/common.txt
+OPTION: Not Recursive
+
+-----------------
+
+GENERATED WORDS: 4612                                                          
+
+---- Scanning URL: http://10.10.121.137/ ----
+==> DIRECTORY: http://10.10.121.137/admin/                                                                                                              
+==> DIRECTORY: http://10.10.121.137/assets/
