@@ -12,13 +12,12 @@ vUnknown.y;
 vUnknown.z;
 vUnknown();
 
-const hasXYZ = (
-  obj: unknown
-): obj is {
-  x: any;
-  y: any;
-  z: any;
-} =>
+interface XYZ {
+  x: string;
+  y: string;
+  z: string;
+}
+const hasXYZ = (obj: unknown): obj is XYZ =>
   typeof obj === "object" &&
   obj !== null &&
   "x" in obj &&
@@ -34,7 +33,10 @@ if (hasXYZ(vUnknown)) {
 const newToUpper = (input: string) => {
   input.toUpperCase();
 };
+newToUpper(vUnknown);
+// Type assertion
 newToUpper(vUnknown as string);
 
+// User defined type guard
 const isString = (input: unknown): input is string => typeof input === "string";
-newToUpper(isString(vUnknown) ? vUnknown : "");
+newToUpper(isString(vUnknown) ? vUnknown : "fail");
