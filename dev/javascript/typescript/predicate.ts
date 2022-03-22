@@ -8,5 +8,8 @@ console.log(stringsOnly);
 const stringsOnlyPredicate = arr.filter((i): i is string => isString(i)); // Type is const stringsOnlyPredicate: string[] 😁
 console.log(stringsOnlyPredicate);
 
+const stringsOnlyPredicate2 = arr.filter(isString); // Type is const stringsOnlyPredicate: string[] 😁
+console.log(stringsOnlyPredicate2);
+
 const stringsOnlyNew = arr.flatMap((i) => (isString(i) ? [i] : [])); // Type is const stringsOnlyNew: string[] 😁
 console.log(stringsOnlyNew);
