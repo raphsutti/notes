@@ -1,3 +1,5 @@
+// https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-0.html#new-unknown-top-type
+
 let vAny: any = 10;
 
 vAny.x;
