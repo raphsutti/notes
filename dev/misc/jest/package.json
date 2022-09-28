@@ -1,0 +1,16 @@
+{
+  "version": "1.0.0",
+  "main": "dist/app.js",
+  "author": "Raph <neoster9@gmail.com>",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "jest": "28.1.2",
+    "ts-jest": "28.0.5",
+    "ts-node": "10.7.0",
+    "typescript": "4.6.4"
+  },
+  "scripts": {
+    "test": "jest"
+  }
+}

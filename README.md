@@ -2,7 +2,7 @@
 
 ## Intro
 
-Hello 👋! 
+Hello 👋!
 My name is Raph and I am new to the tech industry.
 I like learning and taking notes is one of the ways I learn. On top of learning, I also like knowledge sharing so I've decided to create this repo to share with others who are interested.
 
@@ -33,6 +33,7 @@ I'm currently a Software Developer but I also like infosec. This repo will be a 
 
 - [Reverse proxy](/dev/misc/reverse-proxy/reverse-proxy.md)
 - [VIM](/dev/misc/vim.md)
+- [Jest mock functions](dev/misc/jest/README.MD)
 
 # 🔒 Security
 
